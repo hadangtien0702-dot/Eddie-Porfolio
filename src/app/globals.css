@@ -1,0 +1,127 @@
+/* ─── Import Tailwind CSS v4 ─── */
+@import "tailwindcss";
+
+/* ─── Brand Colors & Design Tokens ─── */
+/* Theo RULES_1.md — Dark Theme toàn bộ trang */
+:root {
+  /* Nền */
+  --color-primary: #0a0a0a;
+  --color-surface: #141414;
+  --color-elevated: #1a1a1a;
+
+  /* Accent */
+  --color-accent: #ef4444;
+  --color-accent-warm: #e8512d;
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1a1;
+  --color-text-muted: #6b6b6b;
+
+  /* Border */
+  --color-border: #262626;
+  --color-border-subtle: #1f1f1f;
+
+  /* Font — tham chiếu từ CSS variables mà Next.js tạo ra */
+  --font-heading: var(--font-clash), system-ui, sans-serif;
+  --font-body: var(--font-inter-display), "Inter", system-ui, sans-serif;
+
+  /* Gradient */
+  --gradient-hero: linear-gradient(
+    135deg,
+    #e8512d 0%,
+    #ef4444 40%,
+    #0a0a0a 100%
+  );
+  --gradient-cta: linear-gradient(90deg, #ef4444, #e8512d);
+  --gradient-card-hover: linear-gradient(
+    135deg,
+    #ef4444 0%,
+    #e8512d 50%,
+    transparent 100%
+  );
+  --gradient-text: linear-gradient(90deg, #ffffff 0%, #ef4444 100%);
+  --gradient-glow: radial-gradient(
+    circle at center,
+    rgba(239, 68, 68, 0.15) 0%,
+    transparent 70%
+  );
+}
+
+/* ─── Tailwind v4 Theme Tokens ─── */
+/* Map brand colors cho Tailwind classes */
+@theme inline {
+  /* Colors */
+  --color-primary: #0a0a0a;
+  --color-surface: #141414;
+  --color-elevated: #1a1a1a;
+  --color-accent: #ef4444;
+  --color-accent-warm: #e8512d;
+  --color-border: #262626;
+  --color-border-subtle: #1f1f1f;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1a1;
+  --color-text-muted: #6b6b6b;
+
+  /* Font Family — tham chiếu đúng biến Next.js */
+  --font-heading: var(--font-clash), system-ui, sans-serif;
+  --font-body: var(--font-inter-display), "Inter", system-ui, sans-serif;
+
+  /* Font Size — Typography hierarchy theo RULES_1.md */
+  --font-size-display: clamp(60px, 8vw, 96px);
+  --font-size-h1: clamp(40px, 5vw, 64px);
+  --font-size-h2: clamp(28px, 3vw, 40px);
+  --font-size-h3: clamp(20px, 2vw, 28px);
+  --font-size-h4: 18px;
+  --font-size-h5: 16px;
+  --font-size-body-lg: 18px;
+  --font-size-body: 16px;
+  --font-size-caption: 14px;
+  --font-size-overline: 12px;
+  --font-size-stat: clamp(36px, 5vw, 72px);
+
+  /* Spacing */
+  --spacing-section: 120px;
+  --spacing-section-mobile: 80px;
+
+  /* Animation */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Global Styles ─── */
+/* Nền tối toàn trang, smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Selection Style ─── */
+::selection {
+  background-color: rgba(239, 68, 68, 0.3);
+  color: #ffffff;
+}
+
+/* ─── Scrollbar Custom (Dark Theme) ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
