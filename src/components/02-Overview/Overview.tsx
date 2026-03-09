@@ -119,7 +119,7 @@ export default function Overview() {
         {/* ─── Hero Area: Text + Image overlap ─── */}
         <div className="relative flex-1 flex items-center">
           {/* ─── Cột trái: Overline + Heading cực lớn ─── */}
-          <div className="relative z-20 flex-shrink-0 max-w-[55%] lg:max-w-[50%]">
+          <div className="relative z-20 flex-shrink-0 max-w-[80%] lg:max-w-[65%]">
             {/* Overline — letter reveal, bắt đầu 50% opacity */}
             <motion.p
               initial="hidden"
@@ -153,8 +153,8 @@ export default function Overview() {
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.08, delayChildren: 0.5 } },
               }}
-              className="font-heading text-[clamp(48px,9vw,120px)] font-bold leading-[0.95] text-white
-                         tracking-tight"
+              className="font-heading text-[clamp(44px,8vw,120px)] font-bold leading-[0.95] text-white
+                         tracking-tight break-words"
             >
               {overviewHeading.title.split(" ").map((word, wi) => (
                 <motion.span
@@ -245,6 +245,28 @@ export default function Overview() {
             </motion.p>
           </div>
         </div>
+
+        {/* ─── Scroll indicator — bouncing chevron ─── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
+        >
+          <span className="font-body text-[11px] text-white/25 uppercase tracking-widest">
+            Scroll
+          </span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,0.3)" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

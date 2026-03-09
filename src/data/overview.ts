@@ -7,7 +7,7 @@ export const overviewHeading = {
   // Overline label phía trên heading
   overline: "ABOUT ME",
   // Heading chính
-  title: "Creative Video Strategist",
+  title: "Multimedia Production",
   // Mô tả ngắn
   description:
     "I craft high-converting video content that drives revenue. From concept to execution, I blend creativity with data-driven strategy to build paid funnels and organic growth engines that deliver real results.",

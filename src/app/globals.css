@@ -2,25 +2,28 @@
 @import "tailwindcss";
 
 /* ─── Brand Colors & Design Tokens ─── */
-/* Theo RULES_1.md — Dark Theme toàn bộ trang */
+/* Color System: Pure White · Deep Black · Neutral Grey · Kinetic Orange */
 :root {
-  /* Nền */
-  --color-primary: #0a0a0a;
-  --color-surface: #141414;
-  --color-elevated: #1a1a1a;
+  /* Nền — Deep Black */
+  --color-primary: #040404;
+  --color-surface: #0e0e0e;
+  --color-elevated: #181818;
 
-  /* Accent */
-  --color-accent: #ef4444;
-  --color-accent-warm: #e8512d;
+  /* Accent — Kinetic Orange */
+  --color-accent: #ff4000;
+  --color-accent-warm: #ff4000;
 
-  /* Text */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a1a1a1;
+  /* Text — Pure White + Grey */
+  --color-text-primary: #fbfbfb;
+  --color-text-secondary: #dedede;
   --color-text-muted: #6b6b6b;
+
+  /* Neutral Grey */
+  --color-grey: #dedede;
 
   /* Border */
   --color-border: #262626;
-  --color-border-subtle: #1f1f1f;
+  --color-border-subtle: #1a1a1a;
 
   /* Font — tham chiếu từ CSS variables mà Next.js tạo ra */
   --font-heading: var(--font-clash), system-ui, sans-serif;
@@ -29,21 +32,21 @@
   /* Gradient */
   --gradient-hero: linear-gradient(
     135deg,
-    #e8512d 0%,
-    #ef4444 40%,
-    #0a0a0a 100%
+    #ff4000 0%,
+    #ff4000 40%,
+    #040404 100%
   );
-  --gradient-cta: linear-gradient(90deg, #ef4444, #e8512d);
+  --gradient-cta: linear-gradient(90deg, #ff4000, #e83600);
   --gradient-card-hover: linear-gradient(
     135deg,
-    #ef4444 0%,
-    #e8512d 50%,
+    #ff4000 0%,
+    #e83600 50%,
     transparent 100%
   );
-  --gradient-text: linear-gradient(90deg, #ffffff 0%, #ef4444 100%);
+  --gradient-text: linear-gradient(90deg, #fbfbfb 0%, #ff4000 100%);
   --gradient-glow: radial-gradient(
     circle at center,
-    rgba(239, 68, 68, 0.15) 0%,
+    rgba(255, 64, 0, 0.15) 0%,
     transparent 70%
   );
 }
@@ -51,17 +54,18 @@
 /* ─── Tailwind v4 Theme Tokens ─── */
 /* Map brand colors cho Tailwind classes */
 @theme inline {
-  /* Colors */
-  --color-primary: #0a0a0a;
-  --color-surface: #141414;
-  --color-elevated: #1a1a1a;
-  --color-accent: #ef4444;
-  --color-accent-warm: #e8512d;
+  /* Colors — New Brand Palette */
+  --color-primary: #040404;
+  --color-surface: #0e0e0e;
+  --color-elevated: #181818;
+  --color-accent: #ff4000;
+  --color-accent-warm: #ff4000;
   --color-border: #262626;
-  --color-border-subtle: #1f1f1f;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a1a1a1;
+  --color-border-subtle: #1a1a1a;
+  --color-text-primary: #fbfbfb;
+  --color-text-secondary: #dedede;
   --color-text-muted: #6b6b6b;
+  --color-grey: #dedede;
 
   /* Font Family — tham chiếu đúng biến Next.js */
   --font-heading: var(--font-clash), system-ui, sans-serif;
@@ -104,8 +108,8 @@ body {
 
 /* ─── Selection Style ─── */
 ::selection {
-  background-color: rgba(239, 68, 68, 0.3);
-  color: #ffffff;
+  background-color: rgba(255, 64, 0, 0.3);
+  color: #fbfbfb;
 }
 
 /* ─── Scrollbar Custom (Dark Theme) ─── */
@@ -124,4 +128,13 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+
+/* ─── Ẩn scrollbar cho horizontal scroll (Timeline) ─── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
