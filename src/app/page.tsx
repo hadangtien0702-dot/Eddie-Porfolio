@@ -4,7 +4,7 @@
 
 import Navigation from "@/components/00-Navigation/Navigation";
 import Overview from "@/components/02-Overview/Overview";
-import Services from "@/components/04-Services/Services";
+import Work from "@/components/04-Work/Work";
 import Showreel from "@/components/05-Showreel/Showreel";
 import CaseStudy from "@/components/03-CaseStudy/CaseStudy";
 import Contact from "@/components/06-Contact/Contact";
@@ -19,7 +19,7 @@ export default function Home() {
       {/* Case Study: Chứng minh bằng case thực tế */}
       <CaseStudy />
       {/* Work: Tôi làm được gì */}
-      <Services />
+      <Work />
       {/* Strategy: Xem demo reel */}
       <Showreel />
       {/* Contact: Liên hệ ngay */}

@@ -15,11 +15,9 @@ import {
   ContextProfileCard,
   FunnelChart,
   CPAChallengeChart,
-  WorkflowDiagram,
+  SystemDashboard,
   RevenueChart,
   SocialBars,
-  OverviewChart,
-  BestYearQuarterlyChart,
   useAnimatedCounter,
 } from "./CaseStudyCharts";
 import {
@@ -141,12 +139,73 @@ function StorySection({
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 max-w-2xl mb-14"
+        className="relative z-10 max-w-4xl lg:max-w-5xl mb-14 group cursor-default"
+        style={{ '--case-color': caseColor } as React.CSSProperties}
       >
-        <p className="font-body text-[18px] md:text-[21px] text-white/60 leading-[1.9]">
-          {section.body}
+        <p className="font-body text-[18px] md:text-[21px] text-white/60 transition-colors duration-500 group-hover:text-white/75 leading-[1.9]">
+          {section.body.split(/(\$[0-9.,]+M?(?:\s*[-–]\s*\$[0-9.,]+M?)?)/g).map((part, i) => {
+            if (part && part.startsWith("$")) {
+              return (
+                <span 
+                  key={i} 
+                  className="font-semibold text-white/80 px-0.5 transition-all duration-700 group-hover:text-white group-hover:drop-shadow-[0_0_12px_var(--case-color)]" 
+                >
+                  {part}
+                </span>
+              );
+            }
+            return part;
+          })}
         </p>
       </motion.div>
+
+      {/* ─── Stats Cards — Borderless Typographic Style ─── */}
+      {section.stats && section.stats.length > 0 && (
+        <div
+          id={`${section.id}-stats`}
+          className="relative z-10 max-w-5xl mb-16 flex flex-col sm:flex-row gap-y-10 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.08]"
+        >
+          {section.stats.map((stat, i) => {
+            const isMission = stat.label.toLowerCase().includes("mission");
+            const isWarning = stat.label.toLowerCase().includes("cpa");
+            const statAccent = isWarning ? "#ef4444" : isMission ? caseColor : "rgba(255,255,255,0.4)";
+
+            return (
+              <motion.div
+                key={stat.label}
+                id={`${section.id}-stat-${i}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.3 + i * 0.1,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="relative flex-1 sm:px-8 py-4 sm:py-0 first:pl-0 last:pr-0 flex flex-col justify-center group"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1.5 h-1.5 rounded-full opacity-60" style={{ backgroundColor: statAccent }} />
+                  <span className="font-body text-[11px] uppercase tracking-[0.15em]" style={{ color: statAccent }}>
+                    {stat.label}
+                  </span>
+                </div>
+                <span
+                  className="font-heading font-bold block leading-none"
+                  style={{
+                    fontSize: isMission ? "clamp(24px, 3.5vw, 32px)" : "clamp(32px, 5vw, 48px)",
+                    color: "white",
+                    '--glow-color': statAccent,
+                  } as React.CSSProperties}
+                >
+                  <span className="drop-shadow-[0_0_10px_var(--glow-color)] group-hover:drop-shadow-[0_0_20px_var(--glow-color)] text-white/90 group-hover:text-white transition-all duration-700 block">
+                    {stat.value}
+                  </span>
+                </span>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
 
       {/* ─── Interactive Chart — in glass frame ─── */}
       {section.visualType && (
@@ -155,20 +214,24 @@ function StorySection({
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 mb-14 p-6 md:p-10 rounded-3xl
-                   bg-white/[0.02] border border-white/[0.06]
-                   backdrop-blur-sm"
+          className={
+            section.visualType === "context" || section.visualType === "workflow"
+              ? "relative z-10 mb-14"
+              : "relative z-10 mb-14 p-6 md:p-10 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm"
+          }
         >
           {/* Top accent line */}
-          <div
-            className="absolute top-0 left-8 right-8 h-[1px]"
-            style={{ background: `linear-gradient(90deg, transparent, ${caseColor}40, transparent)` }}
-          />
+          {(section.visualType !== "context" && section.visualType !== "workflow") && (
+            <div
+              className="absolute top-0 left-8 right-8 h-[1px]"
+              style={{ background: `linear-gradient(90deg, transparent, ${caseColor}40, transparent)` }}
+            />
+          )}
           {section.visualType === "context" && <ContextCard color={caseColor} />}
           {section.visualType === "context-profile" && <ContextProfileCard color={caseColor} />}
           {section.visualType === "funnel" && <FunnelChart color={caseColor} />}
           {section.visualType === "cpa-challenge" && <CPAChallengeChart color={caseColor} />}
-          {section.visualType === "workflow" && <WorkflowDiagram color={caseColor} />}
+          {section.visualType === "workflow" && <SystemDashboard color={caseColor} />}
           {section.visualType === "revenue" && <RevenueChart color={caseColor} />}
           {section.visualType === "social" && <SocialBars color={caseColor} />}
         </motion.div>
@@ -242,76 +305,12 @@ function StorySection({
         </motion.div>
       )}
 
-      {/* ─── Stats Cards — adaptive style per section ─── */}
-      {section.stats && section.stats.length > 0 && (
-        <div
-          id={`${section.id}-stats`}
-          className="relative z-10 max-w-4xl mb-10 grid gap-4"
-          style={{
-            gridTemplateColumns: `repeat(${Math.min(section.stats.length, 3)}, 1fr)`,
-          }}
-        >
-          {section.stats.map((stat, i) => {
-            const isMission = stat.label.toLowerCase().includes("mission");
-            const isWarning = stat.label.toLowerCase().includes("cpa");
-            const statAccent = isWarning ? "#ef4444" : isMission ? caseColor : "rgba(255,255,255,0.5)";
 
-            return (
-              <motion.div
-                key={stat.label}
-                id={`${section.id}-stat-${i}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.3 + i * 0.1,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="relative p-5 md:p-6 rounded-2xl text-center overflow-hidden
-                         bg-white/[0.02] border border-white/[0.06]
-                         group hover:bg-white/[0.04] hover:border-white/[0.10]
-                         transition-all duration-500"
-              >
-                {/* Top accent line */}
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={isInView ? { scaleX: 1 } : {}}
-                  transition={{ duration: 0.6, delay: 0.4 + i * 0.1 }}
-                  className="absolute top-0 left-0 right-0 h-[2px] origin-left"
-                  style={{ backgroundColor: statAccent }}
-                />
-
-                {/* Hover glow */}
-                <div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100
-                           transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    background: `radial-gradient(200px circle at 50% 50%, ${statAccent}10, transparent 70%)`,
-                  }}
-                />
-                <span className="relative z-10 font-body text-[11px] text-white/35 uppercase tracking-[0.15em] block mb-3">
-                  {stat.label}
-                </span>
-                <span
-                  className="relative z-10 font-heading font-bold block leading-none"
-                  style={{
-                    fontSize: isMission ? "clamp(18px, 3vw, 24px)" : "clamp(24px, 4vw, 36px)",
-                    color: isWarning ? "#ef4444" : isMission ? caseColor : "#fff",
-                  }}
-                >
-                  {stat.value}
-                </span>
-              </motion.div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* ─── Bullets — numbered glass cards ─── */}
-      {section.bullets && (
+      {/* ─── Bullets — clean numbered list ─── */}
+      {section.bullets && section.visualType !== "workflow" && (
         <div
           id={`${section.id}-bullets`}
-          className="relative z-10 max-w-4xl mb-14 grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="relative z-10 max-w-3xl mb-14 flex flex-col"
         >
           {section.bullets.map((bullet, i) => {
             const parts = bullet.split(" — ");
@@ -323,51 +322,32 @@ function StorySection({
               <motion.div
                 key={i}
                 id={`${section.id}-bullet-${i}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                initial={{ opacity: 0, x: -16 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{
-                  duration: 0.6,
+                  duration: 0.5,
                   delay: 0.35 + i * 0.1,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="group relative p-5 md:p-6 rounded-2xl
-                         bg-white/[0.02] border border-white/[0.06]
-                         hover:bg-white/[0.04] hover:border-white/[0.12]
-                         transition-all duration-500 cursor-default"
+                className="flex items-start gap-5 py-5 border-b border-white/[0.06] last:border-b-0"
               >
-                {/* Hover glow */}
-                <div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100
-                           transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    background: `radial-gradient(300px circle at 50% 0%, ${caseColor}08, transparent 70%)`,
-                  }}
-                />
+                {/* Accent dot + number */}
+                <span
+                  className="flex-shrink-0 font-heading text-[13px] font-bold w-6 pt-0.5 leading-none"
+                  style={{ color: `${caseColor}80` }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
 
-                {/* Số thứ tự — neon accent */}
-                <div className="flex items-start gap-4 relative z-10">
-                  <span
-                    className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center
-                             font-heading text-[14px] font-bold transition-all duration-300"
-                    style={{
-                      color: caseColor,
-                      backgroundColor: `${caseColor}10`,
-                      border: `1px solid ${caseColor}25`,
-                    }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-
-                  <div className="flex-1 min-w-0">
-                    {title && (
-                      <h4 className="font-heading text-[14px] md:text-[15px] font-semibold text-white mb-2 leading-snug">
-                        {title}
-                      </h4>
-                    )}
-                    <p className="font-body text-[13px] md:text-[14px] text-white/50 leading-[1.7]">
-                      {desc}
-                    </p>
-                  </div>
+                <div className="flex-1 min-w-0">
+                  {title && (
+                    <h4 className="font-heading text-[15px] md:text-[16px] font-semibold text-white mb-1 leading-snug">
+                      {title}
+                    </h4>
+                  )}
+                  <p className="font-body text-[14px] md:text-[15px] text-white/45 leading-[1.7]">
+                    {desc}
+                  </p>
                 </div>
               </motion.div>
             );
@@ -1157,15 +1137,11 @@ function CaseStory({
   cs: CaseStudyType;
   onBack: () => void;
 }) {
-  const [resultsTab, setResultsTab] = useState("overview");
   const [activeSection, setActiveSection] = useState<string>(cs.sections[0]?.id || "");
 
-  // Build nav items from sections + results
+  // Build nav items from sections
   const navItems = [
     ...cs.sections.map((s) => ({ id: s.id, label: s.title, number: s.number })),
-    ...(cs.highlights && cs.highlights.length > 0
-      ? [{ id: "results-section", label: "Results", number: cs.sections.length + 1 }]
-      : []),
   ];
 
   // Track active section via IntersectionObserver
@@ -1259,7 +1235,7 @@ function CaseStory({
         </div>
       </div>
 
-      {/* ─── Hero Banner — Cinematic typography ─── */}
+      {/* ─── Hero Banner — Cinematic typography / Custom Hero Image ─── */}
       <motion.div
         id={`case-story-${cs.id}-hero`}
         initial={{ opacity: 0 }}
@@ -1269,58 +1245,75 @@ function CaseStory({
                  border border-white/[0.04]"
         style={{ background: "#050505" }}
       >
-        {/* Ambient glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `
-              radial-gradient(60% 80% at 50% 50%, ${cs.color}0d, transparent 70%),
-              radial-gradient(30% 40% at 20% 80%, ${cs.color}08, transparent),
-              radial-gradient(30% 40% at 80% 20%, ${cs.color}06, transparent)
-            `,
-          }}
-        />
+        {cs.heroImage ? (
+          <>
+            <Image
+              src={cs.heroImage}
+              alt={`${cs.company} Hero`}
+              fill
+              className="object-cover object-center"
+            />
+            {/* Shadow overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/40 pointer-events-none" />
+          </>
+        ) : (
+          <>
+            {/* Ambient glow */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `
+                  radial-gradient(60% 80% at 50% 50%, ${cs.color}0d, transparent 70%),
+                  radial-gradient(30% 40% at 20% 80%, ${cs.color}08, transparent),
+                  radial-gradient(30% 40% at 80% 20%, ${cs.color}06, transparent)
+                `,
+              }}
+            />
 
-        {/* Grid pattern overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: "60px 60px",
-          }}
-        />
+            {/* Grid pattern overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.03]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)
+                `,
+                backgroundSize: "60px 60px",
+              }}
+            />
+          </>
+        )}
 
         {/* Center — Company name large */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 25, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center"
-          >
-            <h2
-              className="font-heading font-bold leading-[0.9] tracking-[-0.03em]"
-              style={{
-                fontSize: "clamp(48px, 8vw, 120px)",
-                background: `linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 100%)`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              {cs.company}
-            </h2>
+        {!cs.heroImage && (
+          <div className="absolute inset-0 flex items-center justify-center">
             <motion.div
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 60 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="h-[2px] mx-auto mt-4 rounded-full"
-              style={{ backgroundColor: cs.color }}
-            />
-          </motion.div>
-        </div>
+              initial={{ opacity: 0, y: 25, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="text-center"
+            >
+              <h2
+                className="font-heading font-bold leading-[0.9] tracking-[-0.03em]"
+                style={{
+                  fontSize: "clamp(48px, 8vw, 120px)",
+                  background: `linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 100%)`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                {cs.company}
+              </h2>
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 60 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="h-[2px] mx-auto mt-4 rounded-full"
+                style={{ backgroundColor: cs.color }}
+              />
+            </motion.div>
+          </div>
+        )}
 
         {/* Corner metadata */}
         <motion.span
@@ -1441,79 +1434,7 @@ function CaseStory({
             ))}
           </div>
 
-      {/* ─── 2. Kết quả sau 3 năm làm việc ─── */}
-      {cs.highlights && cs.highlights.length > 0 && (
-        <div id="results-section" className="mt-16 md:mt-24">
-          {/* Section label */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-3 mb-12"
-          >
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cs.color }} />
-            <span className="font-body text-[12px] text-white/35 uppercase tracking-[0.15em]">
-              Results after 3 years
-            </span>
-            <div className="flex-1 h-[1px] bg-white/[0.05]" />
-          </motion.div>
 
-          {/* Tab switcher */}
-          <div id="results-tab-switcher" className="flex items-center gap-2 mb-6">
-            {[
-              { key: "overview", label: "3-Year Overview" },
-              { key: "quarterly", label: "Best Year 2024" },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setResultsTab(tab.key)}
-                className="px-5 py-2.5 rounded-full font-body text-[13px] font-medium
-                         transition-all duration-300 border"
-                style={{
-                  backgroundColor: resultsTab === tab.key ? `${cs.color}15` : "transparent",
-                  borderColor: resultsTab === tab.key ? `${cs.color}40` : "rgba(255,255,255,0.06)",
-                  color: resultsTab === tab.key ? cs.color : "rgba(255,255,255,0.4)",
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab content */}
-          <AnimatePresence mode="wait">
-            {resultsTab === "overview" && (
-              <motion.div
-                key="overview"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.35 }}
-                className="p-6 md:p-10 rounded-3xl bg-white/[0.02] border border-white/[0.06] mb-6"
-              >
-                <OverviewChart color={cs.color} />
-              </motion.div>
-            )}
-            {resultsTab === "quarterly" && (
-              <motion.div
-                key="quarterly"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.35 }}
-                className="p-6 md:p-10 rounded-3xl bg-white/[0.02] border border-white/[0.06] mb-6"
-              >
-                <BestYearQuarterlyChart color={cs.color} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {cs.timeline && cs.timeline.length > 0 && (
-            <TimelineStrip milestones={cs.timeline} color={cs.color} />
-          )}
-        </div>
-      )}
 
         </div>{/* end Main Content */}
       </div>{/* end Sidebar + Content flex */}

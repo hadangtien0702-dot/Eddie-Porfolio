@@ -15,7 +15,7 @@ export default function Showreel() {
   return (
     <section
       ref={ref}
-      id="strategy"
+      id="showreel"
       className="relative w-full py-section-mobile lg:py-section overflow-hidden bg-primary"
     >
       {/* Glow */}

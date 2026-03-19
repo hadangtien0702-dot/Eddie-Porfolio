@@ -8,10 +8,12 @@ import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { services, servicesHeading } from "@/data/services";
+import VideoCarousel3D from "./VideoCarousel3D";
 
-export default function Services() {
+export default function Work() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [isCarouselOpen, setIsCarouselOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
@@ -178,28 +180,54 @@ export default function Services() {
                         className="absolute bottom-6 right-5 z-10 flex items-center gap-3"
                       >
                         {svc.links && svc.links.length > 0 ? (
-                          svc.links.map((link, idx) => (
-                            <a
-                              key={idx}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-body text-[12px] font-medium px-4 py-2.5 rounded-full flex items-center gap-2 hover:bg-white hover:text-primary transition-all duration-300"
-                              style={{
-                                background: "rgba(255,255,255,0.15)",
-                                color: "#fff",
-                                border: "1px solid rgba(255,255,255,0.4)",
-                                backdropFilter: "blur(10px)",
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {link.label}
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="7" y1="17" x2="17" y2="7"></line>
-                                <polyline points="7 7 17 7 17 17"></polyline>
-                              </svg>
-                            </a>
-                          ))
+                          svc.links.map((link, idx) => {
+                            if (svc.id === "video-editor") {
+                              return (
+                                <button
+                                  key={idx}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsCarouselOpen(true);
+                                  }}
+                                  className="font-body text-[12px] font-medium px-4 py-2.5 rounded-full flex items-center gap-2 hover:bg-white hover:text-primary transition-all duration-300"
+                                  style={{
+                                    background: "rgba(255,255,255,0.15)",
+                                    color: "#fff",
+                                    border: "1px solid rgba(255,255,255,0.4)",
+                                    backdropFilter: "blur(10px)",
+                                  }}
+                                >
+                                  Launch 3D Showcase
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                  </svg>
+                                </button>
+                              );
+                            }
+
+                            return (
+                              <a
+                                key={idx}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-body text-[12px] font-medium px-4 py-2.5 rounded-full flex items-center gap-2 hover:bg-white hover:text-primary transition-all duration-300"
+                                style={{
+                                  background: "rgba(255,255,255,0.15)",
+                                  color: "#fff",
+                                  border: "1px solid rgba(255,255,255,0.4)",
+                                  backdropFilter: "blur(10px)",
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {link.label}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                                  <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                              </a>
+                            );
+                          })
                         ) : (
                           <button
                             className="font-body text-[12px] font-medium px-5 py-2.5 rounded-full hover:bg-white hover:text-primary transition-all duration-300"
@@ -239,6 +267,9 @@ export default function Services() {
           })}
         </motion.div>
       </div>
+      
+      {/* ─── The Rendered 3D Carousel Modal ─── */}
+      <VideoCarousel3D isOpen={isCarouselOpen} onClose={() => setIsCarouselOpen(false)} />
     </section>
   );
 }

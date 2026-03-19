@@ -22,39 +22,57 @@ export const servicesHeading = {
 
 export const services: Service[] = [
   {
-    id: "production-media",
-    title: "Production Media",
-    tag: "Setup & Filming",
+    id: "setup-and-build",
+    title: "Setup and Build",
+    tag: "Studio & Operations",
     description:
-      "Equipment selection, studio setup, and hands-on filming for the company — producing Talking Head videos, Video Sales Letters, Podcasts, and Livestreams.",
-    image: "/images/services/production-media.jpg",
+      "From a raw house to a fully operational production system. Handled the complete studio setup, equipment scaling, and workflow optimization.",
+    image: "/images/services/content-growth.jpg",
   },
   {
-    id: "video-production",
-    title: "Video Production",
-    tag: "Post-Production",
+    id: "web-forum-design",
+    title: "Web & Forum Design",
+    tag: "UI/UX & Web",
     description:
-      "End-to-end video editing, motion design, and post-production — transforming raw footage into performance-driven content for ads and organic channels.",
-    image: "/images/services/video-production.jpg",
+      "Designed and built User Interfaces for 2 polished websites and 1 forum, focusing on seamless user experience across the brands.",
+    image: "/images/services/motion-graphics.jpg",
+    links: [
+      { label: "ThinkSmart Website", url: "https://thinksmartinsurance.com/en/home" },
+      { label: "Dream Talent Website", url: "https://dreamtalent.com.vn/" },
+      { label: "Forum Demo", url: "#" } // User will provide link
+    ],
   },
   {
     id: "social-design",
-    title: "Social Post Design",
-    tag: "Visual Content",
+    title: "Social",
+    tag: "Graphic Design",
     description:
-      "Eye-catching social media graphics, carousel designs, and branded visual content that stops the scroll and drives engagement.",
-    image: "/images/services/social-design.jpg",
+      "Eye-catching social media graphics, carousels, and high-performing posts designed and actively used during my time at ThinkSmart Insurance.",
+    image: "/images/services/brand-content.jpg",
+    links: [
+      { label: "View Social Designs", url: "/work/social-post" } // If applicable
+    ],
   },
   {
-    id: "website",
-    title: "Website",
-    tag: "Web Development",
+    id: "video-editor",
+    title: "Video Editor",
+    tag: "Post-Production",
     description:
-      "Designed and built websites for ThinkSmart Insurance and Dream Talent — creating polished digital presences that align with each brand's identity.",
-    image: "/images/services/website.jpg",
+      "Showcasing the highest-performing and most creative videos cut, edited, and published during my time at ThinkSmart Insurance.",
+    image: "/images/services/video-strategy.jpg",
     links: [
-      { label: "ThinkSmart", url: "https://thinksmartinsurance.com/en/home" },
-      { label: "Dream Talent", url: "https://dreamtalent.com.vn/" }
+      { label: "Watch Best Videos", url: "#" } // User will provide links
+    ]
+  },
+  {
+    id: "ai-applications",
+    title: "A.I",
+    tag: "Innovation",
+    description:
+      "Applied generative AI models to scale production. Leveraged UGC A.I, Heygen, and ElevenLabs to create automated, high-quality published products.",
+    image: "/images/services/performance-ads.jpg",
+    links: [
+      { label: "AI Published Product", url: "#" } // User will provide link
     ],
   },
 ];

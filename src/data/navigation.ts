@@ -6,7 +6,7 @@ export const navItems = [
   { label: "Overview", href: "#overview" },
   { label: "Case Study", href: "#case-study" },
   { label: "Work", href: "#work" },
-  { label: "Strategy", href: "#strategy" },
+  { label: "Showreel", href: "#showreel" },
   { label: "Contact", href: "#contact" },
 ];
 

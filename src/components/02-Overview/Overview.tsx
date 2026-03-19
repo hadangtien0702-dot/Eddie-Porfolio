@@ -208,12 +208,33 @@ export default function Overview() {
               priority
             />
 
-            {/* Đường sáng phía dưới hero — tạo hiệu ứng mượt, không bị cụt */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-[2px]
-                          bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
-            {/* Glow mềm phía dưới */}
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[80%] h-[20px]
-                          bg-accent/20 blur-xl rounded-full" />
+            {/* ─── Shader line — animated sweep loop dưới hero ─── */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[130%] h-[2px] overflow-hidden">
+              {/* Base line mờ */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              {/* Tia sáng quét — loop infinitely */}
+              <motion.div
+                className="absolute inset-y-0 w-[45%]"
+                style={{
+                  background: "linear-gradient(90deg, transparent, rgba(239,68,68,0.9), rgba(255,255,255,0.6), rgba(239,68,68,0.9), transparent)",
+                  filter: "blur(0.5px)",
+                }}
+                animate={{ x: ["-100%", "280%"] }}
+                transition={{
+                  duration: 2.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  repeatDelay: 0.8,
+                }}
+              />
+            </div>
+            {/* Glow mềm phía dưới — cũng pulse nhẹ */}
+            <motion.div
+              className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-[28px] rounded-full"
+              style={{ background: "radial-gradient(ellipse, rgba(239,68,68,0.25) 0%, transparent 70%)" }}
+              animate={{ opacity: [0.4, 0.9, 0.4], scaleX: [0.9, 1.05, 0.9] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8 }}
+            />
           </motion.div>
 
           {/* ─── Cột phải: Description text ─── */}

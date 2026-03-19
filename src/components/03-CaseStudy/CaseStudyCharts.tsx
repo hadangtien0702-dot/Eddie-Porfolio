@@ -265,391 +265,212 @@ export function ContextProfileCard({ color }: { color: string }) {
   );
 }
 
-// ─── 1. ContextCard — Interactive Dashboard Starting Point ───
+// ─── 1. ContextCard — Interactive Dashboard Starting Point (Premium Bento Redesign) ───
 export function ContextCard({ color }: { color: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-40px" });
-  const [expandedCard, setExpandedCard] = useState<string | null>(null);
-  const [revenueHovered, setRevenueHovered] = useState(false);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const revenueCount = useAnimatedCounter(2000000, isInView, 2500);
-  const cpaCount = useAnimatedCounter(120, isInView, 1800);
-
-  const problems = [
-    {
-      id: "cpa",
-      icon: "⬆",
-      label: "CPA",
-      value: cpaCount,
-      displayValue: `$${cpaCount}`,
-      status: "Critical",
-      severity: 85,
-      description: "Cost per acquisition too high with no optimization strategy. Target should be $67 — nearly double the ideal range.",
-      detail: "No A/B testing · No hook optimization · Generic creatives",
-    },
-    {
-      id: "funnel",
-      icon: "⊘",
-      label: "Funnel",
-      value: 0,
-      displayValue: "0%",
-      status: "Missing",
-      severity: 100,
-      description: "Marketing funnel wasn't structured for video-driven acquisition. Leads leaked at every stage.",
-      detail: "No funnel mapping · No retargeting · No attribution",
-    },
-    {
-      id: "video",
-      icon: "◇",
-      label: "Video Strategy",
-      value: 0,
-      displayValue: "Ad-hoc",
-      status: "No system",
-      severity: 70,
-      description: "Video was used as content decoration — not as a structured revenue driver aligned with paid campaigns.",
-      detail: "No scripting framework · No performance tracking · No creative iteration",
-    },
-  ];
+  const cpaCount = useAnimatedCounter(180, isInView, 1800);
 
   const formatRevenue = (n: number) => "$" + n.toLocaleString("en-US");
 
+  // Mouse spotlight effect for all cards
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
   return (
-    <div ref={ref} id="chart-context" className="w-full">
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-
-        {/* ─── LEFT: Hero Revenue Block ─── */}
+    <div ref={ref} id="chart-context" className="w-full relative py-4">
+      {/* Dynamic Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
+        
+        {/* ─── CARD 1: THE CRISIS (Spans 2 columns) ─── */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="relative lg:w-[42%] flex-shrink-0"
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="lg:col-span-2 group relative rounded-3xl overflow-hidden border bg-white/[0.015] backdrop-blur-md transition-colors duration-700 hover:bg-white/[0.02]"
+          style={{ borderColor: "rgba(255,255,255,0.06)" }}
+          onMouseMove={handleMouseMove}
         >
+          {/* Spotlight Glow */}
           <div
-            className="relative p-8 md:p-10 rounded-2xl overflow-hidden cursor-pointer
-                       border transition-all duration-500 h-full flex flex-col"
+            className="absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0 pointer-events-none"
             style={{
-              borderColor: revenueHovered
-                ? `${color}30`
-                : "rgba(255,255,255,0.08)",
-              background: revenueHovered
-                ? "rgba(255,255,255,0.04)"
-                : "rgba(255,255,255,0.02)",
+              background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, ${color}15, transparent 40%)`,
             }}
-            onMouseEnter={() => setRevenueHovered(true)}
-            onMouseLeave={() => setRevenueHovered(false)}
-          >
-            {/* Background glow */}
-            <motion.div
-              animate={{
-                opacity: revenueHovered ? 0.18 : 0.06,
-                scale: revenueHovered ? 1.3 : 1,
-              }}
-              transition={{ duration: 0.7 }}
-              className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full blur-[80px] pointer-events-none"
-              style={{ backgroundColor: color }}
-            />
+          />
 
-            {/* Year badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex items-center gap-2.5 mb-8"
-            >
-              <motion.span
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: color }}
-              />
-              <span className="font-body text-[12px] text-white/40 uppercase tracking-[0.15em] font-medium">
-                June 2022 — Starting Point
-              </span>
-            </motion.div>
+          {/* Abstract Ambient Glow */}
+          <div className="absolute top-0 right-0 w-[400px] h-[300px] bg-[#ef4444]/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none" />
 
-            {/* Label */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="font-body text-[13px] text-white/35 uppercase tracking-[0.12em] mb-3"
-            >
-              Annual Revenue
-            </motion.p>
-
-            {/* Revenue number — BIG animated */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="relative"
-            >
-              <h3
-                className="font-heading font-bold leading-none tracking-[-0.02em]"
-                style={{
-                  fontSize: "clamp(40px, 5vw, 64px)",
-                  color: color,
-                }}
-              >
-                {formatRevenue(revenueCount)}
-              </h3>
-            </motion.div>
-
-            {/* Spacer */}
-            <div className="flex-1 min-h-4" />
-
-            {/* Progress bar — 28% of potential */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-body text-[11px] text-white/30 uppercase tracking-wider">
-                  Growth Potential
+          <div className="relative z-10 p-6 md:p-10 h-full flex flex-col justify-between min-h-[300px] md:min-h-[380px]">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: "#ef4444" }} />
+                <span className="font-body text-[12px] text-[#ef4444] uppercase tracking-[0.2em] font-semibold flex items-center gap-2">
+                   The Challenge
                 </span>
-                <motion.span
-                  animate={{ opacity: revenueHovered ? 1 : 0.5 }}
-                  className="font-body text-[11px] font-medium"
-                  style={{ color: `${color}90` }}
-                >
-                  28% utilized
-                </motion.span>
               </div>
-              <div className="h-[6px] rounded-full bg-white/[0.06] overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={isInView ? { width: "28%" } : {}}
-                  transition={{ duration: 1.5, delay: 1, ease: [0.22, 1, 0.36, 1] }}
-                  className="h-full rounded-full relative"
-                  style={{
-                    background: `linear-gradient(90deg, ${color}, ${color}60)`,
-                  }}
-                >
-                  <motion.div
-                    animate={revenueHovered ? { x: ["-100%", "200%"] } : {}}
-                    transition={{ duration: 1.5, ease: "linear", repeat: Infinity, repeatDelay: 1 }}
-                    className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                  />
-                </motion.div>
+              <div className="px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.03] font-body text-[11px] text-white/40 uppercase tracking-widest backdrop-blur-sm">
+                June 2022
               </div>
-            </motion.div>
+            </div>
 
-            {/* Hover tooltip */}
-            <AnimatePresence>
-              {revenueHovered && (
-                <motion.div
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 5 }}
-                  transition={{ duration: 0.2 }}
-                  className="mt-4 flex items-center gap-2"
-                >
-                  <span className="font-body text-[12px] text-white/40">
-                    Target: <span className="text-white/60 font-medium">$7,000,000</span> — room for <span style={{ color }} className="font-semibold">3.5× growth</span>
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Content Flex */}
+            <div className="flex flex-col gap-8 mt-4">
+              {/* Frozen Revenue Box */}
+              <div>
+                <p className="font-body text-[12px] text-white/40 uppercase tracking-[0.1em] mb-1">Annual Revenue Stagnated</p>
+                <div className="relative inline-block">
+                  <h3 className="font-heading font-bold leading-none tracking-[-0.03em] text-[clamp(42px,6vw,72px)] text-white/90">
+                    {formatRevenue(revenueCount)}
+                  </h3>
+                  {/* Subtle texture overlay */}
+                  <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/diagonal-striped-brick.png')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Skyrocketing CPA Arrow & Chart */}
+              <div className="relative w-full border-t border-white/10 pt-6 flex flex-col">
+                <p className="font-body text-[12px] text-[#ef4444]/60 uppercase tracking-[0.1em] mb-4">
+                  While Acquisition Costs Surged
+                </p>
+                <div className="flex flex-col sm:flex-row sm:items-end gap-6">
+                  {/* Fake Line Chart SVG */}
+                  <div className="relative flex-1 h-[60px] w-full min-w-[150px]">
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 200 60" preserveAspectRatio="none">
+                      <motion.path
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
+                        transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+                        d="M0,50 Q40,45 80,30 T150,15 T200,5"
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        className="drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col items-start sm:items-end flex-shrink-0">
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={isInView ? { scale: 1, opacity: 1 } : {}}
+                      transition={{ duration: 0.6, delay: 1 }}
+                      className="inline-flex flex-col items-start sm:items-end"
+                    >
+                      <span className="font-heading text-[42px] md:text-[56px] font-bold text-[#ef4444] leading-none mb-1 shadow-[#ef4444]/20 drop-shadow-lg pt-2 sm:pt-0">
+                        ${cpaCount}
+                      </span>
+                      <span className="font-body text-[10px] text-white/40 uppercase tracking-widest pl-1 sm:pl-0">
+                        Target: $67
+                      </span>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Gradient border bottom accent */}
+            <div className="absolute bottom-0 left-0 w-full h-[4px] bg-gradient-to-r from-transparent via-[#ef4444]/40 to-transparent opacity-50" />
           </div>
         </motion.div>
 
-        {/* ─── RIGHT: Problem Cards ─── */}
-        <div className="flex-1 flex flex-col gap-3">
-          {problems.map((problem, i) => {
-            const isExpanded = expandedCard === problem.id;
-            const isNeighborHovered = hoveredCard !== null && hoveredCard !== problem.id;
-
-            return (
-              <motion.div
-                key={problem.id}
-                initial={{ opacity: 0, x: 30 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{
-                  duration: 0.7,
-                  delay: 0.3 + i * 0.12,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                onClick={() => setExpandedCard(isExpanded ? null : problem.id)}
-                onMouseEnter={() => setHoveredCard(problem.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className="group relative rounded-xl cursor-pointer overflow-hidden
-                           border transition-all duration-500"
-                style={{
-                  borderColor: isExpanded
-                    ? `${color}40`
-                    : hoveredCard === problem.id
-                    ? `${color}20`
-                    : "rgba(255,255,255,0.06)",
-                  background: isExpanded
-                    ? "rgba(255,255,255,0.04)"
-                    : "rgba(255,255,255,0.02)",
-                  opacity: isNeighborHovered ? 0.7 : 1,
-                  transform: hoveredCard === problem.id ? "scale(1.01)" : "scale(1)",
-                }}
-              >
-                {/* Hover glow */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    background: `radial-gradient(400px circle at 80% 50%, ${color}12, transparent 70%)`,
-                  }}
-                />
-
-                <div className="relative z-10 p-5">
-                  {/* Top row: icon + label + value + status */}
-                  <div className="flex items-center gap-4">
-                    {/* Icon circle */}
-                    <motion.div
-                      animate={{
-                        borderColor: isExpanded || hoveredCard === problem.id
-                          ? `${color}40`
-                          : "rgba(255,255,255,0.08)",
-                        background: isExpanded || hoveredCard === problem.id
-                          ? `${color}15`
-                          : "rgba(255,255,255,0.03)",
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 border"
-                    >
-                      <span className="text-[16px]" style={{ opacity: isExpanded ? 1 : 0.6 }}>
-                        {problem.icon}
-                      </span>
-                    </motion.div>
-
-                    {/* Label + Value */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-3">
-                        <span
-                          className="font-heading text-[22px] md:text-[26px] font-bold leading-none transition-colors duration-300"
-                          style={{ color: isExpanded || hoveredCard === problem.id ? color : "white" }}
-                        >
-                          {problem.displayValue}
-                        </span>
-                        <span className="font-body text-[12px] text-white/35 uppercase tracking-wider">
-                          {problem.label}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Status pill */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <span
-                        className="inline-block w-1.5 h-1.5 rounded-full animate-pulse"
-                        style={{ backgroundColor: color }}
-                      />
-                      <span
-                        className="font-body text-[11px] font-medium uppercase tracking-wider"
-                        style={{ color: `${color}90` }}
-                      >
-                        {problem.status}
-                      </span>
-                    </div>
-
-                    {/* Expand indicator */}
-                    <motion.div
-                      animate={{ rotate: isExpanded ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="flex-shrink-0"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                        strokeLinejoin="round" className="text-white/30">
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </motion.div>
-                  </div>
-
-                  {/* Severity bar — always visible */}
-                  <div className="mt-3">
-                    <div className="h-[3px] rounded-full bg-white/[0.04] overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={isInView ? { width: `${problem.severity}%` } : {}}
-                        transition={{
-                          duration: 1.2,
-                          delay: 0.6 + i * 0.15,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
-                        className="h-full rounded-full"
-                        style={{
-                          background: problem.severity >= 80
-                            ? `linear-gradient(90deg, ${color}, ${color})`
-                            : `linear-gradient(90deg, ${color}80, ${color}40)`,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Expanded content */}
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <div className="pt-4 mt-3 border-t" style={{ borderColor: `${color}15` }}>
-                          <p className="font-body text-[14px] text-white/55 leading-[1.7] mb-3">
-                            {problem.description}
-                          </p>
-                          {/* Detail tags */}
-                          <div className="flex flex-wrap gap-2">
-                            {problem.detail.split(" · ").map((tag, tagIdx) => (
-                              <motion.span
-                                key={tag}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.3, delay: tagIdx * 0.08 }}
-                                className="font-body text-[11px] px-3 py-1 rounded-full border"
-                                style={{
-                                  color: `${color}90`,
-                                  borderColor: `${color}20`,
-                                  background: `${color}08`,
-                                }}
-                              >
-                                {tag}
-                              </motion.span>
-                            ))}
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Accent left border when expanded */}
-                <motion.div
-                  animate={{
-                    opacity: isExpanded ? 1 : 0,
-                    scaleY: isExpanded ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full origin-center"
-                  style={{ backgroundColor: color }}
-                />
-              </motion.div>
-            );
-          })}
-
-          {/* ─── Timeline / Closing Line ─── */}
+        {/* ─── COLUMN RIGHT: The Funnel & Strategy ─── */}
+        <div className="lg:col-span-1 flex flex-col gap-4 md:gap-5">
+          
+          {/* Card 2: Functional Leaks */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-3 p-4 rounded-xl border-l-[3px] bg-white/[0.015]"
-            style={{ borderColor: `${color}50` }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 group relative rounded-3xl overflow-hidden border bg-white/[0.015] backdrop-blur-md transition-colors duration-700 hover:bg-white/[0.02] p-6 h-full min-h-[180px] flex flex-col justify-between"
+            style={{ borderColor: "rgba(255,255,255,0.06)" }}
           >
-            <p className="font-body text-[13px] text-white/45 leading-[1.7] italic">
-              &ldquo;That was the starting point when I joined as an Editor and Media Leader — 
-              before a system was built.&rdquo;
+            {/* Visual background abstraction */}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 select-none pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-700">
+               <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-white/50">
+                 <path d="M3 3h18l-6 8v8l-6-4v-4L3 3z" strokeDasharray="3 3"/>
+               </svg>
+            </div>
+            
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                 <span className="text-[14px]">⊘</span>
+                 <p className="font-body text-[11px] text-white/40 uppercase tracking-widest">System Architecture</p>
+              </div>
+              <h4 className="font-heading text-[24px] font-bold text-white/90">0% Funnel</h4>
+            </div>
+            
+            <p className="font-body text-[13px] text-white/50 leading-relaxed mt-4">
+              Marketing operated without a conversion bridge. Video generated views, but <strong className="text-white/80">no system</strong> existed to capture leads or attribute sales.
             </p>
           </motion.div>
+
+          {/* Card 3: Chaotic Video Strategy */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 group relative rounded-3xl overflow-hidden border bg-white/[0.015] backdrop-blur-md transition-colors duration-700 hover:bg-white/[0.02] p-6 h-full min-h-[180px] flex flex-col justify-between"
+            style={{ borderColor: "rgba(255,255,255,0.06)" }}
+          >
+            <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none flex flex-col gap-1 p-4">
+               {[
+                 { i: 1, delay: 2.4, width: 35 },
+                 { i: 2, delay: 1.8, width: 48 },
+                 { i: 3, delay: 3.2, width: 24 },
+                 { i: 4, delay: 1.1, width: 52 },
+                 { i: 5, delay: 2.9, width: 30 }
+               ].map(({ i, delay, width }) => (
+                 <motion.div key={i} 
+                   animate={{ x: [0, (i%2===0 ? -5 : 5), 0] }}
+                   transition={{ duration: 0.2, repeat: Infinity, repeatDelay: delay }}
+                   className="h-[2px] bg-white rounded-full"
+                   style={{ width: `${width}px` }} 
+                 />
+               ))}
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                 <span className="text-[14px]">◇</span>
+                 <p className="font-body text-[11px] text-white/40 uppercase tracking-widest">Creative Approach</p>
+              </div>
+              <h4 className="font-heading text-[24px] font-bold text-white/90">Ad-hoc Video</h4>
+            </div>
+            
+            <p className="font-body text-[13px] text-white/50 leading-relaxed mt-4">
+              Content was produced blindly. <strong className="text-white/80 border-b border-white/20">No scripting</strong>, <strong className="text-white/80 border-b border-white/20 border-dashed">no hook A/B testing</strong>, <strong className="text-white/80 border-b border-white/20 border-dotted">no iteration</strong> based on ad performance data.
+            </p>
+          </motion.div>
+
         </div>
       </div>
+      
+      {/* ─── Bottom Quote Strip ─── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="mt-4 p-5 md:px-8 rounded-2xl border flex items-center gap-6"
+        style={{ 
+          borderColor: `${color}20`,
+          background: `linear-gradient(90deg, ${color}05, transparent)`
+        }}
+      >
+        <span className="font-heading text-[48px] text-white/10 leading-[0] pt-4 select-none">&ldquo;</span>
+        <p className="font-body text-[14px] text-white/60 italic leading-relaxed">
+          That was the reality when I joined as an Editor and Media Leader<span className="opacity-40"> — a team with immense potential, restricted by an incomplete architecture.</span>
+        </p>
+      </motion.div>
+
     </div>
   );
 }
@@ -925,119 +746,126 @@ export function CPAChallengeChart({ color }: { color: string }) {
   );
 }
 
-// ─── 3. WorkflowDiagram — 4 hệ thống kết nối ───
-export function WorkflowDiagram({ color }: { color: string }) {
+// ─── 3. SystemDashboard — Borderless Freeform Canvas ───
+export function SystemDashboard({ color }: { color: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-40px" });
 
-  const modules = [
+  const steps = [
     {
-      num: "01",
-      title: "Video-First Acquisition",
-      desc: "Purpose-built creatives for conversion",
-      icon: "🎬",
+      id: "media",
+      icon: "👥",
+      title: "Media Team",
+      desc: "Assigned by category and video type to act as a unified machine.",
     },
     {
-      num: "02",
-      title: "5-Second Hook Strategy",
-      desc: "Retention-focused scripting & editing",
+      id: "hook",
       icon: "⚡",
+      title: "Hook Strategy",
+      desc: "A/B testing first 3–5 seconds to secure initial retention.",
     },
     {
-      num: "03",
-      title: "Media × Ads Alignment",
-      desc: "Creative direction meets performance data",
-      icon: "📊",
-    },
-    {
-      num: "04",
-      title: "Creative Control",
-      desc: "Quality review & strategic consistency",
-      icon: "✅",
-    },
+      id: "ads",
+      icon: "🎯",
+      title: "Ad Optimization",
+      desc: "Shifted delivery focus entirely onto high-intent customers.",
+    }
   ];
 
   return (
-    <div ref={ref} id="chart-workflow" className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {modules.map((mod, i) => (
+    <div ref={ref} id="chart-system" className="w-full relative py-16 md:py-24 flex flex-col items-center">
+      
+      {/* ─── The Centered Infinity Loop ─── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={isInView ? { opacity: 1, scale: 1 } : {}}
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full flex flex-col items-center justify-center relative mb-20"
+      >
+        <div className="flex items-center gap-3 mb-10 z-10">
+          <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: color }} />
+          <span className="font-body text-[12px] uppercase tracking-[0.2em] font-semibold" style={{ color }}>
+            The Performance Loop
+          </span>
+        </div>
+
+        {/* Massive Infinity SVG without any bounding box */}
+        <div className="relative w-full max-w-lg flex justify-center">
+          {/* Ambient Glow behind SVG */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[150px] rounded-[100%] blur-[80px] pointer-events-none" style={{ backgroundColor: `${color}15` }} />
+
+          <svg width="100%" height="auto" viewBox="0 0 300 120" className="overflow-visible">
+            {/* Left Media Arc */}
+            <motion.path
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
+              transition={{ duration: 2.5, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 1 }}
+              d="M150,60 C90,0 10,40 10,80 C10,120 90,120 150,60 Z"
+              fill="none"
+              stroke={color}
+              strokeWidth="2.5"
+              strokeOpacity="0.8"
+              className="drop-shadow-[0_0_15px_var(--case-color)]"
+              style={{ '--case-color': color } as React.CSSProperties}
+            />
+            {/* Right Ad Arc */}
+            <motion.path
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
+              transition={{ duration: 2.5, delay: 1.25, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 1 }}
+              d="M150,60 C210,120 290,80 290,40 C290,0 210,0 150,60 Z"
+              fill="none"
+              stroke="white"
+              strokeWidth="2.5"
+              strokeOpacity="0.3"
+            />
+            
+            {/* Traveling Nodes */}
+            <circle cx="10" cy="80" r="5" fill={color} className="drop-shadow-[0_0_10px_currentColor]" />
+            <circle cx="290" cy="40" r="5" fill="white" className="opacity-50" />
+            <circle cx="150" cy="60" r="7" fill="white" className="drop-shadow-[0_0_20px_white]" />
+          </svg>
+        </div>
+      </motion.div>
+
+      {/* ─── The Borderless Data Columns ─── */}
+      <div className="w-full max-w-5xl px-4 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 relative z-10">
+        
+        {/* Subtle top separator line tying them together */}
+        <div className="absolute top-0 left-[10%] right-[10%] h-[1px] hidden md:block">
+           <motion.div 
+             initial={{ width: 0 }}
+             animate={isInView ? { width: "100%" } : {}}
+             transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+             className="h-full bg-gradient-to-r"
+             style={{ backgroundImage: `linear-gradient(90deg, transparent, white, transparent)`, opacity: 0.1 }}
+           />
+        </div>
+
+        {steps.map((step, i) => (
           <motion.div
-            key={mod.num}
-            initial={{ opacity: 0, y: 40 }}
+            key={step.id}
+            initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{
-              duration: 0.7,
-              delay: 0.15 * i,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="group relative"
+            transition={{ duration: 0.7, delay: 0.6 + i * 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center md:items-start text-center md:text-left group pt-8 relative"
           >
-            {/* Connector arrow — hiện giữa các card */}
-            {i < 3 && (
-              <div className="hidden lg:block absolute -right-4 top-1/2 -translate-y-1/2 z-10">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.4, delay: 0.6 + 0.15 * i }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M4 8H12M12 8L8 4M12 8L8 12" stroke={color} strokeWidth="1.5"
-                      strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </motion.div>
-              </div>
-            )}
+            {/* Glowing Accent Dot matching the SVG line */}
+            <div className="absolute top-0 left-1/2 md:left-0 -translate-x-1/2 md:translate-x-0 -translate-y-1/2 w-1.5 h-1.5 rounded-full hidden md:block transition-all duration-500 group-hover:scale-150 group-hover:shadow-[0_0_15px_currentColor]" style={{ backgroundColor: i === 0 ? color : 'rgba(255,255,255,0.5)', color: i === 0 ? color : 'white' }} />
 
-            <div className="relative p-5 md:p-6 rounded-2xl h-full
-                         bg-white/[0.03] border border-white/[0.08]
-                         hover:bg-white/[0.06] hover:border-white/15
-                         hover:shadow-[0_0_30px_rgba(239,68,68,0.08)]
-                         transition-all duration-500">
-              {/* Icon + Number */}
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-2xl">{mod.icon}</span>
-                <span
-                  className="font-heading text-caption font-bold tracking-wider"
-                  style={{ color }}
-                >
-                  {mod.num}
-                </span>
-              </div>
-
-              {/* Title */}
-              <h4 className="font-heading text-body-lg font-semibold text-white mb-2 leading-tight">
-                {mod.title}
-              </h4>
-
-              {/* Description */}
-              <p className="font-body text-caption text-text-secondary leading-relaxed">
-                {mod.desc}
-              </p>
-
-              {/* Accent line bottom on hover */}
-              <div
-                className="absolute bottom-0 left-4 right-4 h-[2px] opacity-0 group-hover:opacity-100
-                         transition-opacity duration-500 rounded-full"
-                style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
-              />
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 blur-[0.5px] group-hover:blur-0">{step.icon}</span>
+              <h3 className="font-heading text-[22px] md:text-[24px] font-bold text-white/90 group-hover:text-white transition-colors duration-500">
+                {step.title}
+              </h3>
             </div>
+            
+            <p className="font-body text-[14px] md:text-[15px] text-white/40 leading-relaxed max-w-[280px] group-hover:text-white/60 transition-colors duration-500">
+              {step.desc}
+            </p>
           </motion.div>
         ))}
       </div>
-
-      {/* Flow label */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.6, delay: 1 }}
-        className="mt-6 flex items-center justify-center gap-3"
-      >
-        <div className="h-[1px] w-12 bg-gradient-to-r from-transparent" style={{ backgroundImage: `linear-gradient(to right, transparent, ${color}60)` }} />
-        <span className="font-body text-caption text-text-muted italic">
-          Repeatable performance system
-        </span>
-        <div className="h-[1px] w-12" style={{ backgroundImage: `linear-gradient(to right, ${color}60, transparent)` }} />
-      </motion.div>
     </div>
   );
 }
