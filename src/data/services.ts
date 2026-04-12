@@ -28,6 +28,9 @@ export const services: Service[] = [
     description:
       "From a raw house to a fully operational production system. Handled the complete studio setup, equipment scaling, and workflow optimization.",
     image: "/images/services/content-growth.jpg",
+    links: [
+      { label: "View Details", url: "/work/setup-and-build" },
+    ],
   },
   {
     id: "web-forum-design",
@@ -37,9 +40,7 @@ export const services: Service[] = [
       "Designed and built User Interfaces for 2 polished websites and 1 forum, focusing on seamless user experience across the brands.",
     image: "/images/services/motion-graphics.jpg",
     links: [
-      { label: "ThinkSmart Website", url: "https://thinksmartinsurance.com/en/home" },
-      { label: "Dream Talent Website", url: "https://dreamtalent.com.vn/" },
-      { label: "Forum Demo", url: "#" } // User will provide link
+      { label: "View Projects", url: "/work/web-forum-design" },
     ],
   },
   {
@@ -72,7 +73,7 @@ export const services: Service[] = [
       "Applied generative AI models to scale production. Leveraged UGC A.I, Heygen, and ElevenLabs to create automated, high-quality published products.",
     image: "/images/services/performance-ads.jpg",
     links: [
-      { label: "AI Published Product", url: "#" } // User will provide link
+      { label: "View A.I Works", url: "/work/ai-applications" },
     ],
   },
 ];

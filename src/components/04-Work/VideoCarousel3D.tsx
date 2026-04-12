@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import Image from "next/image";
 
 // ─── Mock video data — replace with real data later ───
 const videos = [
@@ -247,10 +248,12 @@ export default function VideoCarousel3D({
                     }}
                   >
                     {/* Thumbnail */}
-                    <img
+                    <Image
                       src={video.thumbnail}
                       alt={video.title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      fill
+                      className="object-cover"
+                      style={{ display: "block" }}
                       loading="lazy"
                     />
 

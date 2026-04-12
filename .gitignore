@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# logs and assistant data
+app.log
+.claude/
+.gemini/
+.antigravity/
+HANDOVER.md
+CHECKLIST.md

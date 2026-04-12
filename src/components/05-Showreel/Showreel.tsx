@@ -1,11 +1,8 @@
 "use client";
 
-// ─── Video Showreel Section ───
-// Mô tả: Embed video demo reel — centered, cinematic frame
-// Placeholder: YouTube thumbnail, user thay link sau
-
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import GlowBorder from "@/components/ui/GlowBorder";
 
 export default function Showreel() {
   const ref = useRef<HTMLDivElement>(null);
@@ -16,38 +13,32 @@ export default function Showreel() {
     <section
       ref={ref}
       id="showreel"
-      className="relative w-full py-section-mobile lg:py-section overflow-hidden bg-primary"
+      className="relative w-full py-16 lg:py-20 overflow-hidden bg-primary"
     >
-      {/* Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                    w-[600px] h-[400px] bg-accent/5 rounded-full blur-[150px] pointer-events-none" />
-
-      <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
-        {/* Header */}
-        <div className="text-center mb-12 lg:mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
+        {/* Header — left-aligned, editorial */}
+        <div className="mb-8 lg:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="inline-block font-body text-overline text-accent uppercase tracking-[0.15em] font-medium mb-4"
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            SHOWREEL
-          </motion.span>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 40 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-heading text-display font-bold text-white mb-4"
-          >
-            See the Work
-          </motion.h2>
+            <p className="font-body text-[11px] text-accent uppercase tracking-[0.2em] font-medium mb-3">
+              Showreel
+            </p>
+            <h2
+              className="font-heading font-bold text-white leading-[0.95] tracking-tight"
+              style={{ fontSize: "clamp(32px, 4.5vw, 60px)" }}
+            >
+              See the Work
+            </h2>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-body text-body-lg text-text-secondary max-w-lg mx-auto"
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="font-body text-[14px] text-white/40 max-w-xs leading-relaxed md:text-right"
           >
             A curated selection of creative work — from concept to final delivery.
           </motion.p>
@@ -55,24 +46,19 @@ export default function Showreel() {
 
         {/* Video Container */}
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.96 }}
-          animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-          transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="relative group rounded-3xl overflow-hidden
-                   border border-white/[0.08] hover:border-white/15
-                   transition-all duration-700"
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
-          {/* Accent border glow */}
-          <div className="absolute -inset-[1px] rounded-3xl opacity-0 group-hover:opacity-100
-                       transition-opacity duration-700 -z-10"
-            style={{
-              background: "linear-gradient(135deg, #ef4444, transparent, #e8512d)",
-              filter: "blur(1px)",
-            }}
-          />
-
-          {/* Video area */}
-          <div className="relative aspect-video bg-surface rounded-3xl overflow-hidden">
+        <GlowBorder
+          borderRadius="16px"
+          borderWidth={1.5}
+          glowSize={450}
+          color="rgba(255,64,0,0.6)"
+          className="w-full"
+          style={{ border: "1px solid rgba(255,255,255,0.05)" }}
+        >
+          <div className="relative aspect-video bg-surface overflow-hidden">
             {isPlaying ? (
               <iframe
                 src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0"
@@ -83,44 +69,49 @@ export default function Showreel() {
               />
             ) : (
               <>
-                {/* Placeholder */}
-                <div className="absolute inset-0 bg-gradient-to-br from-surface via-elevated to-surface" />
-
-                {/* Grid pattern */}
-                <div className="absolute inset-0 opacity-5"
+                {/* Subtle grid */}
+                <div
+                  className="absolute inset-0 opacity-[0.03]"
                   style={{
-                    backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                                     linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-                    backgroundSize: "40px 40px",
+                    backgroundImage: `linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px),
+                                     linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)`,
+                    backgroundSize: "60px 60px",
                   }}
                 />
 
-                {/* Center text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="font-heading text-h2 font-bold text-white/10 mb-2">
+                {/* Center placeholder text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span
+                    className="font-heading font-bold text-white/[0.04] tracking-widest select-none"
+                    style={{ fontSize: "clamp(32px, 6vw, 72px)" }}
+                  >
                     SHOWREEL
-                  </span>
-                  <span className="font-body text-[13px] text-white/20">
-                    Replace with your video
                   </span>
                 </div>
 
                 {/* Play button */}
                 <button
                   onClick={() => setIsPlaying(true)}
-                  className="absolute inset-0 flex items-center justify-center cursor-pointer z-10"
+                  className="absolute inset-0 flex items-center justify-center cursor-pointer z-10 group"
                 >
-                  <div className="relative">
-                    {/* Pulse ring */}
-                    <div className="absolute inset-0 w-20 h-20 md:w-24 md:h-24 rounded-full
-                                 bg-accent/20 animate-ping" />
-
+                  <div className="relative flex items-center justify-center">
+                    {/* Slow breathing ring */}
+                    <motion.div
+                      className="absolute rounded-full border border-white/10"
+                      style={{ width: 96, height: 96 }}
+                      animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0, 0.5] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    />
                     {/* Button */}
-                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full
-                                 bg-accent/90 backdrop-blur-sm flex items-center justify-center
-                                 hover:bg-accent hover:scale-110
-                                 transition-all duration-300 shadow-[0_0_40px_rgba(239,68,68,0.3)]">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                    <div
+                      className="relative w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110"
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.15)",
+                        backdropFilter: "blur(12px)",
+                      }}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="white" className="ml-1 opacity-80">
                         <polygon points="8,5 19,12 8,19" />
                       </svg>
                     </div>
@@ -129,6 +120,7 @@ export default function Showreel() {
               </>
             )}
           </div>
+        </GlowBorder>
         </motion.div>
       </div>
     </section>

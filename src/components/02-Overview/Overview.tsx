@@ -114,7 +114,7 @@ export default function Overview() {
       </div>
 
       {/* ─── Main Content Container ─── */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-28 pb-12 min-h-screen flex flex-col justify-between">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-20 pb-8 min-h-screen flex flex-col justify-between">
 
         {/* ─── Hero Area: Text + Image overlap ─── */}
         <div className="relative flex-1 flex items-center">
@@ -153,7 +153,7 @@ export default function Overview() {
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.08, delayChildren: 0.5 } },
               }}
-              className="font-heading text-[clamp(44px,8vw,120px)] font-bold leading-[0.95] text-white
+              className="font-heading text-[clamp(36px,6.5vw,88px)] font-bold leading-[0.95] text-white
                          tracking-tight break-words"
             >
               {overviewHeading.title.split(" ").map((word, wi) => (

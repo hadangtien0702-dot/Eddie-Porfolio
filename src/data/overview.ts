@@ -7,42 +7,42 @@ export const overviewHeading = {
   // Overline label phía trên heading
   overline: "ABOUT ME",
   // Heading chính
-  title: "Multimedia Production",
+  title: "Performance Media Manager",
   // Mô tả ngắn
   description:
-    "I craft high-converting video content that drives revenue. From concept to execution, I blend creativity with data-driven strategy to build paid funnels and organic growth engines that deliver real results.",
+    "I bridge the gap between creative visual production and aggressive performance marketing. Leading a dedicated media team, I engineer video assets that directly supply 100% of marketing leads for Sales. I proactively A/B test, scale content adaptation, and optimize pipelines to drive record-breaking corporate revenue peaks.",
 };
 
 // ─── 4 số liệu business nổi bật ───
 // Mỗi stat sẽ có hiệu ứng count-up khi scroll tới
 export const businessStats = [
   {
-    number: "$6M+",
-    label: "Revenue Peak",
+    number: "$6M",
+    label: "2024 Revenue Peak",
     // Giá trị số để count-up animation
     countValue: 6,
     prefix: "$",
-    suffix: "M+",
-  },
-  {
-    number: "$67",
-    label: "CPA (from $120)",
-    countValue: 67,
-    prefix: "$",
-    suffix: "",
+    suffix: "M",
   },
   {
     number: "100%",
-    label: "Paid Funnel by Video",
+    label: "Leads Sourced by Team",
     countValue: 100,
     prefix: "",
     suffix: "%",
   },
   {
-    number: "6M+",
-    label: "Organic Views",
-    countValue: 6,
+    number: "Proactive",
+    label: "A/B Testing & Optimization",
+    countValue: 1, // dummy for string
     prefix: "",
-    suffix: "M+",
+    suffix: "",
+  },
+  {
+    number: "Mass",
+    label: "Video Volume Adaptation",
+    countValue: 1, // dummy
+    prefix: "",
+    suffix: "",
   },
 ];

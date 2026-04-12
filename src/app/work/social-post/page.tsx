@@ -1,220 +1,283 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useRef } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { socialPostHeading, socialPosts, PostType } from "@/data/social-post";
+import { socialPostHeading, socialPosts, SocialPostItem } from "@/data/social-post";
 
-const filterLabels: Record<string, string> = {
-  all: "All Content",
-  video: "Viral Videos",
-  static: "Static Ads",
-  carousel: "Carousels",
-};
+// ─── Icons ───
+const HeartIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+  </svg>
+);
+const CommentIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+  </svg>
+);
+const ShareIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+  </svg>
+);
+const BookmarkIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+  </svg>
+);
 
-export default function SocialPostPage() {
-  const [activeFilter, setActiveFilter] = useState<PostType | "all">("all");
+// ─── SocialCard Component ───
+function SocialCard({ post }: { post: SocialPostItem }) {
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const filteredPosts = socialPosts.filter(
-    (post) => activeFilter === "all" || post.type === activeFilter
-  );
+  const images = post.images && post.images.length > 0 ? post.images : [post.thumbnail];
+  
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentSlide((p) => (p - 1 + images.length) % images.length);
+  };
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentSlide((p) => (p + 1) % images.length);
+  };
 
   return (
-    <main className="min-h-screen bg-primary text-text-primary">
-      {/* ─── Hero Section ─── */}
-      <section className="relative w-full min-h-[70vh] flex flex-col justify-end overflow-hidden">
-        {/* Decorative background glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-accent/10 blur-[180px] rounded-full" />
+    <div
+      className="absolute top-1/2 left-1/2 w-0 h-0"
+      style={{
+        transform: `translate(${post.x}px, ${post.y}px)`,
+        zIndex: 50
+      }}
+    >
+      <motion.div
+        whileHover={{ scale: 1.02, zIndex: 100 }}
+        className="absolute w-[340px] md:w-[400px] -translate-x-1/2 -translate-y-1/2 bg-[#1a1a1a] rounded-[24px] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/5 pb-4 cursor-grab active:cursor-grabbing"
+        style={{
+          rotate: post.rotation,
+          transformOrigin: "center center",
+        }}
+      >
+      {/* Header */}
+      <div className="flex items-center justify-between p-4">
+        <div className="flex items-center gap-3">
+          <div className="relative w-10 h-10 rounded-full overflow-hidden border border-white/10">
+            <Image src={post.avatar} alt={post.author} fill className="object-cover" />
+          </div>
+          <div>
+            <h4 className="font-body text-[14px] font-semibold text-white leading-none mb-1">{post.author}</h4>
+            <div className="flex items-center gap-1.5 font-body text-[12px] text-white/50">
+              <span>{post.date}</span>
+              <span>•</span>
+              <span className="font-medium text-accent">{post.brand}</span>
+            </div>
+          </div>
+        </div>
+        <button className="text-white/50 hover:text-white transition-colors">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Media Content */}
+      <div className="relative w-full bg-black">
+        {post.type === "grid9" ? (
+           <div className="grid grid-cols-3 gap-[2px] w-full aspect-square bg-[#1a1a1a]">
+             {images.slice(0, 9).map((img, i) => (
+               <div key={i} className="relative w-full h-full">
+                 <Image src={img} alt={`Grid ${i}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 15vw" />
+               </div>
+             ))}
+           </div>
+        ) : (
+          <div className={`relative w-full ${post.type === "carousel" ? "aspect-square" : post.span === 2 ? "aspect-[4/5]" : "aspect-square"}`}>
+            <Image
+              src={images[currentSlide]}
+              alt={post.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 400px"
+              priority={post.type === "video"}
+            />
+
+            {/* Carousel Controls */}
+            {post.type === "carousel" && images.length > 1 && (
+              <>
+                <button onPointerDown={handlePrev} className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-all z-10">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button onPointerDown={handleNext} className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-all z-10">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                {/* Dots */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">
+                  {images.map((_, i) => (
+                    <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === currentSlide ? "w-3 bg-accent" : "w-1.5 bg-white/50"}`} />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Video Play Button */}
+            {post.type === "video" && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                 <div className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/20">
+                   <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="8,5 20,12 8,19" /></svg>
+                 </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 bg-[#1a1a1a]">
+        {/* Actions */}
+        <div className="flex items-center justify-between mb-3 text-white">
+          <div className="flex items-center gap-4">
+             <button className="hover:text-accent transition-colors"><HeartIcon /></button>
+             <button className="hover:text-white/70 transition-colors"><CommentIcon /></button>
+             <button className="hover:text-white/70 transition-colors"><ShareIcon /></button>
+          </div>
+          <button className="hover:text-white/70 transition-colors"><BookmarkIcon /></button>
         </div>
 
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pb-16 pt-40">
-          {/* Back button */}
+        {/* Likes */}
+        <div className="font-body text-[14px] font-semibold text-white mb-2">
+          {post.likes} likes
+        </div>
+
+        {/* Caption */}
+        <div className="font-body text-[14px] text-white/90 leading-snug">
+          <span className="font-bold mr-2">{post.author}</span>
+          {post.title} — <span className="text-white/60">{post.description}</span>
+        </div>
+
+        {/* Comments link */}
+        <div className="font-body text-[13px] text-white/40 mt-2">
+          View all {post.comments} comments
+        </div>
+      </div>
+
+      {/* Cool glow effect behind card */}
+      <div className="absolute inset-0 -z-10 rounded-[24px] pointer-events-none opacity-0 transition-opacity duration-300" style={{ boxShadow: '0 0 40px 10px rgba(255, 64, 0, 0.1)' }} />
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── Main Page ───
+export default function SocialPostPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Controls for canvas panning
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const dragX = useSpring(x, { stiffness: 400, damping: 40 });
+  const dragY = useSpring(y, { stiffness: 400, damping: 40 });
+
+  // Handle re-center
+  const handleRecenter = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <main className="relative w-full h-screen h-[100dvh] bg-[#0a0a0a] overflow-hidden select-none">
+      {/* ── Background Dot Pattern ── */}
+      <motion.div
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+          backgroundPosition: "0 0",
+          x: dragX,
+          y: dragY, // Move dots slightly with drag (parallax) or match the drag
+        }}
+      />
+      
+      {/* Heavy vignette overlay */}
+      <div className="absolute inset-0 pointer-events-none z-10" style={{ background: 'radial-gradient(circle at center, transparent 30%, #0a0a0a 100%)' }} />
+
+      {/* ── Draggable Infinite Canvas ── */}
+      <div ref={containerRef} className="absolute inset-0 z-20 overflow-hidden touch-none pointer-events-none">
+        <motion.div
+           drag
+           dragConstraints={{ left: -2000, right: 2000, top: -2000, bottom: 2000 }}
+           dragElastic={0.1}
+           dragMomentum={true}
+           style={{ x, y }}
+           // Massive draggable area to capture mouse movements
+           className="absolute top-1/2 left-1/2 w-[8000px] h-[8000px] -ml-[4000px] -mt-[4000px] focus:outline-none pointer-events-auto cursor-grab active:cursor-grabbing"
+        >
+           {/* Center Marker (optional debug/aesthetic) */}
+           <div className="absolute top-1/2 left-1/2 -ml-20 -mt-20 w-40 h-40 bg-accent/20 blur-[60px] rounded-full pointer-events-none" />
+           <div className="absolute top-1/2 left-1/2 -ml-2 -mt-2 w-4 h-4 rounded-full border border-white/20 flex items-center justify-center pointer-events-none">
+             <div className="w-1 h-1 bg-white/50 rounded-full" />
+           </div>
+
+           {/* Render all post cards */}
+           {socialPosts.map((post) => (
+             <SocialCard key={post.id} post={post} />
+           ))}
+        </motion.div>
+      </div>
+
+      {/* ── UI Overlays (Fixed to screen) ── */}
+      
+      {/* Header Overlay */}
+      <div className="absolute top-0 left-0 right-0 p-6 md:p-10 z-30 flex items-start justify-between pointer-events-none">
+        <div className="max-w-xl pointer-events-auto">
           <Link
             href="/#work"
-            className="inline-flex items-center gap-2 font-body text-sm text-text-muted hover:text-text-primary transition-colors mb-16"
+            className="inline-flex items-center gap-2 font-body text-sm text-white/50 hover:text-white transition-colors mb-6 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12" />
               <polyline points="12 19 5 12 12 5" />
             </svg>
             Back to Work
           </Link>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className="font-body text-accent tracking-[0.2em] text-overline font-semibold uppercase mb-6">
-              {socialPostHeading.overline}
-            </p>
-            <h1 className="font-heading text-display font-bold leading-[1.05] text-text-primary tracking-tight mb-8 max-w-5xl">
-              {socialPostHeading.headline}
-            </h1>
-            <p className="font-body text-body-lg text-text-secondary font-light max-w-2xl leading-relaxed">
-              {socialPostHeading.description}
-            </p>
-          </motion.div>
+          <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] text-white tracking-tight mb-4 drop-shadow-2xl">
+            Social Media <span className="text-accent">Archive</span>
+          </h1>
+          <p className="font-body text-sm md:text-base text-white/60 font-light leading-relaxed max-w-sm drop-shadow-md">
+            Khám phá 3 năm nội dung mạng xã hội tôi đã sản xuất. <strong className="text-white">Kéo để khám phá (Drag to pan)</strong> không gian vô tận này.
+          </p>
         </div>
 
-        {/* Bottom gradient fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-primary to-transparent pointer-events-none" />
-      </section>
-
-      {/* ─── Filterable Gallery ─── */}
-      <section className="relative w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-16">
-        {/* Filter Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-wrap items-center gap-3 mb-14"
+        {/* Re-center Button */}
+        <button
+           onClick={handleRecenter}
+           className="pointer-events-auto flex items-center justify-center w-12 h-12 md:w-auto md:h-auto md:px-5 md:py-3 bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 rounded-full transition-all duration-300 group"
+           title="Khôi phục góc nhìn"
         >
-          {(["all", "video", "static", "carousel"] as const).map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`font-body text-caption px-5 py-2.5 rounded-full transition-all duration-300 border cursor-pointer ${
-                activeFilter === filter
-                  ? "bg-accent text-white border-accent shadow-[0_0_20px_rgba(255,64,0,0.3)]"
-                  : "bg-surface text-text-secondary border-border hover:bg-elevated hover:border-border hover:text-text-primary"
-              }`}
-            >
-              {filterLabels[filter]}
-            </button>
+           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-rotate-90 transition-transform duration-500">
+             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+             <path d="M3 3v5h5" />
+           </svg>
+           <span className="hidden md:block font-body text-sm text-white ml-2">Center View</span>
+        </button>
+      </div>
+
+      {/* Footer Overlay (Stats) */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-30 flex items-end justify-center pointer-events-none">
+        <div className="flex items-center gap-6 md:gap-12 bg-black/50 backdrop-blur-2xl px-8 py-5 rounded-full border border-white/10 shadow-2xl pointer-events-auto">
+          {socialPostHeading.stats.map((stat, idx) => (
+            <div key={idx} className="flex flex-col items-center">
+              <span className="font-heading text-xl md:text-2xl font-bold text-white tracking-tight">
+                {stat.value}
+              </span>
+              <span className="font-body text-[10px] md:text-[11px] text-white/40 font-medium uppercase tracking-[0.1em]">
+                {stat.label}
+              </span>
+            </div>
           ))}
-        </motion.div>
-
-        {/* Grid Gallery — Fixed height cards */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredPosts.map((post) => (
-              <motion.div
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                key={post.id}
-                className={`relative group overflow-hidden rounded-2xl cursor-pointer ${
-                  post.span === 2
-                    ? "md:col-span-2 h-[500px] lg:h-[600px]"
-                    : "col-span-1 h-[350px] lg:h-[400px]"
-                }`}
-              >
-                {/* Thumbnail Background */}
-                <Image
-                  src={post.thumbnail}
-                  alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                  sizes={post.span === 2 ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
-                />
-
-                {/* Default Dark Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 transition-opacity duration-500 group-hover:opacity-60" />
-
-                {/* Hover Overlay (Darker) */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                {/* ── Viral Badge (top-right) ── */}
-                {post.highlightMetric && (
-                  <div className="absolute top-4 right-4 z-20">
-                    <div
-                      className="font-body text-[11px] font-bold px-3.5 py-1.5 rounded-full text-white"
-                      style={{
-                        background: "rgba(239, 68, 68, 0.25)",
-                        border: "1px solid rgba(239, 68, 68, 0.6)",
-                        backdropFilter: "blur(12px)",
-                        boxShadow: "0 0 20px rgba(239, 68, 68, 0.4)",
-                      }}
-                    >
-                      {post.highlightMetric}
-                    </div>
-                  </div>
-                )}
-
-                {/* ── Type Badge (top-left) ── */}
-                <div className="absolute top-4 left-4 z-20">
-                  <div
-                    className="font-body text-[11px] font-medium px-3 py-1.5 rounded-full text-white/90 capitalize"
-                    style={{
-                      background: "rgba(0,0,0,0.5)",
-                      border: "1px solid rgba(255,255,255,0.15)",
-                      backdropFilter: "blur(12px)",
-                    }}
-                  >
-                    {post.type === "video" ? "📹 Video" : post.type === "carousel" ? "📑 Carousel" : "🖼️ Static"}
-                  </div>
-                </div>
-
-                {/* ── Play Button for Videos ── */}
-                {post.type === "video" && (
-                  <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform duration-300">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                        <polygon points="8,5 20,12 8,19" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
-
-                {/* ── Content Info (bottom) ── */}
-                <div className="absolute inset-x-0 bottom-0 p-6 z-20">
-                  <p className="font-body text-accent text-[11px] font-bold uppercase tracking-[0.15em] mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    {post.brand}
-                  </p>
-                  <h3 className={`font-heading font-bold text-white leading-tight mb-2 ${post.span === 2 ? "text-2xl lg:text-4xl" : "text-xl lg:text-2xl"}`}>
-                    {post.title}
-                  </h3>
-                  <p className="font-body text-sm text-white/70 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 translate-y-2 group-hover:translate-y-0">
-                    {post.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
-      </section>
-
-      {/* ─── Performance Stats ─── */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-24 lg:py-32">
-        <div
-          className="relative rounded-3xl overflow-hidden p-12 md:p-20"
-          style={{
-            background: "linear-gradient(135deg, rgba(255,64,0,0.08) 0%, rgba(255,64,0,0.02) 50%, rgba(4,4,4,0.9) 100%)",
-            border: "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
-          {/* Decorative glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-accent/15 blur-[100px] rounded-full pointer-events-none" />
-
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 text-center">
-            {socialPostHeading.stats.map((stat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.15 }}
-                className="flex flex-col items-center justify-center"
-              >
-                <span className="font-heading text-stat font-bold text-text-primary mb-3 tracking-tighter">
-                  {stat.value}
-                </span>
-                <span className="font-body text-overline text-text-muted font-medium uppercase tracking-[0.2em]">
-                  {stat.label}
-                </span>
-              </motion.div>
-            ))}
-          </div>
         </div>
-      </section>
+      </div>
+      
     </main>
   );
 }

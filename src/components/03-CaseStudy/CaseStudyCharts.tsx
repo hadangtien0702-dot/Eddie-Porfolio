@@ -10,7 +10,68 @@
 // 5. SocialBars — thanh bar TikTok/YouTube views
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import Image from "next/image";
+
+// ─── Reusable Physics-based 3D Premium Card ───
+export interface PremiumHoverCardProps {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  accentColor?: string;
+  disableTilt?: boolean;
+  initial?: React.ComponentProps<typeof motion.div>["initial"];
+  animate?: React.ComponentProps<typeof motion.div>["animate"];
+  transition?: React.ComponentProps<typeof motion.div>["transition"];
+}
+export function PremiumHoverCard({
+  children, className = "", style, accentColor = "rgba(255,255,255,0.1)", disableTilt = false, initial, animate, transition
+}: PremiumHoverCardProps) {
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+
+  const rotateX = useSpring(useTransform(mouseY, [0, 1], [4, -4]), { damping: 40, stiffness: 200 });
+  const rotateY = useSpring(useTransform(mouseX, [0, 1], [-4, 4]), { damping: 40, stiffness: 200 });
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    mouseX.set(x / rect.width);
+    mouseY.set(y / rect.height);
+    
+    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+  }
+  function handleMouseLeave() {
+    mouseX.set(0.5); mouseY.set(0.5);
+  }
+
+  return (
+    <motion.div
+      initial={initial} animate={animate} transition={transition}
+      onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: disableTilt ? 0 : rotateX, rotateY: disableTilt ? 0 : rotateY,
+        transformPerspective: 1200, ...style,
+      }}
+      className={`relative group overflow-hidden bg-white/[0.015] backdrop-blur-md rounded-[20px] isolate ${className}`}
+    >
+      {/* 1. Flashlight Border Effect */}
+      <div className="absolute inset-0 z-0 pointer-events-none rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: `radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${accentColor}, transparent 40%)` }} />
+      <div className="absolute inset-[1px] bg-[#0A0A0A]/95 backdrop-blur-3xl z-0 rounded-[inherit] pointer-events-none" />
+      {/* 2. Inner Reflective Glass Sheen */}
+      <div className="absolute inset-0 z-10 pointer-events-none opacity-0 group-hover:opacity-100 mix-blend-overlay transition-opacity duration-700"
+        style={{ background: `radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%)` }} />
+
+      <div className="relative z-20 h-full w-full">
+        {children}
+      </div>
+    </motion.div>
+  );
+}
 
 // ─── Animated Counter Hook ───
 export function useAnimatedCounter(target: number, isInView: boolean, duration: number = 2000) {
@@ -98,15 +159,15 @@ export function ContextProfileCard({ color }: { color: string }) {
         className="grid grid-cols-3 gap-3 md:gap-5 mb-6"
       >
         {companyCards.map((card, i) => (
-          <motion.div
+          <PremiumHoverCard
             key={card.label}
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.7, delay: 0.08 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="group relative flex flex-col rounded-[20px] overflow-hidden cursor-default"
+            accentColor={card.accentGlow.replace("35", "90")}
+            className="flex flex-col cursor-default"
             style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.02)",
             }}
           >
             {/* Card label — top */}
@@ -116,7 +177,7 @@ export function ContextProfileCard({ color }: { color: string }) {
               </span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="rgba(255,255,255,0.2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                className="group-hover:stroke-white/40 transition-colors duration-300"
+                className="group-hover:stroke-white/80 transition-colors duration-300"
               >
                 <polyline points="6 9 12 15 18 9" />
               </svg>
@@ -159,7 +220,7 @@ export function ContextProfileCard({ color }: { color: string }) {
                   animate={isInView ? { scale: 1, opacity: 1 } : {}}
                   transition={{ duration: 0.6, delay: 0.35 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
                   className="text-[36px] md:text-[44px] select-none
-                           group-hover:scale-110 transition-transform duration-500
+                           group-hover:scale-[1.15] transition-transform duration-500
                            drop-shadow-lg"
                   style={{ filter: "saturate(0.85)" }}
                 >
@@ -186,16 +247,7 @@ export function ContextProfileCard({ color }: { color: string }) {
                 {card.value}
               </motion.p>
             </div>
-
-            {/* Hover border glow */}
-            <motion.div
-              className="absolute inset-0 rounded-[20px] pointer-events-none opacity-0 group-hover:opacity-100
-                       transition-opacity duration-500"
-              style={{
-                boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 30px ${card.accentGlow}`,
-              }}
-            />
-          </motion.div>
+          </PremiumHoverCard>
         ))}
       </motion.div>
 
@@ -275,34 +327,20 @@ export function ContextCard({ color }: { color: string }) {
 
   const formatRevenue = (n: number) => "$" + n.toLocaleString("en-US");
 
-  // Mouse spotlight effect for all cards
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-
   return (
     <div ref={ref} id="chart-context" className="w-full relative py-4">
       {/* Dynamic Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
         
         {/* ─── CARD 1: THE CRISIS (Spans 2 columns) ─── */}
-        <motion.div
+        <PremiumHoverCard
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="lg:col-span-2 group relative rounded-3xl overflow-hidden border bg-white/[0.015] backdrop-blur-md transition-colors duration-700 hover:bg-white/[0.02]"
-          style={{ borderColor: "rgba(255,255,255,0.06)" }}
-          onMouseMove={handleMouseMove}
+          accentColor={`${color}30`}
+          className="lg:col-span-2 flex flex-col justify-between !rounded-3xl"
+          style={{ borderColor: "rgba(255,255,255,0.06)", border: "1px solid" }}
         >
-          {/* Spotlight Glow */}
-          <div
-            className="absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0 pointer-events-none"
-            style={{
-              background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, ${color}15, transparent 40%)`,
-            }}
-          />
 
           {/* Abstract Ambient Glow */}
           <div className="absolute top-0 right-0 w-[400px] h-[300px] bg-[#ef4444]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -380,18 +418,19 @@ export function ContextCard({ color }: { color: string }) {
             {/* Gradient border bottom accent */}
             <div className="absolute bottom-0 left-0 w-full h-[4px] bg-gradient-to-r from-transparent via-[#ef4444]/40 to-transparent opacity-50" />
           </div>
-        </motion.div>
+        </PremiumHoverCard>
 
         {/* ─── COLUMN RIGHT: The Funnel & Strategy ─── */}
         <div className="lg:col-span-1 flex flex-col gap-4 md:gap-5">
           
           {/* Card 2: Functional Leaks */}
-          <motion.div
+          <PremiumHoverCard
             initial={{ opacity: 0, x: 20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="flex-1 group relative rounded-3xl overflow-hidden border bg-white/[0.015] backdrop-blur-md transition-colors duration-700 hover:bg-white/[0.02] p-6 h-full min-h-[180px] flex flex-col justify-between"
-            style={{ borderColor: "rgba(255,255,255,0.06)" }}
+            accentColor={`${color}30`}
+            className="flex-1 p-6 h-full min-h-[180px] flex flex-col justify-between !rounded-3xl"
+            style={{ borderColor: "rgba(255,255,255,0.06)", border: "1px solid" }}
           >
             {/* Visual background abstraction */}
             <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 select-none pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-700">
@@ -411,15 +450,16 @@ export function ContextCard({ color }: { color: string }) {
             <p className="font-body text-[13px] text-white/50 leading-relaxed mt-4">
               Marketing operated without a conversion bridge. Video generated views, but <strong className="text-white/80">no system</strong> existed to capture leads or attribute sales.
             </p>
-          </motion.div>
+          </PremiumHoverCard>
 
           {/* Card 3: Chaotic Video Strategy */}
-          <motion.div
+          <PremiumHoverCard
             initial={{ opacity: 0, x: 20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="flex-1 group relative rounded-3xl overflow-hidden border bg-white/[0.015] backdrop-blur-md transition-colors duration-700 hover:bg-white/[0.02] p-6 h-full min-h-[180px] flex flex-col justify-between"
-            style={{ borderColor: "rgba(255,255,255,0.06)" }}
+            accentColor={`${color}30`}
+            className="flex-1 p-6 h-full min-h-[180px] flex flex-col justify-between !rounded-3xl"
+            style={{ borderColor: "rgba(255,255,255,0.06)", border: "1px solid" }}
           >
             <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none flex flex-col gap-1 p-4">
                {[
@@ -449,7 +489,7 @@ export function ContextCard({ color }: { color: string }) {
             <p className="font-body text-[13px] text-white/50 leading-relaxed mt-4">
               Content was produced blindly. <strong className="text-white/80 border-b border-white/20">No scripting</strong>, <strong className="text-white/80 border-b border-white/20 border-dashed">no hook A/B testing</strong>, <strong className="text-white/80 border-b border-white/20 border-dotted">no iteration</strong> based on ad performance data.
             </p>
-          </motion.div>
+          </PremiumHoverCard>
 
         </div>
       </div>
@@ -750,6 +790,17 @@ export function CPAChallengeChart({ color }: { color: string }) {
 export function SystemDashboard({ color }: { color: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-40px" });
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const y1 = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const yTransforms = [y1, y2, y3];
 
   const steps = [
     {
@@ -757,6 +808,7 @@ export function SystemDashboard({ color }: { color: string }) {
       icon: "👥",
       title: "Media Team",
       desc: "Assigned by category and video type to act as a unified machine.",
+      image: "/images/casestudy/thinksmart/team.jpg",
     },
     {
       id: "hook",
@@ -774,6 +826,53 @@ export function SystemDashboard({ color }: { color: string }) {
 
   return (
     <div ref={ref} id="chart-system" className="w-full relative py-16 md:py-24 flex flex-col items-center">
+
+      {/* ─── Lightbox ─── */}
+      <AnimatePresence>
+        {lightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setLightboxOpen(false)}
+            onMouseLeave={() => setLightboxOpen(false)}
+            className="fixed inset-0 z-[9999] flex items-center justify-center cursor-zoom-out"
+            style={{ backdropFilter: "blur(20px)", backgroundColor: "rgba(0,0,0,0.85)" }}
+          >
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-5xl w-[90vw] rounded-2xl overflow-hidden"
+              style={{ boxShadow: "0 40px 120px rgba(0,0,0,0.8)" }}
+            >
+              <Image
+                src="/images/casestudy/thinksmart/team.jpg"
+                alt="Media Team"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1400px) 90vw, 1200px"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                <p className="font-heading font-bold text-white text-[18px]">Media Team</p>
+                <p className="font-body text-white/60 text-[13px] mt-1">Assigned by category and video type to act as a unified machine.</p>
+              </div>
+              <button
+                onClick={() => setLightboxOpen(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* ─── The Centered Infinity Loop ─── */}
       <motion.div
@@ -795,74 +894,107 @@ export function SystemDashboard({ color }: { color: string }) {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[150px] rounded-[100%] blur-[80px] pointer-events-none" style={{ backgroundColor: `${color}15` }} />
 
           <svg width="100%" height="auto" viewBox="0 0 300 120" className="overflow-visible">
-            {/* Left Media Arc */}
-            <motion.path
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
-              transition={{ duration: 2.5, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 1 }}
-              d="M150,60 C90,0 10,40 10,80 C10,120 90,120 150,60 Z"
-              fill="none"
-              stroke={color}
-              strokeWidth="2.5"
-              strokeOpacity="0.8"
-              className="drop-shadow-[0_0_15px_var(--case-color)]"
-              style={{ '--case-color': color } as React.CSSProperties}
+            <defs>
+              <linearGradient id="infinity-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor={color} />
+                <stop offset="45%" stopColor={color} />
+                <stop offset="55%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#ffffff" />
+              </linearGradient>
+            </defs>
+
+            {/* Base Continuous Track */}
+            <path 
+              d="M150,60 C90,0 10,40 10,80 C10,120 90,120 150,60 C210,0 290,40 290,80 C290,120 210,120 150,60"
+              fill="none" 
+              stroke="url(#infinity-gradient)" 
+              strokeWidth="2" 
+              strokeOpacity="0.1"
             />
-            {/* Right Ad Arc */}
+
+            {/* Traveling Comet (Seamless Continuous Line) */}
             <motion.path
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
-              transition={{ duration: 2.5, delay: 1.25, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 1 }}
-              d="M150,60 C210,120 290,80 290,40 C290,0 210,0 150,60 Z"
+              d="M150,60 C90,0 10,40 10,80 C10,120 90,120 150,60 C210,0 290,40 290,80 C290,120 210,120 150,60"
               fill="none"
-              stroke="white"
-              strokeWidth="2.5"
-              strokeOpacity="0.3"
+              stroke="url(#infinity-gradient)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              className="drop-shadow-[0_0_12px_var(--case-color)]"
+              style={{ '--case-color': color } as React.CSSProperties}
+              initial={{ pathLength: 0, pathOffset: 0 }}
+              animate={isInView ? { 
+                pathLength: 0.35, 
+                pathOffset: [0, 1] 
+              } : {}}
+              transition={{ 
+                duration: 3.5, 
+                ease: "linear", 
+                repeat: Infinity 
+              }}
             />
             
-            {/* Traveling Nodes */}
-            <circle cx="10" cy="80" r="5" fill={color} className="drop-shadow-[0_0_10px_currentColor]" />
-            <circle cx="290" cy="40" r="5" fill="white" className="opacity-50" />
-            <circle cx="150" cy="60" r="7" fill="white" className="drop-shadow-[0_0_20px_white]" />
+            {/* Anchors / Nodes - Synchronized with the 3.5s comet cycle */}
+            {/* Left Node (Comet hits at ~15% = 0.5s) */}
+            <motion.circle cx="10" cy="60" r="5" fill={color} className="drop-shadow-[0_0_10px_currentColor]" 
+              animate={{ scale: [1, 1.4, 1], opacity: [0.6, 1, 0.6] }} 
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} 
+            />
+            
+            {/* Right Node (Comet hits at ~65% = 2.25s) */}
+            <motion.circle cx="290" cy="60" r="5" fill="white" className="opacity-80 drop-shadow-[0_0_10px_white]" 
+              animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} 
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 2.25 }} 
+            />
+            
+            {/* Center Node (Comet crosses at 0s and 1.75s) */}
+            <motion.circle cx="150" cy="60" r="7" fill="url(#infinity-gradient)" className="drop-shadow-[0_0_15px_white]" 
+              animate={{ scale: [1, 1.3, 1] }} 
+              transition={{ duration: 1.75, repeat: Infinity, ease: "easeInOut" }}
+            />
           </svg>
         </div>
       </motion.div>
 
-      {/* ─── The Borderless Data Columns ─── */}
-      <div className="w-full max-w-5xl px-4 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 relative z-10">
-        
-        {/* Subtle top separator line tying them together */}
-        <div className="absolute top-0 left-[10%] right-[10%] h-[1px] hidden md:block">
-           <motion.div 
-             initial={{ width: 0 }}
-             animate={isInView ? { width: "100%" } : {}}
-             transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
-             className="h-full bg-gradient-to-r"
-             style={{ backgroundImage: `linear-gradient(90deg, transparent, white, transparent)`, opacity: 0.1 }}
-           />
-        </div>
-
+      {/* ─── Creative Parallax Cards ─── */}
+      <div className="w-full max-w-5xl mx-auto px-4 flex flex-col md:grid md:grid-cols-3 gap-6 md:gap-10 relative z-10 pt-4 md:pt-10">
         {steps.map((step, i) => (
           <motion.div
             key={step.id}
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.6 + i * 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center md:items-start text-center md:text-left group pt-8 relative"
+            style={{ y: yTransforms[i], zIndex: i === 1 ? 5 : 1 }}
+            className={`flex flex-col relative w-full min-w-0 transition-transform duration-500 hover:z-50 ${step.image ? "cursor-zoom-in" : ""}`}
+            onMouseEnter={() => step.image && setLightboxOpen(true)}
           >
-            {/* Glowing Accent Dot matching the SVG line */}
-            <div className="absolute top-0 left-1/2 md:left-0 -translate-x-1/2 md:translate-x-0 -translate-y-1/2 w-1.5 h-1.5 rounded-full hidden md:block transition-all duration-500 group-hover:scale-150 group-hover:shadow-[0_0_15px_currentColor]" style={{ backgroundColor: i === 0 ? color : 'rgba(255,255,255,0.5)', color: i === 0 ? color : 'white' }} />
+            <PremiumHoverCard
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.4 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+              accentColor={i === 0 ? `${color}40` : "rgba(255,255,255,0.15)"}
+              className="flex-1 flex flex-col p-6 md:p-8 !rounded-3xl hover:-translate-y-2 min-w-0"
+              style={{ borderColor: "rgba(255,255,255,0.06)", border: "1px solid", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.5)" }}
+            >
 
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 blur-[0.5px] group-hover:blur-0">{step.icon}</span>
-              <h3 className="font-heading text-[22px] md:text-[24px] font-bold text-white/90 group-hover:text-white transition-colors duration-500">
-                {step.title}
-              </h3>
-            </div>
-            
-            <p className="font-body text-[14px] md:text-[15px] text-white/40 leading-relaxed max-w-[280px] group-hover:text-white/60 transition-colors duration-500">
-              {step.desc}
-            </p>
+              {/* Giant background faded icon */}
+              {!step.image && (
+                <div className="absolute -bottom-24 -right-24 text-[80px] opacity-[0.025] group-hover:opacity-[0.08] transition-all duration-700 group-hover:scale-105 group-hover:-rotate-12 pointer-events-none select-none">
+                  {step.icon}
+                </div>
+              )}
+
+              <div className="relative z-10 flex flex-col h-full w-full">
+                <div className="flex flex-col gap-4 mb-5">
+                  <div className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-2xl bg-white/[0.03] border border-white/[0.08] group-hover:scale-110 group-hover:border-white/[0.15] transition-all duration-500 shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]">
+                    <span className="text-[18px] md:text-[20px] drop-shadow-md brightness-90 group-hover:brightness-110 transition-all duration-500">{step.icon}</span>
+                  </div>
+                  <h3 className="font-heading text-[18px] md:text-[22px] font-bold text-white/90 group-hover:text-white transition-colors duration-500 text-left leading-tight">
+                    {step.title}
+                  </h3>
+                </div>
+
+                <p className="font-body text-[13px] md:text-[15px] text-white/50 leading-[1.6] group-hover:text-white/75 transition-colors duration-500 drop-shadow-sm text-left min-w-0 break-words flex-1">
+                  {step.desc}
+                </p>
+              </div>
+            </PremiumHoverCard>
           </motion.div>
         ))}
       </div>
@@ -884,77 +1016,122 @@ export function RevenueChart({ color }: { color: string }) {
 
   return (
     <div ref={ref} id="chart-revenue" className="w-full">
-      <div className="relative p-6 md:p-8 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
+      <div className="relative p-2 md:p-4">
         {/* Title */}
-        <p className="font-heading text-body font-semibold text-white/60 mb-8 uppercase tracking-wider">
-          Revenue Growth
+        <p className="font-heading text-[14px] font-semibold text-white/50 mb-12 uppercase tracking-[0.15em] border-l-2 pl-4" style={{ borderColor: color }}>
+          Revenue Growth Strategy
         </p>
 
         {/* Chart area */}
-        <div className="relative h-[280px] flex items-end justify-around gap-4 md:gap-8">
-          {/* Y-axis labels */}
-          <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between pointer-events-none">
+        <div className="relative h-[320px] flex items-end justify-around gap-4 md:gap-8">
+          {/* Y-axis labels - Fixed left side */}
+          <div className="absolute left-0 top-10 bottom-[30px] flex flex-col justify-between pointer-events-none">
             {["$7M", "$5M", "$3M", "$1M"].map((label) => (
-              <span key={label} className="font-body text-[11px] text-text-muted -translate-y-1">
+              <span key={label} className="font-body text-[11px] text-white/20 -translate-y-1">
                 {label}
               </span>
             ))}
           </div>
 
-          {/* Grid lines */}
-          <div className="absolute left-10 right-0 top-0 bottom-8 flex flex-col justify-between pointer-events-none">
+          {/* Grid lines - Aligned with Y-axis */}
+          <div className="absolute left-10 right-0 top-10 bottom-[30px] flex flex-col justify-between pointer-events-none z-0">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-[1px] bg-white/[0.04]" />
+              <div key={i} className="h-[1px] bg-white/[0.03] border-dashed" />
             ))}
           </div>
 
-          {/* Bars */}
-          <div className="relative flex-1 flex items-end justify-around gap-6 ml-12 pb-8">
+          {/* Bars Container */}
+          <div id="chart-revenue-bars" className="relative z-10 flex-1 flex items-end justify-around gap-4 md:gap-8 ml-10">
             {data.map((d, i) => {
+              // Adjust percentage to fit within the new 250px working area height
               const heightPercent = (d.value / maxVal) * 100;
+              const barHeight = (heightPercent / 100) * 230; // Max bar height ~230px
+              
               return (
-                <div key={d.year} className="flex flex-col items-center gap-3 flex-1 max-w-[120px]">
-                  {/* Value label */}
-                  <motion.span
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.6 + i * 0.2 }}
-                    className="font-heading text-h3 font-bold"
-                    style={{ color }}
-                  >
-                    {d.label}
-                  </motion.span>
+                <motion.div
+                  key={d.year}
+                  id={`chart-revenue-bar-group-${i}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.7, delay: 0.2 * i, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+                  // Ensure strict column layout that grows from bottom up
+                  className="flex flex-col items-center justify-end flex-1 max-w-[140px] group/bar cursor-default h-full"
+                >
+                  {/* Dynamic Height Spacer + Bar Wrapper */}
+                  <div className="flex flex-col items-center justify-end w-full" style={{ height: "260px" }}>
+                    
+                    {/* Value label - Moves up dynamically with bar height */}
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                      transition={{ duration: 0.5, delay: 0.6 + i * 0.2 }}
+                      // Massive font size requested by user
+                      className="font-heading text-[28px] md:text-[40px] font-bold mb-4 transition-all duration-300 group-hover/bar:scale-110 leading-none"
+                      style={{ 
+                        color, 
+                        textShadow: `0 0 20px ${color}50`,
+                      }}
+                    >
+                      {d.label}
+                    </motion.span>
 
-                  {/* Bar */}
-                  <div className="w-full relative" style={{ height: "200px" }}>
-                    <div className="absolute bottom-0 w-full rounded-t-lg overflow-hidden">
+                    {/* Bar visual - Exact height applied here */}
+                    <div className="w-full relative rounded-t-xl overflow-visible" style={{ height: `${barHeight}px` }}>
                       <motion.div
                         initial={{ height: 0 }}
-                        animate={isInView ? { height: `${heightPercent * 2}px` } : {}}
+                        animate={isInView ? { height: "100%" } : {}}
                         transition={{
-                          duration: 1.2,
+                          duration: 1.4,
                           delay: 0.3 + i * 0.2,
-                          ease: [0.22, 1, 0.36, 1],
+                          type: "spring",
+                          damping: 15,
+                          stiffness: 100,
                         }}
-                        className="w-full rounded-t-lg relative"
+                        className="w-full h-full rounded-t-xl relative transition-all duration-500 group-hover/bar:brightness-125"
                         style={{
-                          background: `linear-gradient(180deg, ${color}, ${color}40)`,
+                          background: `linear-gradient(180deg, ${color}, ${color}20)`,
+                          boxShadow: `0 0 30px -5px ${color}40`,
                         }}
                       >
-                        {/* Glow top */}
+                        {/* Glass edge sheen */}
+                        <div className="absolute inset-0 rounded-t-[inherit] border-t-2 border-x border-white/30 opacity-40 group-hover/bar:opacity-60 transition-opacity" />
+                        
+                        {/* Internal shadow for depth */}
+                        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+
+                        {/* Glow top edge */}
                         <div
-                          className="absolute top-0 left-0 right-0 h-2 blur-sm"
+                          className="absolute top-0 left-0 right-0 h-2 blur-[5px] rounded-t-full"
                           style={{ backgroundColor: color }}
                         />
+
+                        {/* Animated Shimmer on Hover */}
+                        <motion.div 
+                          className="absolute inset-0 w-full h-full opacity-0 group-hover/bar:opacity-100 overflow-hidden rounded-t-[inherit]"
+                          initial={false}
+                        >
+                          <motion.div 
+                            animate={{ x: ["-100%", "200%"] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                            className="w-1/2 h-full bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-12"
+                          />
+                        </motion.div>
                       </motion.div>
                     </div>
                   </div>
 
-                  {/* Year label */}
-                  <span className="font-body text-caption text-text-secondary font-medium">
-                    {d.year}
-                  </span>
-                </div>
+                  {/* Fixed Year label baseline */}
+                  <div className="mt-4 flex flex-col items-center">
+                    <div className="w-[1px] h-[10px] bg-white/10 mb-2 group-hover/bar:bg-white/30 transition-colors" />
+                    <span 
+                      className="font-body text-[14px] md:text-[16px] text-white/50 tracking-[0.15em] font-semibold group-hover/bar:text-white transition-colors"
+                      style={{ color: d.year === "2024" ? color : undefined }}
+                    >
+                      {d.year}
+                    </span>
+                  </div>
+                </motion.div>
               );
             })}
           </div>

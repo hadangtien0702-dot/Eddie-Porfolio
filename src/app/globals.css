@@ -72,21 +72,21 @@
   --font-body: var(--font-inter-display), "Inter", system-ui, sans-serif;
 
   /* Font Size — Typography hierarchy theo RULES_1.md */
-  --font-size-display: clamp(60px, 8vw, 96px);
-  --font-size-h1: clamp(40px, 5vw, 64px);
-  --font-size-h2: clamp(28px, 3vw, 40px);
-  --font-size-h3: clamp(20px, 2vw, 28px);
-  --font-size-h4: 18px;
-  --font-size-h5: 16px;
-  --font-size-body-lg: 18px;
-  --font-size-body: 16px;
-  --font-size-caption: 14px;
-  --font-size-overline: 12px;
-  --font-size-stat: clamp(36px, 5vw, 72px);
+  --font-size-display: clamp(44px, 6vw, 76px);
+  --font-size-h1: clamp(32px, 4vw, 52px);
+  --font-size-h2: clamp(24px, 2.5vw, 34px);
+  --font-size-h3: clamp(18px, 1.8vw, 24px);
+  --font-size-h4: 16px;
+  --font-size-h5: 15px;
+  --font-size-body-lg: 16px;
+  --font-size-body: 15px;
+  --font-size-caption: 13px;
+  --font-size-overline: 11px;
+  --font-size-stat: clamp(28px, 3.5vw, 52px);
 
   /* Spacing */
-  --spacing-section: 120px;
-  --spacing-section-mobile: 80px;
+  --spacing-section: 80px;
+  --spacing-section-mobile: 52px;
 
   /* Animation */
   --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
