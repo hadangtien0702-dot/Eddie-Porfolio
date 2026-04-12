@@ -769,10 +769,12 @@ function StorySection({
   section,
   caseColor,
   isLast,
+  onImageClick,
 }: {
   section: CaseStudySectionType;
   caseColor: string;
   isLast: boolean;
+  onImageClick?: (index: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
@@ -1518,6 +1520,8 @@ function CaseStory({
   onBack: () => void;
 }) {
   const [activeSection, setActiveSection] = useState<string>(cs.sections[0]?.id || "");
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
+
 
   // Build nav items from sections
   const navItems = [
@@ -1813,6 +1817,7 @@ function CaseStory({
                   section={section}
                   caseColor={cs.color}
                   isLast={i === cs.sections.length - 1 && !cs.highlights}
+                  onImageClick={(idx) => setLightbox({ images: section.galleryImages || [], index: idx })}
                 />
 
                 {/* Creative Gallery sau Section 3 (System) */}
@@ -1822,6 +1827,17 @@ function CaseStory({
               </React.Fragment>
             ))}
           </div>
+
+          <AnimatePresence>
+            {lightbox && (
+              <FullscreenLightbox
+                images={lightbox.images}
+                initialIndex={lightbox.index}
+                onClose={() => setLightbox(null)}
+              />
+            )}
+          </AnimatePresence>
+
 
 
 
