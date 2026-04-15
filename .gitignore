@@ -42,9 +42,17 @@ next-env.d.ts
 
 # logs and assistant data
 app.log
+dev.stderr.log
+dev.stdout.log
 .claude/
 .gemini/
 .antigravity/
 HANDOVER.md
 CHECKLIST.md
 secrets.md
+
+# raw source images (originals, not for repo)
+public/HUONG_DAN_HINH_ANH/
+
+# large video files
+public/images/**/*.mp4

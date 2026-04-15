@@ -138,3 +138,22 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Gentle orbital motion for the Dream Talent gallery */
+@keyframes orbit-clockwise {
+  from {
+    transform: rotate(var(--orbit-start, 0deg));
+  }
+  to {
+    transform: rotate(calc(var(--orbit-start, 0deg) + 360deg));
+  }
+}
+
+@keyframes orbit-counterclockwise {
+  from {
+    transform: rotate(var(--orbit-start, 0deg));
+  }
+  to {
+    transform: rotate(calc(var(--orbit-start, 0deg) - 360deg));
+  }
+}

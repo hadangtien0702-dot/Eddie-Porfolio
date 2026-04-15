@@ -187,6 +187,8 @@ export default function Overview() {
           </div>
 
           {/* ─── Hero Image — giữa, overlap với heading + parallax layer 2 ─── */}
+          {/* ─── Hero Image — Hide as requested ─── */}
+          {/* 
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
@@ -208,11 +210,8 @@ export default function Overview() {
               priority
             />
 
-            {/* ─── Shader line — animated sweep loop dưới hero ─── */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[130%] h-[2px] overflow-hidden">
-              {/* Base line mờ */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              {/* Tia sáng quét — loop infinitely */}
               <motion.div
                 className="absolute inset-y-0 w-[45%]"
                 style={{
@@ -228,7 +227,6 @@ export default function Overview() {
                 }}
               />
             </div>
-            {/* Glow mềm phía dưới — cũng pulse nhẹ */}
             <motion.div
               className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-[28px] rounded-full"
               style={{ background: "radial-gradient(ellipse, rgba(239,68,68,0.25) 0%, transparent 70%)" }}
@@ -236,6 +234,7 @@ export default function Overview() {
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8 }}
             />
           </motion.div>
+          */}
 
           {/* ─── Cột phải: Description text ─── */}
           <div className="relative z-20 ml-auto max-w-[280px] lg:max-w-[320px] self-center">

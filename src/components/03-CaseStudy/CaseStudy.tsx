@@ -8,7 +8,7 @@
 // Data: import từ data/casestudy.ts
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, useInView, AnimatePresence, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { motion, useInView, AnimatePresence, useTransform, useMotionValue, useSpring, useScroll, useVelocity } from "framer-motion";
 import Image from "next/image";
 import {
   ContextCard,
@@ -19,6 +19,7 @@ import {
   RevenueChart,
   SocialBars,
 } from "./CaseStudyCharts";
+import { ZAxisTunnelGallery } from "./CaseStudyGalleries";
 import {
   caseStudies,
   caseStudyHeading,
@@ -131,8 +132,9 @@ function FullscreenLightbox({
           alt={`Visual ${currentIndex + 1}`} 
           fill 
           className="object-contain" 
-          sizes="90vw" 
-          quality={100} 
+          sizes="(max-width: 1200px) 100vw, 1200px" 
+          quality={90} 
+          unoptimized={images[currentIndex]?.includes("unsplash.com") || images[currentIndex]?.includes("supabase.co")}
           priority 
         />
       </motion.div>
@@ -221,7 +223,14 @@ function EditorialGallery({
           className="absolute inset-0 md:inset-x-12 md:inset-y-0 rounded-[2rem] overflow-hidden group border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-10"
         >
           <div className="relative w-full h-full cursor-pointer" onClick={() => onImageClick?.(0)}>
-            <Image src={images[0]} alt="Feature event coverage" fill className="object-cover group-hover:scale-[1.04] transition-transform duration-[1.5s]" sizes="(max-width: 768px) 100vw, 80vw" />
+            <Image 
+              src={images[0]} 
+              alt="Feature event coverage" 
+              fill 
+              className="object-cover group-hover:scale-[1.04] transition-transform duration-[1.5s]" 
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1100px" 
+              unoptimized={images[0]?.includes("unsplash.com") || images[0]?.includes("supabase.co")}
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
             <div className="absolute bottom-8 left-8 z-20 px-5 py-2.5 rounded-full border border-white/20 bg-black/40 backdrop-blur-md">
               <span className="font-body text-[12px] font-semibold tracking-widest text-white uppercase drop-shadow-md">FEATURED MOMENT</span>
@@ -238,7 +247,14 @@ function EditorialGallery({
           className="absolute -bottom-8 md:-bottom-16 -left-2 md:-left-4 w-[55%] md:w-[45%] aspect-[4/3] rounded-[1.5rem] overflow-hidden border-[6px] md:border-[8px] border-[#FBFBFB] shadow-[0_30px_60px_rgba(0,0,0,0.6)] cursor-pointer z-20 origin-bottom-left"
           onClick={() => onImageClick?.(1)}
         >
-          <Image src={images[1]} alt="Detail 1" fill className="object-cover" sizes="(max-width: 768px) 50vw, 30vw" />
+          <Image 
+            src={images[1]} 
+            alt="Detail 1" 
+            fill 
+            className="object-cover" 
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 40vw, 500px" 
+            unoptimized={images[1]?.includes("unsplash.com") || images[1]?.includes("supabase.co")}
+          />
         </motion.div>
 
         {/* Floating Polaroid 2 (Bottom Right) */}
@@ -250,7 +266,14 @@ function EditorialGallery({
           className="absolute -bottom-6 md:-bottom-10 -right-2 md:-right-8 w-[45%] md:w-[35%] aspect-[3/4] md:aspect-[4/3] rounded-[1.5rem] overflow-hidden border-[6px] md:border-[8px] border-[#111] shadow-[0_30px_60px_rgba(0,0,0,0.8)] cursor-pointer z-30 origin-bottom-right"
           onClick={() => onImageClick?.(2)}
         >
-          <Image src={images[2]} alt="Detail 2" fill className="object-cover" sizes="(max-width: 768px) 50vw, 30vw" />
+          <Image 
+            src={images[2]} 
+            alt="Detail 2" 
+            fill 
+            className="object-cover" 
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 30vw, 400px" 
+            unoptimized={images[2]?.includes("unsplash.com") || images[2]?.includes("supabase.co")}
+          />
         </motion.div>
       </div>
     </div>
@@ -283,84 +306,11 @@ function HorizontalFilmstrip({ images, onImageClick }: { images: string[]; onIma
               alt={`Filmstrip image ${idx + 1}`}
               fill
               className="object-cover group-hover:scale-[1.03] transition-transform duration-[1.5s] ease-[0.22,1,0.36,1]"
-              sizes="(max-width: 768px) 100vw, 80vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
+              unoptimized={src?.includes("unsplash.com") || src?.includes("supabase.co")}
             />
           </motion.div>
         ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── BentoMasonry — Lưới đa dạng cho sự kiện sôi động ───
-// ─── BentoMasonry — Dải ảnh hàng ngang tập trung (Linear Focus Strip) ───
-function BentoMasonry({ images, onImageClick }: { images: string[]; onImageClick?: (index: number) => void }) {
-  if (!images || images.length === 0) return null;
-  
-  // Chúng ta có 9 ảnh: 1 Master (Tập thể) + 8 ảnh vệ tinh
-  const masterIdx = images.length - 1; // Giả định tấm cuối là tấm tập thể
-  const masterImage = images[masterIdx];
-  const sideImages = images.slice(0, masterIdx);
-  
-  // Chia 8 ảnh vệ tinh thành 2 bên: 4 trái - 4 phải
-  const leftSide = sideImages.slice(0, 4);
-  const rightSide = sideImages.slice(4, 8);
-
-  return (
-    <div className="mb-24 md:mb-44 w-full pt-12 overflow-hidden">
-      <div className="relative w-full overflow-x-auto no-scrollbar pb-8">
-        <div className="flex items-center gap-4 md:gap-6 px-[5vw] min-w-max">
-          {/* ── Left Satellites (4 images) ── */}
-          {leftSide.map((src, idx) => (
-            <motion.div
-              key={`left-${idx}`}
-              initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * idx }}
-              className="relative w-32 h-20 md:w-56 md:h-36 rounded-2xl overflow-hidden group cursor-pointer shadow-lg opacity-40 hover:opacity-100 transition-opacity"
-              onClick={() => onImageClick?.(idx)}
-            >
-              <Image src={src} alt="" fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-              <div className="absolute inset-0 bg-black/20" />
-            </motion.div>
-          ))}
-
-          {/* ── THE CENTER MASTERPIECE ── */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-            className="relative w-[70vw] md:w-[60vw] aspect-video md:aspect-[16/8] rounded-[3rem] overflow-hidden group cursor-pointer shadow-[0_40px_120px_rgba(0,0,0,0.6)] z-10 border border-white/[0.05]"
-            onClick={() => onImageClick?.(masterIdx)}
-          >
-            <Image src={masterImage} alt="Master Group" fill className="object-cover transition-transform duration-[3s] group-hover:scale-110" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
-            <div className="absolute bottom-8 left-10">
-               <span className="font-heading text-[10px] text-accent tracking-[0.4em] uppercase mb-1 block">Full_Team_Capture</span>
-               <h4 className="font-heading text-xl md:text-3xl text-white font-bold">Dream Talent Celebration</h4>
-            </div>
-          </motion.div>
-
-          {/* ── Right Satellites (4 images) ── */}
-          {rightSide.map((src, idx) => (
-            <motion.div
-              key={`right-${idx}`}
-              initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * idx }}
-              className="relative w-32 h-20 md:w-56 md:h-36 rounded-2xl overflow-hidden group cursor-pointer shadow-lg opacity-40 hover:opacity-100 transition-opacity"
-              onClick={() => onImageClick?.(idx + 4)}
-            >
-              <Image src={src} alt="" fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-              <div className="absolute inset-0 bg-black/20" />
-            </motion.div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Visual Indicator */}
-      <div className="mt-4 flex justify-center">
-         <div className="w-24 h-[1px] bg-white/10 relative overflow-hidden">
-            <motion.div 
-               animate={{ x: ["-100%", "100%"] }}
-               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-               className="absolute top-0 left-0 w-1/3 h-full bg-accent"
-            />
-         </div>
       </div>
     </div>
   );
@@ -379,6 +329,7 @@ function StackedScrollingGallery({
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [isHoveredCenter, setIsHoveredCenter] = useState(false);
+  const [sceneWidth, setSceneWidth] = useState(0);
   
   // ── Physics for 3D Tilt & Parallax ──
   const x = useMotionValue(0);
@@ -389,6 +340,21 @@ function StackedScrollingGallery({
 
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["8deg", "-8deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-8deg", "8deg"]);
+  const ambientX = useTransform(mouseXSpring, [-0.5, 0.5], [-40, 40]);
+  const ambientY = useTransform(mouseYSpring, [-0.5, 0.5], [-40, 40]);
+
+  useEffect(() => {
+    const scene = ref.current;
+    if (!scene || typeof ResizeObserver === "undefined") return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+      setSceneWidth(entry.contentRect.width);
+    });
+
+    observer.observe(scene);
+    return () => observer.disconnect();
+  }, []);
 
   if (!images || images.length === 0) return null;
 
@@ -397,23 +363,130 @@ function StackedScrollingGallery({
   const mainImage = images[mainImageIdx];
   const satelliteImages = images.slice(0, mainImageIdx);
 
-  // Define static positions for satellites
-  // Added 'pullX/pullY' for the gravity effect towards center
+  const resolvedSceneWidth = sceneWidth || 1400;
+  // Bán kính trục X rộng hơn để đẩy sang 2 bên
+  const orbitBaseRadiusX = Math.min(Math.max(resolvedSceneWidth * 0.48, 420), 720);
+  const orbitBaseRadiusY = Math.min(Math.max(resolvedSceneWidth * 0.15, 120), 220);
+  const focusBaseRadius = Math.min(Math.max(resolvedSceneWidth * 0.14, 100), 220);
+
+  const satelliteConfigs = [
+    // --- CÁNH PHẢI (Right Wing) ---
+    {
+      size: "w-[12rem] md:w-[20rem]",
+      radiusFactorX: 1.05,
+      radiusFactorY: 0.8,
+      focusFactor: 0.85,
+      baseAngle: 5,
+      yOffset: -120,
+      orbitDuration: 4,
+      direction: "clockwise" as const,
+      cardRotate: -5,
+      restFilter: "grayscale(10%) blur(0px)",
+      baseOpacity: 0.85,
+    },
+    {
+      size: "w-[10.5rem] md:w-[17rem]",
+      radiusFactorX: 1.25,
+      radiusFactorY: 1.2,
+      focusFactor: 1.05,
+      baseAngle: 25,
+      yOffset: 160,
+      orbitDuration: 5,
+      direction: "counterclockwise" as const,
+      cardRotate: 8,
+      restFilter: "grayscale(30%) blur(1px)",
+      baseOpacity: 0.6,
+    },
+    {
+      size: "w-[11.5rem] md:w-[19rem]",
+      radiusFactorX: 1.15,
+      radiusFactorY: 0.4,
+      focusFactor: 0.9,
+      baseAngle: -15,
+      yOffset: 40,
+      orbitDuration: 6,
+      direction: "clockwise" as const,
+      cardRotate: 5,
+      restFilter: "grayscale(20%) blur(0.5px)",
+      baseOpacity: 0.7,
+    },
+    {
+      size: "w-[9.5rem] md:w-[15rem]",
+      radiusFactorX: 1.4,
+      radiusFactorY: 1.1,
+      focusFactor: 1.2,
+      baseAngle: -35,
+      yOffset: -190,
+      orbitDuration: 5.5,
+      direction: "counterclockwise" as const,
+      cardRotate: -12,
+      restFilter: "grayscale(45%) blur(1.5px)",
+      baseOpacity: 0.45,
+    },
+    // --- CÁNH TRÁI (Left Wing) ---
+    {
+      size: "w-[13rem] md:w-[21rem]",
+      radiusFactorX: -1.1,
+      radiusFactorY: 0.7,
+      focusFactor: 0.85,
+      baseAngle: 175,
+      yOffset: -80,
+      orbitDuration: 4.5,
+      direction: "clockwise" as const,
+      cardRotate: -3,
+      restFilter: "grayscale(5%) blur(0px)",
+      baseOpacity: 0.88,
+    },
+    {
+      size: "w-[11rem] md:w-[18rem]",
+      radiusFactorX: -1.35,
+      radiusFactorY: 1.3,
+      focusFactor: 1.1,
+      baseAngle: 155,
+      yOffset: 210,
+      orbitDuration: 6.5,
+      direction: "counterclockwise" as const,
+      cardRotate: 6,
+      restFilter: "grayscale(25%) blur(1px)",
+      baseOpacity: 0.55,
+    },
+    {
+      size: "w-[12rem] md:w-[20rem]",
+      radiusFactorX: -1.2,
+      radiusFactorY: 0.5,
+      focusFactor: 0.95,
+      baseAngle: 195,
+      yOffset: 110,
+      orbitDuration: 5.2,
+      direction: "clockwise" as const,
+      cardRotate: 4,
+      restFilter: "grayscale(15%) blur(0px)",
+      baseOpacity: 0.75,
+    },
+    {
+      size: "w-[10.5rem] md:w-[16.5rem]",
+      radiusFactorX: -1.45,
+      radiusFactorY: 1.0,
+      focusFactor: 1.2,
+      baseAngle: 215,
+      yOffset: -150,
+      orbitDuration: 5.8,
+      direction: "counterclockwise" as const,
+      cardRotate: -8,
+      restFilter: "grayscale(40%) blur(2px)",
+      baseOpacity: 0.5,
+    },
+  ];
+
   const satellites = satelliteImages.map((img, i) => {
-    const positions = [
-      { top: "0%", left: "10%", size: "w-24 md:w-48", depth: 30, delay: 0.1, rotate: -5, pullX: "10%", pullY: "15%" },
-      { top: "15%", left: "-5%", size: "w-20 md:w-36", depth: -20, delay: 0.2, rotate: 8, blur: "blur-[1px]", pullX: "15%", pullY: "10%" },
-      { top: "60%", left: "0%", size: "w-28 md:w-52", depth: 40, delay: 0.3, rotate: -3, pullX: "12%", pullY: "-15%" },
-      { top: "5%", right: "12%", size: "w-28 md:w-44", depth: 15, delay: 0.4, rotate: 6, pullX: "-10%", pullY: "15%" },
-      { top: "25%", right: "0%", size: "w-20 md:w-32", depth: -40, delay: 0.5, rotate: -10, blur: "blur-[2px]", pullX: "-20%", pullY: "5%" },
-      { top: "65%", right: "5%", size: "w-32 md:w-48", depth: 60, delay: 0.6, rotate: 4, pullX: "-15%", pullY: "-20%" },
-      { bottom: "0%", left: "20%", size: "w-24 md:w-40", depth: 10, delay: 0.7, rotate: -12, pullX: "5%", pullY: "-20%" },
-      { bottom: "5%", right: "15%", size: "w-28 md:w-44", depth: -15, delay: 0.8, rotate: 7, blur: "blur-[1px]", pullX: "-10%", pullY: "-25%" },
-    ];
-    return { 
-      img, 
-      ...positions[i % positions.length], 
-      key: `sat-${i}`
+    const config = satelliteConfigs[i % satelliteConfigs.length];
+    return {
+      img,
+      ...config,
+      key: `sat-${i}`,
+      orbitRadiusX: orbitBaseRadiusX * config.radiusFactorX,
+      orbitRadiusY: orbitBaseRadiusY * config.radiusFactorY,
+      focusRadius: focusBaseRadius * config.focusFactor,
     };
   });
 
@@ -439,50 +512,116 @@ function StackedScrollingGallery({
       ref={ref} 
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full min-h-[60vh] md:min-h-[80vh] py-12 md:py-20 overflow-visible flex items-center justify-center transition-all duration-1000"
+      className="relative w-full min-h-[68vh] md:min-h-[88vh] py-16 md:py-24 overflow-visible flex items-center justify-center transition-all duration-1000"
     >
       {/* ─── THE COSMIC ORBIT (Satellite Images - Tightened) ─── */}
       <div className="absolute inset-0 pointer-events-none overflow-visible">
-        {satellites.map((sat, i) => (
-          <motion.div
-            key={sat.key}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { 
-              opacity: isHoveredCenter ? 0.9 : 0.4, 
-              scale: isHoveredCenter ? 1.05 : 0.85,
-              x: isHoveredCenter ? sat.pullX : 0, 
-              y: isHoveredCenter ? sat.pullY : 0,
-              filter: isHoveredCenter ? 'grayscale(0%)' : 'grayscale(100%)'
-            } : {}}
-            transition={{ 
-              type: "spring", 
-              stiffness: isHoveredCenter ? 60 : 40, 
-              damping: 20,
-              delay: isInView && !isHoveredCenter ? sat.delay : 0,
-              duration: 0.8
-            }}
-            className={`absolute ${sat.size} aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl z-0 ${!isHoveredCenter ? sat.blur : ""}`}
-            style={{
-              top: sat.top,
-              left: sat.left,
-              right: sat.right,
-              bottom: sat.bottom,
-              rotate: sat.rotate,
-              // Parallax movement (additive)
-              translateX: useTransform(mouseXSpring, [-0.5, 0.5], [-sat.depth, sat.depth]),
-              translateY: useTransform(mouseYSpring, [-0.5, 0.5], [-sat.depth, sat.depth]),
-            }}
-          >
-            <Image 
-              src={sat.img} 
-              alt="" 
-              fill 
-              className="object-cover transition-all duration-1000" 
-            />
-            {/* Soft Overlay that fades on hover */}
-            <div className={`absolute inset-0 bg-black/40 transition-opacity duration-700 ${isHoveredCenter ? 'opacity-0' : 'opacity-40'}`} />
-          </motion.div>
-        ))}
+        {satellites.map((sat, i) => {
+          const orbitStyle = {
+            "--orbit-start": `${sat.baseAngle}deg`,
+            animationName:
+              sat.direction === "clockwise"
+                ? "orbit-clockwise"
+                : "orbit-counterclockwise",
+            animationDuration: `${sat.orbitDuration}s`,
+            animationTimingFunction: "linear",
+            animationIterationCount: "infinite",
+            animationPlayState: isHoveredCenter ? "paused" : "running",
+            transformOrigin: "0 0",
+          } as React.CSSProperties;
+
+          const counterOrbitStyle = {
+            "--orbit-start": `${-sat.baseAngle}deg`,
+            animationName:
+              sat.direction === "clockwise"
+                ? "orbit-counterclockwise"
+                : "orbit-clockwise",
+            animationDuration: `${sat.orbitDuration}s`,
+            animationTimingFunction: "linear",
+            animationIterationCount: "infinite",
+            animationPlayState: isHoveredCenter ? "paused" : "running",
+            transformOrigin: "center",
+          } as React.CSSProperties;
+
+          return (
+            <div
+              key={sat.key}
+              className="absolute left-1/2 top-1/2 z-0"
+              style={orbitStyle}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.82, x: sat.orbitRadiusX * 0.9 }}
+                animate={
+                  isInView
+                    ? {
+                        opacity: isHoveredCenter ? 1 : sat.baseOpacity,
+                        scale: isHoveredCenter ? 1.15 : 1,
+                        x: isHoveredCenter 
+                          ? (sat.radiusFactorX > 0 ? sat.focusRadius : -sat.focusRadius) 
+                          : [
+                              sat.orbitRadiusX, 
+                              sat.orbitRadiusX * 1.05, 
+                              sat.orbitRadiusX
+                            ],
+                        y: isHoveredCenter 
+                          ? 0 
+                          : [
+                              sat.yOffset, 
+                              sat.yOffset + 30, 
+                              sat.yOffset
+                            ],
+                        z: isHoveredCenter ? 120 : 0,
+                        rotate: isHoveredCenter ? 0 : [sat.cardRotate, sat.cardRotate + 5, sat.cardRotate],
+                        filter: isHoveredCenter
+                          ? "grayscale(0%) blur(0px) brightness(1.1)"
+                          : sat.restFilter,
+                      }
+                    : {}
+                }
+                transition={{
+                  x: isHoveredCenter 
+                    ? { type: "spring", stiffness: 60, damping: 24 }
+                    : { duration: sat.orbitDuration, repeat: Infinity, ease: "easeInOut" },
+                  y: isHoveredCenter
+                    ? { type: "spring", stiffness: 60, damping: 24 }
+                    : { duration: sat.orbitDuration * 0.8, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
+                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                  scale: { type: "spring", stiffness: 90, damping: 22, mass: 1 },
+                  z: { type: "spring", stiffness: 80, damping: 20 },
+                  opacity: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+                  filter: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                }}
+                className="relative"
+              >
+                <div style={counterOrbitStyle}>
+                  <div
+                    className={`relative ${sat.size} aspect-video rounded-[1.35rem] overflow-hidden border border-white/12 shadow-[0_26px_70px_rgba(0,0,0,0.55)]`}
+                    style={{ rotate: `${sat.cardRotate}deg` }}
+                  >
+                    <Image 
+                      src={sat.img} 
+                      alt="" 
+                      fill 
+                      className="object-cover transition-transform duration-[1200ms] ease-[0.22,1,0.36,1]" 
+                      sizes="(max-width: 768px) 180px, 260px"
+                      unoptimized={sat.img?.includes("unsplash.com") || sat.img?.includes("supabase.co")}
+                    />
+                    <div
+                      className={`absolute inset-0 transition-opacity duration-700 ${
+                        isHoveredCenter ? "opacity-10" : "opacity-35"
+                      }`}
+                      style={{
+                        background:
+                          "linear-gradient(to bottom, rgba(0,0,0,0.12), rgba(0,0,0,0.48))",
+                      }}
+                    />
+                    <div className="absolute inset-0 rounded-[1.35rem] ring-1 ring-white/8" />
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          );
+        })}
       </div>
 
       {/* ─── THE CENTER MASTERPIECE (3D Tilt & Scanline) ─── */}
@@ -491,7 +630,7 @@ function StackedScrollingGallery({
         animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
         transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         onMouseEnter={() => setIsHoveredCenter(true)}
-        className="relative w-[85vw] md:w-[50vw] aspect-video md:aspect-[16/9] z-20 cursor-pointer group"
+        className="relative w-[86vw] md:w-[52vw] lg:w-[50vw] aspect-video md:aspect-[16/9] z-20 cursor-pointer group"
         onClick={() => onImageClick?.(mainImageIdx)}
         style={{ perspective: "1500px" }}
       >
@@ -507,7 +646,8 @@ function StackedScrollingGallery({
                fill 
                className="object-cover transition-transform duration-[6s] group-hover:scale-110" 
                priority 
-               sizes="60vw" 
+               sizes="(max-width: 1200px) 100vw, 1000px" 
+               unoptimized={mainImage?.includes("unsplash.com") || mainImage?.includes("supabase.co")}
              />
              
              {/* HUD Overlays & Cinematic Gradients */}
@@ -560,8 +700,8 @@ function StackedScrollingGallery({
           className="absolute -inset-24 bg-accent/20 blur-[150px] -z-10" 
           animate={{ scale: isHoveredCenter ? 1.4 : 1, opacity: isHoveredCenter ? 0.8 : 0.4 }}
           style={{ 
-            x: useTransform(mouseXSpring, [-0.5, 0.5], [-40, 40]), 
-            y: useTransform(mouseYSpring, [-0.5, 0.5], [-40, 40]),
+            x: ambientX, 
+            y: ambientY,
           }}
         />
       </motion.div>
@@ -637,7 +777,7 @@ function IncentivesBlock({
 }
 
 // Sub-component for individual reward cards in the marquee
-function RewardCard({ reward, color }: { reward: any, color: string }) {
+function RewardCard({ reward, color }: { reward: { title: string; image: string }, color: string }) {
   return (
     <div className="relative group w-[220px] md:w-[320px] aspect-[16/8] rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-500 hover:border-white/30">
       <Image 
@@ -646,6 +786,7 @@ function RewardCard({ reward, color }: { reward: any, color: string }) {
         fill 
         className="object-cover grayscale-50 group-hover:grayscale-0 transition-all duration-700" 
         sizes="320px"
+        unoptimized={reward.image?.includes("unsplash.com") || reward.image?.includes("supabase.co")}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40" />
       
@@ -713,8 +854,9 @@ function FeaturedVideo({
               fill
               className="object-cover"
               priority
-              sizes="(max-width: 768px) 100vw, 1200px"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1100px"
               quality={90}
+              unoptimized={poster?.includes("unsplash.com") || poster?.includes("supabase.co")}
             />
           </div>
         )}
@@ -1459,7 +1601,14 @@ function CaseCard({
           <div className="absolute top-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-20" style={{ background: `linear-gradient(90deg, transparent, ${cs.color}80, transparent)` }} />
           {cs.cardImage && (
             <div className="absolute inset-0">
-              <Image src={cs.cardImage} alt="" fill className="object-cover opacity-[0.10] scale-110 grayscale group-hover:grayscale-0 group-hover:opacity-[0.25] group-hover:scale-100 transition-all duration-700 ease-out" />
+              <Image 
+                src={cs.cardImage} 
+                alt="" 
+                fill 
+                className="object-cover opacity-[0.10] scale-110 grayscale group-hover:grayscale-0 group-hover:opacity-[0.25] group-hover:scale-100 transition-all duration-700 ease-out" 
+                sizes="(max-width: 768px) 100vw, 600px"
+                unoptimized={cs.cardImage?.includes("unsplash.com") || cs.cardImage?.includes("supabase.co")}
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/90 to-[#0a0a0a]/20" />
             </div>
           )}
@@ -1892,9 +2041,11 @@ function MarqueeStrip({ color }: { color: string }) {
 // ─── DreamTalentStory — Editorial event showcase ───
 function DreamTalentStory({
   cs,
+  scrollContainer,
   onBack,
 }: {
   cs: CaseStudyType;
+  scrollContainer?: React.RefObject<HTMLDivElement | null>;
   onBack: () => void;
 }) {
   const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
@@ -1955,8 +2106,16 @@ function DreamTalentStory({
         </div>
       </div>
 
-      {/* ── Custom Cinematic Hero Image ── */}
-      {cs.heroImage && (
+      {/* ── Custom Cinematic Hero Image / Video ── */}
+      {cs.videoUrl ? (
+        <div className="mb-20">
+          <FeaturedVideo 
+            src={cs.videoUrl} 
+            poster={cs.videoPoster || cs.heroImage} 
+            color={cs.color} 
+          />
+        </div>
+      ) : cs.heroImage && (
         <motion.div
            initial={{ opacity: 0, scale: 1.08, y: 30 }}
            animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -2034,7 +2193,7 @@ function DreamTalentStory({
                   />
                 )}
                 {section.id === "dt-teambuilding" && <HorizontalFilmstrip images={section.galleryImages} onImageClick={(idx) => setLightbox({ images: section.galleryImages || [], index: idx })} />}
-                {section.id === "dt-sportsday" && <BentoMasonry images={section.galleryImages} onImageClick={(idx) => setLightbox({ images: section.galleryImages || [], index: idx })} />}
+                {section.id === "dt-sportsday" && <ZAxisTunnelGallery images={section.galleryImages} color={cs.color} scrollContainer={scrollContainer} onImageClick={(idx) => setLightbox({ images: section.galleryImages || [], index: idx })} />}
                 
                 {/* Rewards in DreamTalentStory */}
                 {section.rewards && <div className="mt-12"><IncentivesBlock rewards={section.rewards} color={cs.color} /></div>}
@@ -2077,6 +2236,7 @@ function DreamTalentStory({
 // ─── CaseStudy Section chính ───
 export default function CaseStudy() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const modalScrollRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -2163,6 +2323,7 @@ export default function CaseStudy() {
       <AnimatePresence>
         {activeCase && (
           <motion.div
+            ref={modalScrollRef}
             key={activeCase.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -2174,6 +2335,7 @@ export default function CaseStudy() {
               {activeCase.id === "dreamtalent" ? (
                 <DreamTalentStory
                   cs={activeCase}
+                  scrollContainer={modalScrollRef}
                   onBack={() => setActiveId(null)}
                 />
               ) : (

@@ -73,6 +73,8 @@ export interface CaseStudy {
   creativeWork?: CreativeWorkItem[];
   testimonial?: Testimonial;
   timeline?: TimelineMilestone[];
+  videoUrl?: string;
+  videoPoster?: string;
 }
 
 // ─── 01. Thinksmart Insurance (Focus: Marketing/Revenue) ───
@@ -122,8 +124,8 @@ const thinksmartSections: CaseStudySection[] = [
   }
 ];
 
-// ─── Supabase Configuration ───
-const SUPABASE_BASE_URL = "https://yfftfzmqpubjmehvxfdw.supabase.co/storage/v1/object/public/Porfolio";
+// ─── Local Assets Configuration (Optimized) ───
+const SUPABASE_BASE_URL = "/images/casestudy/dreamtalent";
 
 // ─── 02. Dream Talent (Focus: Company Events) ───
 const dreamTalentSections: CaseStudySection[] = [
@@ -134,7 +136,7 @@ const dreamTalentSections: CaseStudySection[] = [
     headline: "Year End\nParty",
     subtitle: "Event Planning · Media Coverage · Post-Production",
     body: "Co-organized and directed full media coverage for the annual Year End Party. The goal was to capture authentic moments and the grand scale of the evening without disrupting the attendee experience.",
-    videoUrl: `${SUPABASE_BASE_URL}/dreamtalent-yep.mp4`,
+    videoUrl: `/videos/casestudy/dreamtalent-yep.mp4`,
     videoPoster: `${SUPABASE_BASE_URL}/yep-thumbnail.jpg`,
     galleryImages: [
       `${SUPABASE_BASE_URL}/yep-vdht.jpg`,
@@ -174,13 +176,16 @@ const dreamTalentSections: CaseStudySection[] = [
     subtitle: "Action Photography · Highlight Videos · Internal Media",
     body: "Captured high-energy team building activities with a focus on authentic moments. Delivered short-form recap videos and photo collections that reinforced team culture and morale.",
     galleryImages: [
-      `${SUPABASE_BASE_URL}/tb-1.png`,
-      `${SUPABASE_BASE_URL}/tb-2.png`,
-      `${SUPABASE_BASE_URL}/tb-3.png`,
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1520333789090-1afc82db536a?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1544391682-17dd1d84a38d?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=1200&auto=format&fit=crop",
+      `${SUPABASE_BASE_URL}/teambuilding/DHAI0036.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/DHAI0474.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/DHAI0483.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/DHAI1164.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/DHAI1559.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/flycam-3.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/flycam-8.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/ĐRT-FLYCAM-12.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/ĐRT-FLYCAM-26.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/ĐRT-FLYCAM-27.webp`
     ],
   },
   {
@@ -191,12 +196,17 @@ const dreamTalentSections: CaseStudySection[] = [
     subtitle: "Dynamic Sports Coverage · Highlight Reels · Team Spirit",
     body: "Directed highly dynamic sports coverage for the annual corporate Sports Day. The focus was on freezing peak action, capturing raw emotion, and showcasing the competitive yet bonded spirit of the company.",
     galleryImages: [
-      "https://images.unsplash.com/photo-1526676037598-3317e666ed1b?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1530549387789-4c1017266635?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1541252260730-0412e8e2108e?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1200&auto=format&fit=crop",
+      `${SUPABASE_BASE_URL}/sportsday/sports-1.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-2.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-3.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-4.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-5.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-6.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-7.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-8.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-9.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-10.jpg`,
+      `${SUPABASE_BASE_URL}/sportsday/sports-11.jpg`,
     ],
   },
 ];
@@ -237,7 +247,9 @@ export const caseStudies: CaseStudy[] = [
     color: "#e8512d",
     website: "https://dreamtalent.com.vn/",
     cardImage: `${SUPABASE_BASE_URL}/dreamtalent_card.png`,
-    heroImage: `${SUPABASE_BASE_URL}/dreamtalent_hero.png`,
+    heroImage: `${SUPABASE_BASE_URL}/dreamtalent-poster.jpg`,
+    videoUrl: `${SUPABASE_BASE_URL}/dreamtalent-video.mp4`,
+    videoPoster: `${SUPABASE_BASE_URL}/dreamtalent-poster.jpg`,
     highlights: [
       { value: "Full", label: "Media Scale", description: "Directed complete photo/video coverage for the largest annual gatherings (YEP & Team Building)." },
       { value: "100%", label: "In-house Execution", description: "Managed the entire pipeline: pre-event planning, multi-cam shooting, and post-production." },
