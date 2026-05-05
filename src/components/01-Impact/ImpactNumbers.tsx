@@ -54,7 +54,7 @@ function StatItem({
         {count}
         {stat.suffix}
       </p>
-      <p className="font-body text-[11px] text-white/30 uppercase tracking-[0.18em] leading-snug">
+      <p className="font-body text-[12px] text-white/40 font-bold uppercase tracking-[0.2em] leading-snug">
         {stat.label}
       </p>
     </motion.div>

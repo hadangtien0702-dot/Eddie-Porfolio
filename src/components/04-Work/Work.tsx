@@ -34,7 +34,7 @@ function ServiceCard({
         opacity: { duration: 0.6, delay: 0.3 + index * 0.1 },
         layout: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
       }}
-      className="relative rounded-3xl overflow-hidden group cursor-none"
+      className="relative rounded-3xl overflow-hidden group cursor-pointer"
       style={{
         background: "#0a0a0a",
         flex: isActive ? 6 : 1,
@@ -102,7 +102,7 @@ function ServiceCard({
              className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6 pointer-events-none"
            >
               <div className="flex flex-col gap-3 pointer-events-auto">
-                 <span className="font-body font-bold text-[10px] px-3 py-1 rounded border border-white/20 bg-white/10 backdrop-blur-md text-white w-fit uppercase tracking-widest">
+                 <span className="font-body font-bold text-[12px] px-3 py-1 rounded border border-white/20 bg-white/10 backdrop-blur-md text-white w-fit uppercase tracking-[0.2em]">
                     {svc.tag}
                  </span>
                  <h3 className="font-heading font-black text-white text-3xl md:text-5xl lg:text-6xl tracking-tight leading-none drop-shadow-[0_10px_20px_rgba(0,0,0,1)]">
@@ -119,7 +119,7 @@ function ServiceCard({
                          <button
                            key={idx}
                            onClick={(e) => { e.stopPropagation(); onOpenCarousel(); }}
-                           className="font-body text-[11px] font-bold px-5 py-3 md:py-4 rounded bg-white text-black hover:bg-[#ff3300] hover:text-white transition-colors duration-300 flex items-center gap-2 uppercase tracking-widest"
+                           className="font-body text-[12px] font-bold px-5 py-3 md:py-4 rounded bg-white text-black hover:bg-[#ff3300] hover:text-white transition-colors duration-300 flex items-center gap-2 uppercase tracking-[0.2em]"
                          >
                            3D Showcase
                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -129,7 +129,7 @@ function ServiceCard({
                        );
                      }
                      const isExternal = link.url.startsWith("http");
-                     const cls = "font-body text-[11px] font-bold px-5 py-3 md:py-4 rounded bg-[#ff3300] text-white hover:bg-white hover:text-black transition-colors duration-300 flex items-center gap-2 uppercase tracking-widest";
+                     const cls = "font-body text-[12px] font-bold px-5 py-3 md:py-4 rounded bg-[#ff3300] text-white hover:bg-white hover:text-black transition-colors duration-300 flex items-center gap-2 uppercase tracking-[0.2em]";
                      
                      return isExternal ? (
                        <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className={cls}>
@@ -143,7 +143,7 @@ function ServiceCard({
                    })
                  ) : (
                    <button
-                     className="font-body text-[11px] font-bold px-5 py-3 md:py-4 rounded border-2 border-white text-white hover:bg-white hover:text-black transition-colors duration-300 flex items-center uppercase tracking-widest"
+                     className="font-body text-[12px] font-bold px-5 py-3 md:py-4 rounded border-2 border-white text-white hover:bg-white hover:text-black transition-colors duration-300 flex items-center uppercase tracking-[0.2em]"
                      onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
                    >
                      Deploy Now
@@ -172,16 +172,15 @@ export default function Work() {
       className="relative w-full overflow-hidden"
       style={{ background: "#FBFBFB" }}
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-16 pb-10 lg:pt-24 lg:pb-14">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-24 lg:py-40">
         {/* ─── Heading ─── */}
-        <div className="relative mb-10 lg:mb-14">
+        <div className="relative mb-16 lg:mb-24">
           <div className="flex items-start justify-between gap-8 mb-5">
             <motion.span
               initial={{ opacity: 0, y: 12 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="font-body text-[11px] uppercase tracking-[0.2em]"
-              style={{ color: "#aaaaaa" }}
+              className="font-body text-[12px] font-bold uppercase tracking-[0.2em] text-white/40"
             >
               Services
             </motion.span>
@@ -190,8 +189,8 @@ export default function Work() {
               initial={{ opacity: 0, y: 12 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="font-body text-[13px] leading-[1.7] max-w-[260px] text-right hidden md:block"
-              style={{ color: "#9b9b9b" }}
+              className="font-body text-[14px] leading-[1.7] max-w-[260px] text-right hidden md:block"
+              style={{ color: "rgba(255,255,255,0.4)" }}
             >
               {servicesHeading.descriptionRight}
             </motion.p>

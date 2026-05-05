@@ -28,7 +28,7 @@ export default function Footer() {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group font-body text-[12px] text-white/25 hover:text-white/55 uppercase tracking-[0.12em] transition-colors duration-300 relative"
+                className="group font-body text-[12px] text-white/40 hover:text-white/55 uppercase tracking-[0.2em] transition-colors duration-300 relative"
               >
                 {social.label}
                 <span
@@ -42,10 +42,10 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="mt-5 pt-4 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="font-body text-[11px] text-white/15">
+          <p className="font-body text-[12px] text-white/15">
             © {year} {brand.name}. All rights reserved.
           </p>
-          <p className="font-body text-[11px] text-white/10">
+          <p className="font-body text-[12px] text-white/10 uppercase tracking-[0.1em]">
             {brand.tagline}
           </p>
         </div>

@@ -3,7 +3,7 @@
 
 export const webForumMeta = {
   overline: "UI/UX & Web",
-  title: "Web & Forum Design",
+  title: "Digital Platforms & Web Design",
   description:
     "Designed and built polished digital experiences for brands — from corporate websites to community-driven platforms.",
 };
@@ -38,15 +38,5 @@ export const webProjects: WebProject[] = [
     tags: ["Web Design", "UI/UX", "Entertainment", "Brand"],
     status: "Live",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    name: "Community Forum",
-    type: "Forum Platform",
-    url: "#",
-    description:
-      "Built and themed a community discussion forum with custom category architecture, user permission levels, and brand-consistent styling.",
-    tags: ["Forum", "Community", "Custom Theme", "Moderation"],
-    status: "Demo coming soon",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop",
   },
 ];

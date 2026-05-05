@@ -93,9 +93,20 @@
 }
 
 /* ─── Global Styles ─── */
-/* Nền tối toàn trang, smooth scroll */
-html {
-  scroll-behavior: smooth;
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
@@ -139,21 +150,3 @@ body {
   display: none;
 }
 
-/* Gentle orbital motion for the Dream Talent gallery */
-@keyframes orbit-clockwise {
-  from {
-    transform: rotate(var(--orbit-start, 0deg));
-  }
-  to {
-    transform: rotate(calc(var(--orbit-start, 0deg) + 360deg));
-  }
-}
-
-@keyframes orbit-counterclockwise {
-  from {
-    transform: rotate(var(--orbit-start, 0deg));
-  }
-  to {
-    transform: rotate(calc(var(--orbit-start, 0deg) - 360deg));
-  }
-}

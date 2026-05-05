@@ -1,6 +1,6 @@
 # Portfolio Content Outline
 
-> **Ngày**: 2026-03-19
+> **Ngày**: 2026-05-04
 > **Mục tiêu**: phác thảo nội dung cho landing page portfolio hiện tại
 > **Flow hiện có**: `Overview -> Case Study -> Work -> Showreel -> Contact`
 

@@ -1,8 +1,8 @@
 // ─── Contact Data ───
 
 export const contactData = {
-  headline: "Let's Create Something Extraordinary",
-  subtitle: "Ready to drive real business impact through creative video?",
+  headline: "Let's Build Work That Performs",
+  subtitle: "If you need creative that looks sharp and drives results, let's talk.",
   email: "hello@eddie.com",
   availability: "Available for projects",
   socials: [

@@ -1,34 +1,43 @@
-# Portfolio V3 — Progress
+# PROJECT PROGRESS — Eddie Portfolio V3
 
----
+## ✅ Hoàn Thành (Completed)
 
-## Đang cần làm
+### Core UI & Framework
+- [x] Khởi tạo Next.js 16 + Tailwind CSS 4.
+- [x] Thiết lập hệ thống Font (Clash Display & Inter).
+- [x] Xây dựng Narrative Flow cho trang chủ.
 
-- [ ] Case Study — redesign 2 card (bố cục + stats nổi bật + hiệu ứng)
-- [ ] Setup and Build — thêm Before/After + Gallery ảnh thật
-- [ ] Video Editor — tạo page `/work/video-editor`
-- [ ] Điền số liệu thật vào Overview
-- [ ] Điền content thật vào Case Study (bỏ placeholder)
-- [ ] Showreel — thay link demo bằng link video thật
-- [ ] Contact + Footer — điền email, social links thật
-- [ ] Mobile — kiểm tra responsive toàn trang
+### Case Study: Thinksmart Insurance (Premium Redesign)
+- [x] Refactor `ProductLineShowcase` sang cinematic style (hover reveal).
+- [x] Chuẩn hoá Vertical Rhythm (spacing py-16).
+- [x] Tối ưu Typography (Header leading, Body spacing).
+- [x] Fix lỗi text clipping trong `VerticalCutReveal`.
 
----
+### Media & Asset Optimization
+- [x] Chuyển đổi toàn bộ ảnh sang định dạng `.webp`.
+- [x] Thiết lập "Source of Truth" tại thư mục `Image` gốc.
+- [x] Tạo Junction link kết nối `public/images` với root folder.
+- [x] Tự động hoá cập nhật đường dẫn ảnh trong `casestudy.ts`.
 
-## Đã xong
+### Case Study: Dream Talent & Content Sync
+- [x] Đồng bộ hóa toàn bộ Content từ `docs/content-outline.md` vào data.
+- [x] Khôi phục thiết kế UI nguyên bản (Centered layout) theo yêu cầu người dùng.
+- [x] Tối ưu hóa Spacing và Typography toàn bộ Portfolio (py-16 rhythm).
+- [x] Sửa lỗi hiển thị tài nguyên cục bộ (Local Assets) và nén không gian dư thừa.
+- [x] Dọn dẹp và tối ưu hóa hệ thống tài liệu `docs/` (Removing outdated files).
 
-### 2026-03-23
-- [x] Tách data inline từ 3 work pages ra `src/data/`
-- [x] Tạo folder `public/images/work/` cho ảnh từng work page
-- [x] Gom tất cả doc vào `docs/` — dọn sạch root
+### Portfolio Sub-pages & Assets (May 04)
+- [x] Redesign "Digital Platforms & Web Design" sang High-End Editorial style.
+- [x] Tích hợp content trực tiếp vào Browser Mockup (Glassmorphism overlay).
+- [x] Cập nhật Cover Asset cho Setup & Build và Web Design (Nén WebP).
+- [x] Xây dựng "Social Media Archive" với Infinite Draggable Canvas (28+ images).
+- [x] Refactor "Setup and Build" Gallery thành Interactive Canvas (30+ images).
+- [x] Tối ưu Spacing (Vertical Rhythm) toàn bộ các trang Work con (py-16/py-24).
 
-### 2026-03-18
-- [x] Navigation — active dot, glow border, smooth scroll
-- [x] Overview — animated shader line + glow dưới hero
-- [x] Work — đổi tên từ Services, viết lại VideoCarousel3D
-- [x] Work — fix image paths trong services.ts
+## 🚧 Đang Thực Hiện (In Progress)
+- [ ] Tinh chỉnh Showreel video chính thức.
+- [ ] Kiểm tra SEO và Accessibility cuối cùng.
+- [ ] Kiểm tra hiển thị Responsive cho hệ thống Interactive Canvas trên Mobile.
 
-### 2026-03-17
-- [x] Case Study — viết lại nội dung 5 sections
-- [x] Case Study — thêm Section 5 Results (RevenueChart + stats)
-- [x] Navigation — scroll effects (glass → solid background)
+## 📅 Log Cập Nhật Gần Nhất
+- **2026-05-04**: Tái cấu trúc folder ảnh, nâng cấp UI/UX trang Web Design & Setup Build. Triển khai hệ thống Interactive Canvas cho Portfolio Social Media & Build Process. Tối ưu Spacing toàn project.

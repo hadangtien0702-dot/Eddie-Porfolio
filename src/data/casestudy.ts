@@ -38,12 +38,13 @@ export interface CaseStudySection {
   id: string;
   number: number;
   title: string;
+  label?: string;          // Short title for sidebar
   headline: string;        // EN only — Clash Display
   subtitle?: string;       // Sub text below headline
   body: string;
   image?: string;
   imageAlt?: string;
-  visualType?: "context" | "context-profile" | "funnel" | "workflow" | "revenue" | "social" | "cpa-challenge";
+  visualType?: "context" | "context-profile" | "funnel" | "workflow" | "revenue" | "social" | "cpa-challenge" | "product-line";
   bullets?: string[];
   stats?: { label: string; value: string }[];
   closingLine?: string;
@@ -83,10 +84,10 @@ const thinksmartSections: CaseStudySection[] = [
     id: "thinksmart-context",
     number: 1,
     title: "Context & Challenge",
+    label: "01. Context",
     headline: "The Starting Point\n& Challenge",
     subtitle: "ThinkSmart Insurance — Head of Video Production & Media Manager",
     body: "ThinkSmart Insurance had strong sales, but marketing operated without a unified acquisition system. CPA had skyrocketed to $180–$200 while revenue stagnated. My mission was clear: restructure the media operations, drive acquisition costs down, and directly supply Sales with high-converting marketing leads.",
-    visualType: "context",
     stats: [
       { label: "CPA in 2022", value: "$180–$200" },
       { label: "Revenue in 2022", value: "$1.8M–$2M" },
@@ -97,9 +98,10 @@ const thinksmartSections: CaseStudySection[] = [
     id: "thinksmart-role",
     number: 2,
     title: "My Role & System",
-    headline: "Building a\nPerformance System",
+    label: "02. Strategy",
+    headline: "Systematic Approach",
     subtitle: "Performance Media Manager — Strategy, Operations & Optimization",
-    body: "I took full ownership of the Media team, transforming it from a standard production unit into a ruthless performance engine. We proactively collaborated with the Ads team, ensuring our video adaptations met extreme volume and quality demands. When A/B tests ran, we instantly jumped in to fix and iterate underperforming creatives.",
+    body: "I built a structured media acquisition machine. My role evolved from simply creating content to architecting a system where every video serves a specific purpose in the acquisition funnel.",
     visualType: "workflow",
     bullets: [
       "Media Team Leadership — Managed the team to adapt massive volumes of ad creatives without losing quality.",
@@ -108,24 +110,42 @@ const thinksmartSections: CaseStudySection[] = [
     ],
   },
   {
-    id: "thinksmart-results",
+    id: "thinksmart-product-line",
     number: 3,
+    title: "Product Line",
+    label: "03. Products",
+    headline: "Insurance Product Line",
+    subtitle: "Visual Design — IUL, Term Life, EBTP, Kaizen, Max-Funded",
+    body: "Designed the full visual identity for ThinkSmart's core insurance product line. Each graphic was crafted to clearly communicate complex financial products — making them approachable and compelling for prospects at every stage of the funnel.",
+    visualType: "product-line",
+    galleryImages: [
+      "/images/02-CaseStudy/thinksmart/05-ProductLine/iul.webp",
+      "/images/02-CaseStudy/thinksmart/05-ProductLine/iul-max-funded.webp",
+      "/images/02-CaseStudy/thinksmart/05-ProductLine/ebtp.webp",
+      "/images/02-CaseStudy/thinksmart/05-ProductLine/kaizen.webp",
+      "/images/02-CaseStudy/thinksmart/05-ProductLine/term-life.webp",
+    ],
+  },
+  {
+    id: "thinksmart-results",
+    number: 4,
     title: "The Results",
+    label: "04. Results",
     headline: "Driving Revenue\n& Growth",
     subtitle: "2024 — Achieving the highest company revenue in history",
-    body: "Through sheer creative volume and relentless optimization, our media pipeline fed directly into the company's bottom line. The result was the highest revenue peak the company had ever seen while I was there.",
-    visualType: "revenue",
+    body: "Relentless optimization of the creative system directly correlated with decreasing customer acquisition costs and record-breaking revenue peaks.",
+    visualType: "cpa-challenge",
     stats: [
-      { label: "2024 Revenue Peak", value: "$6,000,000" },
+      { label: "2024 Revenue Peak", value: "$6.2M" },
       { label: "Marketing Leads Supplied", value: "100%" },
-      { label: "CPA Reduction", value: "-44%" },
+      { label: "CPA Reduction", value: "-66%" },
     ],
     closingLine: "I didn't receive performance commissions. I operated purely on ownership, ensuring my team's output translated directly into tangible business growth.",
   }
 ];
 
-// ─── Local Assets Configuration (Optimized) ───
-const SUPABASE_BASE_URL = "/images/casestudy/dreamtalent";
+// ─── Asset Base URL: local khi dev, Supabase khi production ───
+const SUPABASE_BASE_URL = "/images/02-CaseStudy/dreamtalent";
 
 // ─── 02. Dream Talent (Focus: Company Events) ───
 const dreamTalentSections: CaseStudySection[] = [
@@ -133,7 +153,7 @@ const dreamTalentSections: CaseStudySection[] = [
     id: "dt-yep",
     number: 1,
     title: "Year End Party",
-    headline: "Year End\nParty",
+    headline: "Year End Party",
     subtitle: "Event Planning · Media Coverage · Post-Production",
     body: "Co-organized and directed full media coverage for the annual Year End Party. The goal was to capture authentic moments and the grand scale of the evening without disrupting the attendee experience.",
     videoUrl: `/videos/casestudy/dreamtalent-yep.mp4`,
@@ -172,7 +192,7 @@ const dreamTalentSections: CaseStudySection[] = [
     id: "dt-teambuilding",
     number: 2,
     title: "Team Building",
-    headline: "Team\nBuilding",
+    headline: "Team Building",
     subtitle: "Action Photography · Highlight Videos · Internal Media",
     body: "Captured high-energy team building activities with a focus on authentic moments. Delivered short-form recap videos and photo collections that reinforced team culture and morale.",
     galleryImages: [
@@ -183,16 +203,16 @@ const dreamTalentSections: CaseStudySection[] = [
       `${SUPABASE_BASE_URL}/teambuilding/DHAI1559.webp`,
       `${SUPABASE_BASE_URL}/teambuilding/flycam-3.webp`,
       `${SUPABASE_BASE_URL}/teambuilding/flycam-8.webp`,
-      `${SUPABASE_BASE_URL}/teambuilding/ĐRT-FLYCAM-12.webp`,
-      `${SUPABASE_BASE_URL}/teambuilding/ĐRT-FLYCAM-26.webp`,
-      `${SUPABASE_BASE_URL}/teambuilding/ĐRT-FLYCAM-27.webp`
+      `${SUPABASE_BASE_URL}/teambuilding/DRT-FLYCAM-12.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/DRT-FLYCAM-26.webp`,
+      `${SUPABASE_BASE_URL}/teambuilding/DRT-FLYCAM-27.webp`
     ],
   },
   {
     id: "dt-sportsday",
     number: 3,
     title: "Hội thao (Sports Day)",
-    headline: "Company\nSports Day",
+    headline: "Company Sports Day",
     subtitle: "Dynamic Sports Coverage · Highlight Reels · Team Spirit",
     body: "Directed highly dynamic sports coverage for the annual corporate Sports Day. The focus was on freezing peak action, capturing raw emotion, and showcasing the competitive yet bonded spirit of the company.",
     galleryImages: [
@@ -222,10 +242,10 @@ export const caseStudies: CaseStudy[] = [
     description: "Proactively built and managed a high-volume performance media pipeline. Supplied 100% of marketing leads through relentless A/B testing, rapid creative adaptation, and deep involvement in ad strategy.",
     color: "#FF4000",
     website: "https://thinksmartinsurance.com/en/home",
-    cardImage: "/images/casestudy/thinksmart/card-cover.png",
-    heroImage: "/images/casestudy/thinksmart/HeroCaseStudy.png",
+    cardImage: "/images/02-CaseStudy/thinksmart/01-Hero/card-cover.webp",
+    heroImage: "/images/02-CaseStudy/thinksmart/01-Hero/banner-01.webp",
     highlights: [
-      { value: "$6,000,000", label: "2024 Revenue Peak", description: "Contributed to the highest corporate revenue in history through constant creative optimization.", image: "/images/casestudy/thinksmart/revenue-hero.png" },
+      { value: "$6,200,000", label: "2024 Revenue Peak", description: "Contributed to the highest corporate revenue in history through constant creative optimization.", image: "/images/02-CaseStudy/thinksmart/04-Results/revenue-hero.webp" },
       { value: "100%", label: "Leads Sourced", description: "My team's adapted videos became the supreme driver, providing 100% of marketing leads for Sales." },
       { value: "Proactive", label: "A/B Testing", description: "Operated with extreme ownership. Actively worked with Ads team to rapidly fix and scale creatives." },
     ],
@@ -233,9 +253,8 @@ export const caseStudies: CaseStudy[] = [
     timeline: [
       { date: "2022", title: "Media Foundation", description: "Established initial video operational frameworks.", type: "start" },
       { date: "2023", title: "Media Team Lead", description: "Promoted to lead the entire design and video production squad.", type: "milestone" },
-      { date: "2024", title: "Record Historic Revenue & Leads", description: "Hit $6,000,000 in revenue by driving 100% of the marketing leads to Sales through scaled A/B testing.", metric: "$6.0M", type: "peak" },
+      { date: "2024", title: "Record Historic Revenue & Leads", description: "Hit $6,200,000 in revenue by driving 100% of the marketing leads to Sales through scaled A/B testing.", metric: "$6.2M", type: "peak" },
     ],
-    creativeWork: []
   },
   {
     id: "dreamtalent",
@@ -243,7 +262,7 @@ export const caseStudies: CaseStudy[] = [
     tagline: "Corporate event media planning & production",
     role: "Event Media Director",
     duration: "2022 — 2023",
-    description: "Led the end-to-end media production for Dream Talent's major corporate events. The priority was capturing high-energy, authentic moments and delivering cinematic highlight reels with extremely rapid turnarounds.",
+    description: "Led full creative direction for Dream Talent's corporate media — from concept to final delivery across recruitment films, company profiles, and internal showcases.",
     color: "#e8512d",
     website: "https://dreamtalent.com.vn/",
     cardImage: `${SUPABASE_BASE_URL}/dreamtalent_card.png`,
@@ -281,6 +300,6 @@ export const caseStudies: CaseStudy[] = [
 // ─── Section heading ───
 export const caseStudyHeading = {
   overline: "CASE STUDIES",
-  title: "Proven Results",
+  title: "Selected Stories",
   description: "Explore how I drive real business impact and build strong company culture through creative video strategy.",
 };

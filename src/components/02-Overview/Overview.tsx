@@ -78,7 +78,7 @@ export default function Overview() {
         className="absolute -inset-6 z-0"
       >
         <Image
-          src="/images/overview/bg2.jpg"
+          src="/images/01-Overview/bg2.jpg"
           alt="Overview background"
           fill
           sizes="100vw"
@@ -114,7 +114,7 @@ export default function Overview() {
       </div>
 
       {/* ─── Main Content Container ─── */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-20 pb-8 min-h-screen flex flex-col justify-between">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-32 lg:pt-48 pb-16 lg:pb-24 min-h-screen flex flex-col justify-between">
 
         {/* ─── Hero Area: Text + Image overlap ─── */}
         <div className="relative flex-1 flex items-center">
@@ -128,7 +128,7 @@ export default function Overview() {
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.03, delayChildren: 0.2 } },
               }}
-              className="font-body text-body-lg text-white/90 font-normal mb-4"
+              className="font-body text-[12px] font-bold uppercase tracking-[0.2em] text-white/40 mb-4"
             >
               {"Hey, I'm a".split("").map((char, i) => (
                 <motion.span
@@ -202,7 +202,7 @@ export default function Overview() {
                        w-[400px] h-[530px] sm:w-[440px] sm:h-[580px] md:w-[500px] md:h-[660px] lg:w-[580px] lg:h-[770px]"
           >
             <Image
-              src="/images/overview/hero.png"
+              src="/images/01-Overview/hero.png"
               alt="Eddie — Creative Video Strategist"
               fill
               sizes="(max-width: 768px) 350px, (max-width: 1024px) 420px, 480px"
@@ -259,7 +259,7 @@ export default function Overview() {
                 delay: 0.45,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="font-body text-body text-white/60 leading-relaxed"
+              className="font-body text-[17px] md:text-[19px] text-white/60 leading-[1.8]"
             >
               {overviewHeading.description.split(".").slice(1).join(".").trim()}
             </motion.p>
@@ -273,7 +273,7 @@ export default function Overview() {
           transition={{ duration: 0.6, delay: 1.5 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
         >
-          <span className="font-body text-[11px] text-white/25 uppercase tracking-widest">
+          <span className="font-body text-[12px] font-bold text-white/40 uppercase tracking-[0.2em]">
             Scroll
           </span>
           <motion.div

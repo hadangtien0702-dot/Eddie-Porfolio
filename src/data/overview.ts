@@ -5,44 +5,43 @@
 // ─── Heading & mô tả cho Overview section ───
 export const overviewHeading = {
   // Overline label phía trên heading
-  overline: "ABOUT ME",
+  overline: "HEY, I'M EDDIE",
   // Heading chính
-  title: "Performance Media Manager",
+  title: "Creative Video Strategist",
   // Mô tả ngắn
   description:
-    "I bridge the gap between creative visual production and aggressive performance marketing. Leading a dedicated media team, I engineer video assets that directly supply 100% of marketing leads for Sales. I proactively A/B test, scale content adaptation, and optimize pipelines to drive record-breaking corporate revenue peaks.",
+    "I build video systems that turn creative ideas into measurable growth. From strategy and production to testing and optimization, I focus on content that performs across paid and organic channels.",
 };
 
 // ─── 4 số liệu business nổi bật ───
 // Mỗi stat sẽ có hiệu ứng count-up khi scroll tới
 export const businessStats = [
   {
-    number: "$6M",
-    label: "2024 Revenue Peak",
-    // Giá trị số để count-up animation
+    number: "$6M+",
+    label: "Annual Revenue Peak",
     countValue: 6,
     prefix: "$",
-    suffix: "M",
+    suffix: "M+",
   },
   {
     number: "100%",
-    label: "Leads Sourced by Team",
+    label: "Leads Sourced by Video",
     countValue: 100,
     prefix: "",
     suffix: "%",
   },
   {
-    number: "Proactive",
-    label: "A/B Testing & Optimization",
-    countValue: 1, // dummy for string
+    number: "500+",
+    label: "High-Performance Ads",
+    countValue: 500,
     prefix: "",
-    suffix: "",
+    suffix: "+",
   },
   {
-    number: "Mass",
-    label: "Video Volume Adaptation",
-    countValue: 1, // dummy
+    number: "12M+",
+    label: "Organic Video Reach",
+    countValue: 12,
     prefix: "",
-    suffix: "",
+    suffix: "M+",
   },
 ];

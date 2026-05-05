@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 // ─── Body Font — Inter Display từ Google Fonts ───
 const inter = Inter({
@@ -64,15 +65,17 @@ export default function RootLayout({
           />
           <svg className="absolute inset-0 w-full h-full opacity-[0.03]" preserveAspectRatio="none">
              <path d="M 0 100 L 200 100 L 250 150 L 500 150" stroke="white" strokeWidth="1" fill="none" />
-             <path d="M 70% 0 L 70% 30% L 80% 40% L 80% 100%" stroke="white" strokeWidth="1" fill="none" />
-             <path d="M 30% 60% L 40% 70% L 100% 70%" stroke="white" strokeWidth="1" fill="none" />
+             <path d="M 800 0 L 800 300 L 900 400 L 900 1000" stroke="white" strokeWidth="1" fill="none" />
+             <path d="M 300 600 L 400 700 L 1200 700" stroke="white" strokeWidth="1" fill="none" />
              <circle cx="200" cy="100" r="3" fill="white" />
              <circle cx="250" cy="150" r="3" fill="white" />
           </svg>
           <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] opacity-50" />
         </div>
 
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

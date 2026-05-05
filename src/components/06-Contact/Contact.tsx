@@ -20,7 +20,7 @@ export default function Contact() {
     <section
       ref={ref}
       id="contact"
-      className="relative w-full py-16 lg:py-24 overflow-hidden"
+      className="relative w-full py-10 lg:py-16 overflow-hidden"
     >
       {/* Very subtle ambient glow — not centered, shifted right */}
       <div
@@ -39,7 +39,7 @@ export default function Contact() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center justify-between mb-6 lg:mb-8"
         >
-          <span className="font-body text-[11px] text-white/25 uppercase tracking-[0.2em]">
+          <span className="font-body text-[12px] font-bold text-white/40 uppercase tracking-[0.2em]">
             Contact
           </span>
 
@@ -49,7 +49,7 @@ export default function Contact() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-50" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
             </span>
-            <span className="font-body text-[12px] text-white/40 tracking-wide">
+            <span className="font-body text-[12px] font-bold text-white/40 uppercase tracking-[0.2em]">
               {contactData.availability}
             </span>
           </div>
@@ -74,7 +74,7 @@ export default function Contact() {
           className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-10"
         >
           {/* Subtitle */}
-          <p className="font-body text-[15px] text-white/40 max-w-sm leading-relaxed">
+          <p className="font-body text-[16px] md:text-[17px] text-white/40 max-w-sm leading-[1.8]">
             {contactData.subtitle}
           </p>
 
@@ -83,7 +83,7 @@ export default function Contact() {
             {/* Primary — Email */}
             <a
               href={`mailto:${contactData.email}`}
-              className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full font-body text-[14px] font-medium text-white transition-colors duration-300"
+              className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full font-body text-[12px] font-bold uppercase tracking-[0.2em] text-white transition-colors duration-300"
               style={{
                 background: "#FF4000",
               }}
@@ -104,7 +104,7 @@ export default function Contact() {
               href={contactData.socials[0]?.href || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 font-body text-[14px] text-white/40 hover:text-white/70 transition-colors duration-300 py-3.5"
+              className="group inline-flex items-center gap-2 font-body text-[12px] font-bold uppercase tracking-[0.2em] text-white/40 hover:text-white/70 transition-colors duration-300 py-3.5"
             >
               <span className="relative overflow-hidden">
                 <span className="block">LinkedIn</span>
@@ -138,7 +138,7 @@ export default function Contact() {
               href={social.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group font-body text-[12px] text-white/25 hover:text-white/60 uppercase tracking-[0.12em] transition-colors duration-300 flex items-center gap-1.5"
+              className="group font-body text-[12px] text-white/40 hover:text-white/60 uppercase tracking-[0.2em] transition-colors duration-300 flex items-center gap-1.5"
             >
               {social.label}
               <svg

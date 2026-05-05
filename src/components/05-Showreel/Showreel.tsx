@@ -13,7 +13,7 @@ export default function Showreel() {
     <section
       ref={ref}
       id="showreel"
-      className="relative w-full py-16 lg:py-20 overflow-hidden bg-primary"
+      className="relative w-full py-10 lg:py-16 overflow-hidden bg-primary"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16">
         {/* Header — left-aligned, editorial */}
@@ -23,7 +23,7 @@ export default function Showreel() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="font-body text-[11px] text-accent uppercase tracking-[0.2em] font-medium mb-3">
+            <p className="font-body text-[12px] text-accent uppercase tracking-[0.2em] font-bold mb-3">
               Showreel
             </p>
             <h2
@@ -38,7 +38,7 @@ export default function Showreel() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="font-body text-[14px] text-white/40 max-w-xs leading-relaxed md:text-right"
+            className="font-body text-[15px] md:text-[17px] text-white/40 max-w-xs leading-relaxed md:text-right"
           >
             A curated selection of creative work — from concept to final delivery.
           </motion.p>
