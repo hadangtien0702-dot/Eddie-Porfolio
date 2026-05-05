@@ -55,7 +55,7 @@ export const services: Service[] = [
       "/images/services/setup-build/IMG_9500.webp",
       "/images/services/setup-build/IMG_9507.webp",
       "/images/services/setup-build/IMG_9510.webp",
-      "/images/services/setup-build/IMG_9513.webp",
+      "/images/services/setup-build/Main.webp",
       "/images/services/setup-build/IMG_9896.webp",
       "/images/services/setup-build/IMG_9897.webp",
       "/images/services/setup-build/IMG_9898.webp",

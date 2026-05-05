@@ -125,7 +125,7 @@ export const setupStory: SetupStoryMoment[] = [
     title: "Live Production",
     description: "Direct application of the newly built environment. Actively recording high-tier content and interviews in the fully optimized studio.",
     images: [
-      "/images/services/setup-build/IMG_9513.webp",
+      "/images/services/setup-build/Main.webp",
     ],
     type: "operation"
   }
