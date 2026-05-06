@@ -34,10 +34,19 @@
 - [x] Refactor "Setup and Build" Gallery thành Interactive Canvas (30+ images).
 - [x] Tối ưu Spacing (Vertical Rhythm) toàn bộ các trang Work con (py-16/py-24).
 
+## ✅ Hoàn Thành (Completed)
+
+### Cinematic & Technical Enhancements (May 05)
+- [x] Chuyển đổi Archive Gallery (Setup & Build) sang Cinematic 3D HUD Space.
+- [x] Tích hợp hiệu ứng 3D Tilt vật lý và vạch quét dữ liệu (Data Scanner).
+- [x] Tối ưu hóa Spacing (Tightening layout) cho toàn bộ trang Setup & Build.
+- [x] Sửa lỗi đồng bộ dữ liệu ảnh (IMG_9513 fallback to Main.webp).
+- [x] Chuẩn hóa hệ thống âm thanh phản hồi UI (UI Audio Feedback).
+
 ## 🚧 Đang Thực Hiện (In Progress)
 - [ ] Tinh chỉnh Showreel video chính thức.
 - [ ] Kiểm tra SEO và Accessibility cuối cùng.
 - [ ] Kiểm tra hiển thị Responsive cho hệ thống Interactive Canvas trên Mobile.
 
 ## 📅 Log Cập Nhật Gần Nhất
-- **2026-05-04**: Tái cấu trúc folder ảnh, nâng cấp UI/UX trang Web Design & Setup Build. Triển khai hệ thống Interactive Canvas cho Portfolio Social Media & Build Process. Tối ưu Spacing toàn project.
+- **2026-05-05**: Nâng cấp giao diện Archive trang Setup and Build sang 3D HUD Space. Tối ưu hóa Spacing và nhịp điệu hiển thị toàn bộ trang Case Study. Fix lỗi render lightbox và đồng bộ asset ảnh.

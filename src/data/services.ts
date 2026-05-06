@@ -93,7 +93,7 @@ export const services: Service[] = [
     tag: "Post-Production",
     description:
       "Showcasing the highest-performing and most creative videos cut, edited, and published during my time at ThinkSmart Insurance.",
-    image: "/images/03-Services/video-strategy.jpg",
+    image: "/images/04-Services/video-strategy.jpg",
     links: [
       { label: "Watch Best Videos", url: "/work/video-editor" }
     ]
@@ -104,7 +104,7 @@ export const services: Service[] = [
     tag: "Innovation",
     description:
       "Applied generative AI models to scale production. Leveraged UGC A.I, Heygen, and ElevenLabs to create automated, high-quality published products.",
-    image: "/images/03-Services/performance-ads.jpg",
+    image: "/images/04-Services/performance-ads.jpg",
     links: [
       { label: "View A.I Works", url: "/work/ai-applications" },
     ],

@@ -12,26 +12,30 @@ export interface SetupHighlight {
   label: string;
   value: string;
   description: string;
+  icon?: "Maximize" | "Layers" | "Gauge";
 }
 
 export const setupHighlights: SetupHighlight[] = [
   {
     label: "Studio Space",
-    value: "Full Build",
+    value: "End-to-End Build",
+    icon: "Maximize",
     description:
-      "Converted raw space into a professional production studio with acoustic treatment, lighting rigs, and equipment mounting.",
+      "Transforming raw environments into high-tier production studios. From acoustic engineering to lighting infrastructure, optimizing every square inch for professional use.",
   },
   {
     label: "Equipment Scaled",
-    value: "12+ Pieces",
+    value: "Tech Ecosystem",
+    icon: "Layers",
     description:
-      "Camera systems, audio gear, lighting, editing workstations — sourced, configured, and integrated end-to-end.",
+      "Mastering complex equipment chains—from cinema cameras and audio to high-end workstations. Custom-configured and synchronized for seamless operation.",
   },
   {
     label: "Workflow Optimized",
-    value: "3× Faster",
+    value: "High-Efficiency",
+    icon: "Gauge",
     description:
-      "Standardized production pipelines reduced turnaround time by 3× compared to ad-hoc processes.",
+      "Engineering intelligent production pipelines. Reducing turnaround times by 3× while maintaining peak output quality through resource optimization.",
   },
 ];
 

@@ -10,9 +10,11 @@ import {
   gearDetails,
   GearItem,
   supplementaryGallery,
+  SetupHighlight,
 } from "@/data/work-setup-and-build";
 import { FullscreenLightbox } from "@/components/03-CaseStudy/CaseStudyModals";
 import { uiSounds } from "@/utils/ui-sounds";
+import { Maximize, Layers, Gauge, Target, Activity, Cpu } from "lucide-react";
 
 const BackgroundParticles = () => {
   const particles = useMemo(() => Array.from({ length: 40 }).map((_, i) => ({
@@ -200,11 +202,72 @@ const Hotspot = ({ item, active }: { item: GearItem; active: boolean }) => {
   );
 };
 
+const HighlightCard = ({ item, index }: { item: SetupHighlight, index: number }) => {
+  const Icon = {
+    Maximize: Maximize,
+    Layers: Layers,
+    Gauge: Gauge
+  }[item.icon || "Maximize"];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -10 }}
+      className="relative group"
+    >
+      {/* Glow Effect */}
+      <div className="absolute -inset-2 bg-accent/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem]" />
+      
+      <div className="relative h-full bg-white/[0.02] backdrop-blur-3xl border border-white/5 rounded-[2rem] p-10 overflow-hidden transition-all duration-500 group-hover:border-accent/20 group-hover:bg-white/[0.04]">
+        {/* HUD Corner Accents */}
+        <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/10 group-hover:border-accent/40 rounded-tl-[2rem] transition-colors duration-500" />
+        <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-white/10 group-hover:border-accent/40 rounded-tr-[2rem] transition-colors duration-500" />
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-white/10 group-hover:border-accent/40 rounded-bl-[2rem] transition-colors duration-500" />
+        <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/10 group-hover:border-accent/40 rounded-br-[2rem] transition-colors duration-500" />
+
+        {/* Icon & Label */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent group-hover:scale-110 group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-[0_0_20px_rgba(255,64,0,0.1)]">
+            {Icon && <Icon size={22} strokeWidth={2.5} />}
+          </div>
+          <div className="h-[1px] flex-grow bg-white/5 group-hover:bg-accent/20 transition-colors" />
+          <span className="font-mono text-[10px] text-accent font-bold tracking-[0.3em] uppercase">0{index + 1}</span>
+        </div>
+
+        <p className="font-body text-[12px] text-text-muted uppercase tracking-[0.2em] mb-3 group-hover:text-accent transition-colors font-medium">
+          {item.label}
+        </p>
+        
+        <h3 className="font-heading text-[28px] md:text-[38px] font-bold text-white mb-5 tracking-tight group-hover:translate-x-2 transition-transform duration-500 min-h-[2.2em] flex items-center">
+          {item.value}
+        </h3>
+        
+        <p className="font-body text-[14px] text-text-secondary leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity min-h-[4.5em]">
+          {item.description}
+        </p>
+
+        {/* Decorative Status Bar */}
+        <div className="absolute bottom-0 left-10 right-10 h-[2px] bg-white/5 overflow-hidden">
+          <motion.div 
+            initial={{ x: "-100%" }}
+            whileHover={{ x: "100%" }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="w-full h-full bg-gradient-to-r from-transparent via-accent to-transparent"
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 const InteractiveCanvasGallery = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
-    <section className="relative w-full pt-12 pb-32 bg-[#050505] overflow-hidden border-t border-white/5">
+    <section className="relative w-full pt-16 pb-16 bg-[#050505] overflow-hidden border-t border-white/5">
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 mb-12 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -248,7 +311,7 @@ const InteractiveCanvasGallery = () => {
             <div className="flex flex-col">
               <span className="font-mono text-[9px] text-accent font-bold uppercase tracking-[0.2em] mb-1">Navigation Protocol</span>
               <p className="font-body text-[13px] text-white/60 leading-relaxed max-w-[280px]">
-                Khám phá chi tiết quá trình thi công. <strong className="text-white">Kéo thả (Drag)</strong> để di chuyển trong không gian lưu trữ.
+                Explore the detailed construction process. <strong className="text-white">Drag</strong> to navigate through the digital archive space.
               </p>
             </div>
           </motion.div>
@@ -295,7 +358,7 @@ export default function SetupAndBuildPage() {
   return (
     <main className="min-h-screen bg-primary text-text-primary">
       {/* ─── Hero ─── */}
-      <section className="relative w-full min-h-[85vh] flex flex-col justify-end overflow-hidden">
+      <section className="relative w-full min-h-[65vh] flex flex-col justify-end overflow-hidden">
         <div className="absolute inset-0 pointer-events-none z-0">
           <Image 
             src="/images/services/setup-build/Firstroom.webp" 
@@ -306,9 +369,16 @@ export default function SetupAndBuildPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/50 to-transparent" />
+          
+          {/* Tech Scan Line */}
+          <motion.div 
+            animate={{ top: ["0%", "100%"] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className="absolute left-0 right-0 h-[1px] bg-accent/20 z-10 blur-[1px]"
+          />
         </div>
 
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pb-6 pt-24">
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pb-12 pt-32">
           <Link
             href="/#work"
             className="inline-flex items-center gap-2 font-body text-sm text-text-muted hover:text-text-primary transition-colors mb-8"
@@ -344,49 +414,28 @@ export default function SetupAndBuildPage() {
       </section>
 
       {/* ─── Highlights ─── */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-12 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {highlights.map((item, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.12 }}
-              className="rounded-2xl p-8"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-              }}
-            >
-              <p className="font-body text-[11px] text-text-muted uppercase tracking-widest mb-3">
-                {item.label}
-              </p>
-              <p className="font-heading text-[36px] font-bold text-text-primary mb-4 tracking-tight">
-                {item.value}
-              </p>
-              <p className="font-body text-[13px] text-text-secondary leading-relaxed">
-                {item.description}
-              </p>
-            </motion.div>
+            <HighlightCard key={idx} item={item} index={idx} />
           ))}
         </div>
       </section>
 
       {/* ─── Visual Timeline Section ─── */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-8 pb-0">
+      <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-4 pb-20">
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            whileInView={{ opacity: 1, y: 0 }}
            viewport={{ once: true }}
            transition={{ duration: 0.6 }}
-           className="mb-16"
+           className="mb-10"
         >
           <h2 className="font-heading text-[32px] md:text-[56px] font-bold text-text-primary tracking-tight leading-none mb-6">
             The Build Sequence
           </h2>
           <p className="font-body text-[16px] text-text-secondary max-w-xl leading-relaxed opacity-70">
-            A chronological look at làm thế nào một không gian vật lý thô sơ được biến đổi thành một studio sản xuất chuyên nghiệp.
+            A chronological look at how a raw physical space is transformed into a professional-grade production studio.
           </p>
         </motion.div>
 
@@ -525,7 +574,7 @@ export default function SetupAndBuildPage() {
       <InteractiveCanvasGallery />
 
       {/* ─── CTA SECTION ─── */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-32">
+      <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-4 pb-32">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

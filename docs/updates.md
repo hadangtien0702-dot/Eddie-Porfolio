@@ -1,5 +1,27 @@
 # UPDATES LOG — Eddie Portfolio V3
 
+## [2026-05-05] - Cinematic 3D HUD & Spacing Optimization
+
+### Added
+- **Cinematic 3D HUD Space**: Nâng cấp phần Archive trang Setup and Build từ 2D sang không gian 3D tương tác.
+- Hiệu ứng **3D Tilt**, **Scanner Lines**, và **Digital Particles** cho các card ảnh.
+- Hệ thống âm thanh phản hồi UI (`uiSounds.playClick()`) khi tương tác.
+- Instructional HUD Overlay hướng dẫn điều hướng bên trong Canvas.
+
+### Changed
+- **Spacing Optimization**: 
+  - Siết chặt khoảng cách dọc (py/mb) ở Hero, Highlights và Timeline.
+  - Tăng mật độ hình ảnh trong Archive (giãn cách x1.2).
+  - Tách biệt `InteractiveCanvasGallery` thành section độc lập để quản lý layout tốt hơn.
+- **CTA Design**: Nâng cấp block kêu gọi hành động với hiệu ứng Glow và Typography đậm chất cinematic hơn.
+
+### Fixed
+- Lỗi `FullscreenLightbox` bị truyền sai props (`initialIndex` vs `currentIndex`).
+- Lỗi mất ảnh Step 04 (Live Production) do đường dẫn file không tồn tại (đã thay bằng `Main.webp`).
+- Lỗi tiêu đề Archive bị xuống dòng trên màn hình hẹp (đã dùng `whitespace-nowrap`).
+
+---
+
 ## [2026-05-04] - Typography & Image Management Standard
 
 ### Added
