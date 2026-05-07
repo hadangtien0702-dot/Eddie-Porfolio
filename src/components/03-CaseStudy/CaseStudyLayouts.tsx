@@ -224,7 +224,7 @@ export function StorySection({
         {section.visualType === "context" && <ContextCard color={caseColor} />}
         {section.visualType === "context-profile" && <ContextProfileCard color={caseColor} />}
         {section.visualType === "funnel" && <FunnelChart color={caseColor} />}
-        {section.visualType === "cpa-challenge" && <CPAChallengeChart color={caseColor} />}
+        {section.visualType === "cpa-challenge" && <CPAChallengeChart caseColor={caseColor} />}
         {section.visualType === "workflow" && <MyRole />}
         {section.visualType === "revenue" && <RevenueChart color={caseColor} />}
         {section.visualType === "social" && <SocialBars color={caseColor} />}
