@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { TrendingUp, Heart, MessageCircle, Share2, Music, Bookmark, Play, Pause } from "lucide-react";
+import { TrendingUp, Heart, MessageCircle, Share2, Music, Bookmark, Play } from "lucide-react";
 import { VideoPostItem } from "@/data/video-post";
 
 export default function SocialPlayerLayout({ 
@@ -223,7 +223,7 @@ export default function SocialPlayerLayout({
           {/* Description */}
           <div className="pt-4">
               <p className="font-sans text-[14px] text-white/60 leading-relaxed italic border-l-2 border-accent/40 pl-4 hover:border-accent hover:text-white/90 hover:bg-white/5 p-3 -ml-3 rounded-r-xl transition-all duration-300 cursor-default">
-                "{selectedVideo.description}"
+                &quot;{selectedVideo.description}&quot;
               </p>
           </div>
         </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { viralVideos, ViralItem } from "@/data/viral-content";
 import { TrendingUp } from "lucide-react";

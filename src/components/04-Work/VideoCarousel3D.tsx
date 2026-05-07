@@ -4,13 +4,11 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import Image from "next/image";
 import { videoPosts, VideoPostItem } from "@/data/video-post";
-import { X, Play, ChevronLeft, ChevronRight, TrendingUp, Users, Calendar, Clock } from "lucide-react";
-import ViralWall from "./ViralWall";
+import { X, Play, ChevronLeft, ChevronRight, TrendingUp, Clock } from "lucide-react";
 import SocialPlayerLayout from "./SocialPlayerLayout";
 import AdsPlayerLayout from "./AdsPlayerLayout";
 import SocialGrid from "./SocialGrid";
 
-const CARD_W = 260;
 const CARD_H = 360;
 const OFFSET_X = 290;
 
@@ -36,10 +34,7 @@ export default function VideoCarousel3D({
   const total = filteredVideos.length;
   const currentVideo = filteredVideos[activeIndex];
 
-  // Reset index when category changes
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [activeCategory]);
+
 
   // ─── Auto-rotate every 5s ───
   const resetAutoPlay = useCallback(() => {
@@ -150,7 +145,7 @@ export default function VideoCarousel3D({
               {(["Ads Performance", "Social Content"] as const).map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => { setActiveCategory(cat); setActiveIndex(0); }}
                   className={`px-6 py-2 rounded-full font-body text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
                     activeCategory === cat ? "bg-white text-black shadow-lg" : "text-white/40 hover:text-white"
                   }`}
@@ -174,7 +169,7 @@ export default function VideoCarousel3D({
               {(["Ads Performance", "Social Content"] as const).map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => { setActiveCategory(cat); setActiveIndex(0); }}
                   className={`flex-1 py-2 rounded-full font-body text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${
                     activeCategory === cat ? "bg-white text-black" : "text-white/40"
                   }`}
