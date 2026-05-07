@@ -44,9 +44,9 @@ export default function ViralWall() {
   const row2 = [...viralVideos.slice().reverse(), ...viralVideos.slice().reverse(), ...viralVideos.slice().reverse()];
 
   return (
-    <section className="py-32 bg-[#050505] overflow-hidden border-t border-white/5 relative">
+    <section className="pt-24 pb-32 overflow-hidden border-t border-white/5 relative z-10">
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-accent/10 blur-[150px] rounded-full pointer-events-none mix-blend-screen" />
 
       <div className="container mx-auto px-6 mb-16 relative z-10">
         <div className="flex flex-col items-center text-center gap-4">

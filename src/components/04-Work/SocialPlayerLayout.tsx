@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import { TrendingUp, Heart, MessageCircle, Share2, Music, Bookmark } from "lucide-react";
+import { useState, useRef } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { TrendingUp, Heart, MessageCircle, Share2, Music, Bookmark, Play, Pause } from "lucide-react";
 import { VideoPostItem } from "@/data/video-post";
 
 export default function SocialPlayerLayout({ 
@@ -12,25 +13,109 @@ export default function SocialPlayerLayout({
   // Kiểm tra xem user có truyền link MP4 trực tiếp không
   const isNativeVideo = selectedVideo.fullVideoUrl?.toLowerCase().includes('.mp4');
 
+  // --- Play/Pause State ---
+  const [isPlaying, setIsPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const ambilightRef = useRef<HTMLVideoElement>(null);
+
+  const togglePlay = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        if (ambilightRef.current) ambilightRef.current.pause();
+      } else {
+        videoRef.current.play();
+        if (ambilightRef.current) ambilightRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  // --- 3D Hover State ---
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / rect.width - 0.5);
+    y.set(mouseY / rect.height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
   // Tách riêng phần Hashtag ra khỏi Title để style cho đẹp
   const titleParts = selectedVideo.title.split(/(#.*)/);
   const mainTitle = titleParts[0];
   const hashtags = titleParts[1] || "";
 
   return (
-    <motion.div 
-      initial={{ scale: 0.95, opacity: 0, y: 20 }}
-      animate={{ scale: 1, opacity: 1, y: 0 }}
-      exit={{ scale: 0.95, opacity: 0, y: 20 }}
-      className="relative w-full max-w-6xl mx-auto flex flex-col lg:flex-row bg-[#050505]/70 backdrop-blur-3xl border border-white/10 rounded-[48px] shadow-[0_0_100px_rgba(0,0,0,0.7)] overflow-hidden"
-    >
+    <div className="relative w-full max-w-6xl mx-auto">
+      {/* PHILIPS HUE AMBILIGHT BACKGROUND */}
+      {isNativeVideo && (
+        <div className={`absolute inset-[-100px] -z-10 pointer-events-none blur-[100px] saturate-[2.5] mix-blend-screen transition-opacity duration-1000 ${isPlaying ? 'opacity-40' : 'opacity-10'}`}>
+          <video 
+            ref={ambilightRef}
+            src={selectedVideo.fullVideoUrl}
+            className="w-full h-full object-cover rounded-[100px]"
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+          />
+        </div>
+      )}
+
+      <motion.div 
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="relative w-full h-full flex flex-col lg:flex-row bg-[#050505]/70 backdrop-blur-3xl border border-white/10 rounded-[48px] shadow-[0_0_100px_rgba(0,0,0,0.7)] overflow-hidden group/modal"
+      >
+      {/* Animated Glowing Border Sweep (Linked to Video Play State) */}
+      <div 
+        className={`absolute inset-0 rounded-[48px] pointer-events-none z-50 p-[2px] transition-opacity duration-1000 ${isPlaying ? 'opacity-100' : 'opacity-0'}`}
+        style={{
+          mask: "linear-gradient(#fff, #fff) content-box, linear-gradient(#fff, #fff)",
+          WebkitMask: "linear-gradient(#fff, #fff) content-box, linear-gradient(#fff, #fff)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
+        }}
+      >
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg_at_50%_50%,transparent_0%,transparent_80%,#ff4000_100%)] animate-spin" 
+          style={{ animationDuration: '15s' }}
+        />
+      </div>
+
       {/* 1. CREATIVE DYNAMIC BACKGROUND (Card scoped) */}
-      <div className="absolute inset-0 -z-10 flex items-center justify-center opacity-30 pointer-events-none">
-        <div className="w-[100%] h-[100%] rounded-full bg-accent/20 blur-[150px] mix-blend-screen" />
-        {selectedVideo.thumbnailUrl && (
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        {/* Lớp nền Socials Wall */}
+        <div className="absolute inset-0 flex opacity-[0.15] blur-[40px] scale-110 saturate-50 pointer-events-none">
+            <div className="w-1/3 h-full bg-cover bg-center" style={{ backgroundImage: "url('/images/04-Work/Socials/Wall1.jpg')" }} />
+            <div className="w-1/3 h-full bg-cover bg-center" style={{ backgroundImage: "url('/images/04-Work/Socials/Wall2.jpg')" }} />
+            <div className="w-1/3 h-full bg-cover bg-center" style={{ backgroundImage: "url('/images/04-Work/Socials/Wall3.jpg')" }} />
+        </div>
+        {/* Gradient làm dịu */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 via-[#050505]/80 to-[#050505]" />
+        
+        <div className="absolute inset-0 w-[100%] h-[100%] rounded-full bg-accent/20 blur-[150px] mix-blend-screen" />
+        
+        {selectedVideo.thumbnail && (
           <div 
-            className="absolute inset-0 blur-[100px] opacity-20 scale-110 bg-cover bg-center"
-            style={{ backgroundImage: `url(${selectedVideo.thumbnailUrl})` }}
+            className="absolute inset-0 blur-[100px] opacity-10 scale-110 bg-cover bg-center"
+            style={{ backgroundImage: `url(${selectedVideo.thumbnail})` }}
           />
         )}
       </div>
@@ -154,40 +239,56 @@ export default function SocialPlayerLayout({
       </div>
 
       {/* 3. RIGHT PANE: PREMIUM SHOWCASE */}
-      <div className="w-full lg:w-[55%] relative flex flex-col items-center justify-center p-10 lg:p-14 bg-gradient-to-bl from-white/[0.02] to-transparent">
-        {/* The Phone (Phóng to max-w-[420px] để phone to và dài bằng khung) */}
-        <div className="relative w-full max-w-[420px] aspect-[9/16] rounded-[52px] shadow-[0_0_120px_rgba(255,64,0,0.15)] ring-[14px] ring-[#030303] bg-black flex items-center justify-center group pointer-events-auto">
+      <div className="w-full lg:w-[55%] relative flex flex-col items-center justify-center p-6 lg:p-10 bg-gradient-to-bl from-white/[0.02] to-transparent h-full">
+        {/* The Phone (Scale by height to ensure it looks tall and premium while keeping 9:16) */}
+        <div style={{ perspective: "1500px" }} className="relative h-[80vh] max-h-[850px] w-auto aspect-[9/16] shrink-0">
+          <motion.div 
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+            className="absolute inset-0 rounded-[42px] shadow-[0_0_120px_rgba(255,64,0,0.15)] ring-[10px] ring-[#030303] bg-black flex items-center justify-center group pointer-events-auto cursor-pointer"
+            onClick={togglePlay}
+          >
           {/* Titanium Edge Highlight */}
-          <div className="absolute inset-0 rounded-[52px] ring-1 ring-white/10 pointer-events-none z-30" />
+          <div className="absolute inset-0 rounded-[42px] ring-1 ring-white/10 pointer-events-none z-30" />
           
           {/* Glass Screen Glare */}
           <div className="absolute top-0 left-[-100%] w-[200%] h-[200%] bg-gradient-to-br from-white/10 via-transparent to-transparent rotate-45 pointer-events-none z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
-          {/* Dynamic Island (Pro Version - Tăng kích thước nhẹ cho cân đối) */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-40 flex items-center justify-between px-3 shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)] pointer-events-none">
-              <div className="w-16 h-2 bg-[#1a1a1a] rounded-full shadow-[inset_0_1px_1px_rgba(0,0,0,0.5)]" />
-              <div className="relative w-4 h-4 rounded-full bg-[#0a0a2a] shadow-[0_0_4px_rgba(255,255,255,0.1)] flex items-center justify-center">
-                <div className="w-1.5 h-1.5 bg-blue-500/40 rounded-full blur-[1px]" />
+          {/* Dynamic Island */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[100px] h-[28px] bg-black rounded-full z-40 flex items-center justify-between px-3 shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)] pointer-events-none">
+              <div className="w-12 h-2 bg-[#1a1a1a] rounded-full shadow-[inset_0_1px_1px_rgba(0,0,0,0.5)]" />
+              <div className="relative w-3.5 h-3.5 rounded-full bg-[#0a0a2a] shadow-[0_0_4px_rgba(255,255,255,0.1)] flex items-center justify-center">
+                <div className="w-1 h-1 bg-blue-500/40 rounded-full blur-[1px]" />
                 <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-1 left-1" />
               </div>
           </div>
           
           {/* Screen Content */}
-          <div className="absolute inset-0 rounded-[42px] overflow-hidden bg-[#050505] z-10 flex items-center justify-center">
+          <div className="absolute inset-0 rounded-[32px] overflow-hidden bg-[#050505] z-10 flex items-center justify-center">
             {isNativeVideo ? (
               <div className="relative w-full h-full text-white font-sans">
                 {/* NATIVE MP4 PLAYER */}
                 <video 
+                  ref={videoRef}
                   src={selectedVideo.fullVideoUrl}
                   className="absolute inset-0 w-full h-full object-cover"
                   autoPlay 
                   loop 
-                  muted 
                   playsInline
                 />
                 
+                {/* Play/Pause Center Indicator */}
+                {!isPlaying && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+                    <div className="w-16 h-16 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white/90 border border-white/20">
+                      <Play fill="currentColor" size={28} className="ml-1" />
+                    </div>
+                  </div>
+                )}
+                
                 {/* Dark Gradient Overlay for Text Visibility */}
-                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none z-10" />
 
                 {/* Toàn bộ không gian được giải phóng cho Video */}
 
@@ -220,8 +321,10 @@ export default function SocialPlayerLayout({
               </div>
             )}
           </div>
+          </motion.div>
         </div>
       </div>
     </motion.div>
+    </div>
   );
 }

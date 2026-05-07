@@ -8,6 +8,7 @@ import { X, Play, ChevronLeft, ChevronRight, TrendingUp, Users, Calendar, Clock 
 import ViralWall from "./ViralWall";
 import SocialPlayerLayout from "./SocialPlayerLayout";
 import AdsPlayerLayout from "./AdsPlayerLayout";
+import SocialGrid from "./SocialGrid";
 
 const CARD_W = 260;
 const CARD_H = 360;
@@ -102,12 +103,39 @@ export default function VideoCarousel3D({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-[100] bg-[#050505] flex flex-col overflow-y-auto scrollbar-hide"
+          className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#050505]"
+          data-lenis-prevent="true"
         >
-          {/* Ambient Glow */}
-          <div className="absolute inset-0 pointer-events-none opacity-20">
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent blur-[150px] rounded-full" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent blur-[150px] rounded-full" />
+          {/* Global Fixed Background Layer */}
+          <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+            {/* Base Background */}
+            <div className="absolute inset-0 bg-[#050505]" />
+            
+            {/* Ambient Glow */}
+            <div className="absolute inset-0 opacity-20 mix-blend-screen">
+              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent blur-[150px] rounded-full" />
+              <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent blur-[150px] rounded-full" />
+            </div>
+
+            {/* Social Wall Dynamic Background */}
+            <AnimatePresence>
+              {activeCategory === "Social Content" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 0.25, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.05 }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
+                  className="absolute inset-0 flex blur-[20px] saturate-50"
+                >
+                  <div className="w-1/3 h-[120%] -mt-[10%] bg-cover bg-center" style={{ backgroundImage: "url('/images/04-Work/Socials/Wall1.jpg')" }} />
+                  <div className="w-1/3 h-[120%] mt-[5%] bg-cover bg-center" style={{ backgroundImage: "url('/images/04-Work/Socials/Wall2.jpg')" }} />
+                  <div className="w-1/3 h-[120%] -mt-[5%] bg-cover bg-center" style={{ backgroundImage: "url('/images/04-Work/Socials/Wall3.jpg')" }} />
+                  {/* Radial fade so center is clean, edges show images */}
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#050505_90%)]" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Header */}
@@ -157,7 +185,9 @@ export default function VideoCarousel3D({
             </div>
           </div>
 
-          {/* Main Carousel Area */}
+          {activeCategory === "Ads Performance" ? (
+            <>
+              {/* Main Carousel Area */}
           <div className="relative flex-1 flex flex-col items-center justify-center pt-4" style={{ perspective: "1200px" }}>
             <motion.div
               className="absolute inset-0 z-0 cursor-grab active:cursor-grabbing"
@@ -241,7 +271,7 @@ export default function VideoCarousel3D({
           </div>
 
           {/* Detailed Info Panel */}
-          <div className="relative z-30 w-full bg-gradient-to-t from-black to-transparent pt-10 pb-12 px-8 md:px-16">
+          <div className="relative z-30 w-full pt-10 pb-12 px-8 md:px-16 border-t border-white/5 bg-[#050505]/40 backdrop-blur-md">
             <motion.div 
               key={activeIndex + activeCategory}
               initial={{ opacity: 0, y: 20 }}
@@ -293,16 +323,9 @@ export default function VideoCarousel3D({
             </motion.div>
           </div>
 
-          {/* Render ViralWall specifically for Social Content */}
-          {activeCategory === "Social Content" && (
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="mt-12"
-            >
-              <ViralWall />
-            </motion.div>
+            </>
+          ) : (
+            <SocialGrid videos={filteredVideos} onSelectVideo={setSelectedVideo} />
           )}
 
           {/* Full Video Modal Player (Enhanced Split View) */}
