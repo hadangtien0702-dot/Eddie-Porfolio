@@ -43,10 +43,17 @@
 - [x] Sửa lỗi đồng bộ dữ liệu ảnh (IMG_9513 fallback to Main.webp).
 - [x] Chuẩn hóa hệ thống âm thanh phản hồi UI (UI Audio Feedback).
 
+### Viral Performance & Social Showcase (May 07)
+- [x] Xây dựng "Native MP4 Player" cao cấp với hiệu ứng Philips Hue Ambilight.
+- [x] Tích hợp 3D Interaction cho iPhone Mockup (Tilt, Dynamic Island).
+- [x] Đồng bộ hóa Border Sweep Radar với trạng thái Play/Pause của video.
+- [x] Tự động hóa Thumbnail generation và import 17 video thực tế.
+- [x] Nâng cấp Social Grid sang Masonry chuẩn Premium với 3D lift & stats reveal.
+
 ## 🚧 Đang Thực Hiện (In Progress)
 - [ ] Tinh chỉnh Showreel video chính thức.
 - [ ] Kiểm tra SEO và Accessibility cuối cùng.
 - [ ] Kiểm tra hiển thị Responsive cho hệ thống Interactive Canvas trên Mobile.
 
 ## 📅 Log Cập Nhật Gần Nhất
-- **2026-05-05**: Nâng cấp giao diện Archive trang Setup and Build sang 3D HUD Space. Tối ưu hóa Spacing và nhịp điệu hiển thị toàn bộ trang Case Study. Fix lỗi render lightbox và đồng bộ asset ảnh.
+- **2026-05-07**: Hoàn thiện Viral Performance Showcase với hệ thống Native Player, hiệu ứng Ambilight và Grid Masonry cao cấp. Tự động hóa asset video/thumbnail cho 17 mục nội dung thực tế.

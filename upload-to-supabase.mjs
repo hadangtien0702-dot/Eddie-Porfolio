@@ -5,7 +5,7 @@ import path from 'path';
 const SUPABASE_URL = 'https://yfftfzmqpubjmehvxfdw.supabase.co';
 const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmZnRmem1xcHViam1laHZ4ZmR3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTk5NTY2NCwiZXhwIjoyMDkxNTcxNjY0fQ.AoaOy4sapHuX3j3TbaXZBdM-dFZYg5OZhlqo4B7zSBE';
 const BUCKET = 'Porfolio';
-const LOCAL_BASE = 'g:/2026/Porto/V31.0/V3/public/images';
+const LOCAL_BASE = 'g:/2026/Porto/V3.2/V3/public/images';
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 

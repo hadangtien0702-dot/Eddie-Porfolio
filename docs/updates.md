@@ -1,4 +1,28 @@
 # UPDATES LOG — Eddie Portfolio V3
+2: 
+3: ## [2026-05-07] - Cinematic Social Showcase & Ambilight Integration
+4: 
+5: ### Added
+6: - **Cinematic Social Showcase**: Nâng cấp toàn diện phần "Viral Performance" với giao diện Mobile Mockup cao cấp.
+7: - **Philips Hue Ambilight**: Hiệu ứng hắt sáng môi trường theo màu sắc video, đồng bộ với trạng thái phát/tạm dừng.
+8: - **3D Interaction**: Tích hợp hiệu ứng 3D Perspective Tilt (nghiêng theo chuột) và Dynamic Island cho iPhone Mockup.
+9: - **Border Sweep Radar**: Hiệu ứng viền sáng chạy quanh Box, đồng bộ với tiến trình phát video (tốc độ chậm 15s/vòng).
+10: - **Automated Assets**: Import 17 video thực tế, tự động tạo Thumbnail bằng FFmpeg và gán nhãn `#creative` (màu tím) phân biệt với nhóm Performance (màu cam).
+11: 
+12: ### Changed
+13: - **Premium Social Grid**: 
+14:   - Nâng cấp Grid Masonry với hiệu ứng hover nâng card 3D và phủ lớp Noise Cinematic.
+15:   - Thêm bảng Glassmorphism Stats (Likes, Shares) tự động trượt ra khi hover vào card.
+16:   - Thêm thanh Progress Bar giả lập và nút "PLAY REEL" dạng pill hiện đại.
+17: - **Audio Sync**: Mặc định bật tiếng (unmute) cho video chính khi mở Player nhưng vẫn giữ Auto-play.
+18: 
+19: ### Fixed
+20: - Lỗi CSS Mask không cắt được viền (Border-sweep bị xuyên thấu) trên một số trình duyệt.
+21: - Lỗi không đồng bộ Play/Pause giữa video chính và video Ambilight nền.
+22: 
+23: ---
+24: 
+
 
 ## [2026-05-05] - Cinematic 3D HUD & Spacing Optimization
 
