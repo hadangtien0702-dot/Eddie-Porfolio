@@ -6,11 +6,8 @@ import {
   BrainCircuit, 
   Cpu, 
   Workflow, 
-  Share2, 
   Zap, 
   Bot, 
-  Microchip, 
-  MessageSquare,
   ChevronRight,
   Sparkles,
   Palette
@@ -197,7 +194,7 @@ export default function AIWorkflowDashboard() {
                 </div>
 
                 <p className="font-body text-white/80 leading-relaxed mb-10 text-lg italic">
-                  \"{currentStep.description}\"
+                  &quot;{currentStep.description}&quot;
                 </p>
 
                 <div className="space-y-8">
