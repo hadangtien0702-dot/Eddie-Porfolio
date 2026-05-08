@@ -115,8 +115,8 @@ export default function SocialGrid({
                        </div>
                      ) : video.stats.views ? (
                        <div className="bg-accent text-white px-3 py-1.5 rounded-full flex items-center gap-2 shadow-[0_0_20px_rgba(255,64,0,0.4)]">
-                         <TrendingUp size={12} strokeWidth={3} />
-                         <span className="text-xs font-black tracking-tight">{video.stats.views}</span>
+                         <TrendingUp size={14} strokeWidth={3} />
+                         <span className="text-[13px] font-black tracking-tight leading-none">{video.stats.views}</span>
                        </div>
                      ) : null}
                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/60 truncate max-w-[120px] bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/5">{video.brand}</span>

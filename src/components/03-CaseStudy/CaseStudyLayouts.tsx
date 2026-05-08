@@ -15,8 +15,7 @@ import {
   ProductLineShowcase, 
   StackedScrollingGallery, 
   HorizontalFilmstrip, 
-  ZAxisTunnelGallery,
-  CreativeGallery
+  ZAxisTunnelGallery
 } from "./CaseStudyGalleries";
 import { 
   ContextCard, 
@@ -316,9 +315,9 @@ export function ThinksmartStory({
 
   // Update Lenis when content changes
   useEffect(() => {
-    // @ts-ignore
+    // @ts-expect-error: window.lenis might not be typed globally
     if (window.lenis && typeof window.lenis.update === 'function') {
-      // @ts-ignore
+      // @ts-expect-error: window.lenis might not be typed globally
       window.lenis.update();
     }
     // Scroll to top on enter
@@ -392,9 +391,9 @@ export function ThinksmartStory({
                     onClick={() => {
                       const el = document.getElementById(s.id);
                       if (el) {
-                        // @ts-ignore
+                        // @ts-expect-error: window.lenis might not be typed globally
                         if (window.lenis && typeof window.lenis.scrollTo === 'function') {
-                          // @ts-ignore
+                          // @ts-expect-error: window.lenis might not be typed globally
                           window.lenis.scrollTo(el, { offset: -120, duration: 1.5 });
                         } else {
                           el.scrollIntoView({ behavior: "smooth" });

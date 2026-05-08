@@ -104,9 +104,9 @@ export const services: Service[] = [
     tag: "Innovation",
     description:
       "Applied generative AI models to scale production. Leveraged UGC A.I, Heygen, and ElevenLabs to create automated, high-quality published products.",
-    image: "/images/04-Services/performance-ads.jpg",
+    image: "/images/05-AI/ai_dashboard_card.png",
     links: [
-      { label: "View A.I Works", url: "/work/ai-applications" },
+      { label: "View A.I Works", url: "/ai" },
     ],
   },
 ];

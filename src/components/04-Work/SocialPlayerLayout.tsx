@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { TrendingUp, Heart, MessageCircle, Share2, Music, Bookmark, Play } from "lucide-react";
+import { TrendingUp, Heart, MessageCircle, Share2, Music, Bookmark, Play, Sparkles, Layers, Zap, Palette } from "lucide-react";
 import { VideoPostItem } from "@/data/video-post";
 
 export default function SocialPlayerLayout({ 
@@ -10,7 +10,8 @@ export default function SocialPlayerLayout({
   selectedVideo: VideoPostItem; 
   getEmbedUrl: (url?: string) => string; 
 }) {
-  // Kiểm tra xem user có truyền link MP4 trực tiếp không
+  // --- Category Logic ---
+  const isCreative = selectedVideo.badge === "#creative";
   const isNativeVideo = selectedVideo.fullVideoUrl?.toLowerCase().includes('.mp4');
 
   // --- Play/Pause State ---
@@ -129,7 +130,7 @@ export default function SocialPlayerLayout({
         <div className="mb-10 group">
             <div className="flex items-center gap-3 mb-4">
               <span className="px-3 py-1 rounded-full bg-accent/20 border border-accent/30 font-mono text-[9px] text-accent uppercase tracking-widest shadow-[0_0_15px_rgba(255,64,0,0.1)] hover:bg-accent/40 hover:shadow-[0_0_20px_rgba(255,64,0,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer">
-                Viral Performance
+                {isCreative ? "Creative Showcase" : "Viral Performance"}
               </span>
             </div>
             <h3 className="font-sans font-black tracking-tight drop-shadow-xl leading-[1.2]">
@@ -148,52 +149,194 @@ export default function SocialPlayerLayout({
         <div className="h-px w-full bg-gradient-to-r from-white/10 to-transparent mb-10" />
 
         <div className="space-y-10 flex-grow">
-          {/* Main Stats Area: Views + 4 Interactions */}
-          <div className="flex flex-col xl:flex-row xl:items-center gap-8">
-            {/* Massive Views */}
-            <div className="flex flex-col gap-2 min-w-[140px] group cursor-default">
-              <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest flex items-center gap-2 group-hover:text-accent/80 transition-colors duration-300">
-                <TrendingUp size={14} className="text-accent group-hover:animate-pulse" />
-                Total Views
-              </span>
-              <span className="font-sans text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 tracking-tighter drop-shadow-md group-hover:scale-105 origin-left transition-transform duration-500">
-                {selectedVideo.stats.views}
-              </span>
-            </div>
+          {/* Main Info Area: Views (for Performance) or Craft (for Creative) */}
+          <div className="flex flex-col gap-10">
+            {isCreative ? (
+              /* --- CREATIVE CRAFT VIEW (Removed Header) --- */
+              null
+            ) : (
+              /* --- PERFORMANCE DATA VIEW --- */
+              <div className="flex flex-col gap-2 group cursor-default">
+                <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest flex items-center gap-2 group-hover:text-accent/80 transition-colors duration-300">
+                  <TrendingUp size={14} className="text-accent group-hover:animate-pulse" />
+                  Total Views
+                </span>
+                <span className="font-sans text-7xl md:text-8xl lg:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 tracking-tighter drop-shadow-md group-hover:scale-105 origin-left transition-transform duration-500 whitespace-nowrap">
+                  {selectedVideo.stats.views}
+                </span>
+              </div>
+            )}
 
-            {/* Interaction 2x2 Grid */}
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6 border-l border-white/10 pl-8">
-               <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
-                 <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
-                   <Heart size={14} className="text-accent fill-accent/20 group-hover:fill-accent group-hover:scale-125 transition-all duration-300" />
-                   <span className="font-mono text-[9px] uppercase tracking-widest">Likes</span>
-                 </div>
-                 <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.likes || "-"}</span>
-               </div>
-               
-               <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
-                 <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
-                   <MessageCircle size={14} className="text-accent fill-accent/20 group-hover:fill-accent group-hover:scale-125 transition-all duration-300" />
-                   <span className="font-mono text-[9px] uppercase tracking-widest">Comments</span>
-                 </div>
-                 <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.comments || "-"}</span>
-               </div>
+            {/* Right Side: Stats Grid (Performance) or Tech Specs (Creative) */}
+            <div className="flex-grow">
+               {isCreative ? (
+                 /* --- TECH SPECS FOR CREATIVE --- */
+                 <motion.div 
+                    key={`creative-grid-${selectedVideo.id}`}
+                    initial="hidden"
+                    animate="show"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+                    }}
+                    className="grid grid-cols-2 gap-x-12 gap-y-8"
+                 >
+                    {/* 1. COLOR GRADING (Vector Scope) */}
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } } }} className="flex items-center gap-4 group/item cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                      <div className="relative w-14 h-14 rounded-full border border-white/10 bg-black/50 flex items-center justify-center overflow-hidden shrink-0 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
+                         <div className="absolute inset-0 flex items-center justify-center"><div className="w-full h-[1px] bg-white/10"/><div className="absolute h-full w-[1px] bg-white/10"/></div>
+                         <div className="absolute w-full h-full mix-blend-screen opacity-80 group-hover/item:scale-125 transition-transform duration-700 animate-[spin_8s_linear_infinite]">
+                            <div className="absolute w-6 h-6 bg-red-500 rounded-full blur-[6px] top-1 left-1 animate-pulse" style={{ animationDuration: '2s' }} />
+                            <div className="absolute w-5 h-5 bg-cyan-500 rounded-full blur-[5px] bottom-1 left-5 animate-pulse" style={{ animationDuration: '3s' }} />
+                            <div className="absolute w-4 h-4 bg-yellow-400 rounded-full blur-[5px] top-4 right-1 animate-pulse" style={{ animationDuration: '4s' }} />
+                         </div>
+                         <div className="absolute w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_5px_rgba(255,255,255,1)] z-10" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-0.5 group-hover/item:text-accent/80 transition-colors">Visual Tone</span>
+                        <span className="font-sans text-base font-bold text-white/90 group-hover/item:text-white transition-colors">Color Grading</span>
+                      </div>
+                    </motion.div>
 
-               <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
-                 <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
-                   <Bookmark size={14} className="text-accent fill-accent/20 group-hover:fill-accent group-hover:scale-125 transition-all duration-300" />
-                   <span className="font-mono text-[9px] uppercase tracking-widest">Saves</span>
-                 </div>
-                 <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.saves || "-"}</span>
-               </div>
+                    {/* 2. SPEED RAMPING (Velocity Curve) */}
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } } }} className="flex items-center gap-4 group/item cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                      <div className="relative w-14 h-14 rounded-xl border border-white/10 bg-black/50 flex items-center justify-center overflow-hidden shrink-0">
+                        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:5px_5px]" />
+                        <svg viewBox="0 0 40 40" className="w-full h-full p-1 opacity-80 group-hover/item:stroke-accent transition-colors duration-500 relative z-10">
+                          <path id="speed-path" d="M 0 30 C 15 30, 15 10, 20 10 C 25 10, 25 30, 40 30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-white/80 drop-shadow-[0_0_3px_rgba(255,255,255,0.5)]" />
+                          <circle r="2.5" fill="#ff4000" className="drop-shadow-[0_0_5px_rgba(255,64,0,1)]">
+                             <animateMotion dur="2.5s" repeatCount="indefinite" path="M 0 30 C 15 30, 15 10, 20 10 C 25 10, 25 30, 40 30" />
+                          </circle>
+                        </svg>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-0.5 group-hover/item:text-accent/80 transition-colors">Motion Flow</span>
+                        <span className="font-sans text-base font-bold text-white/90 group-hover/item:text-white transition-colors">Speed Ramping</span>
+                      </div>
+                    </motion.div>
 
-               <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
-                 <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
-                   <Share2 size={14} className="text-accent group-hover:scale-125 transition-all duration-300" />
-                   <span className="font-mono text-[9px] uppercase tracking-widest">Shares</span>
+                    {/* 3. VFX & COMPOSITING (3D Layers) */}
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } } }} className="flex items-center gap-4 group/item cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                      <div className="relative w-14 h-14 rounded-xl border border-white/10 bg-black/50 flex items-center justify-center shrink-0 [perspective:200px]">
+                        <div className="absolute w-7 h-7 border border-white/20 bg-white/5 rounded-[4px] transform -rotate-x-12 rotate-y-12 -translate-z-4 translate-y-1.5 animate-[pulse_3s_ease-in-out_infinite] group-hover/item:!translate-y-2.5 group-hover/item:!-translate-x-1.5 transition-transform duration-500" />
+                        <div className="absolute w-7 h-7 border border-white/40 bg-white/10 rounded-[4px] transform -rotate-x-12 rotate-y-12 translate-z-0 group-hover/item:border-accent/80 group-hover/item:bg-accent/20 transition-all duration-500 z-10" />
+                        <div className="absolute w-7 h-7 border border-white/60 bg-white/20 rounded-[4px] transform -rotate-x-12 rotate-y-12 translate-z-4 -translate-y-1.5 animate-[pulse_4s_ease-in-out_infinite] group-hover/item:!-translate-y-2.5 group-hover/item:!translate-x-1.5 transition-transform duration-500 z-20" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-0.5 group-hover/item:text-accent/80 transition-colors">Compositing</span>
+                        <span className="font-sans text-base font-bold text-white/90 group-hover/item:text-white transition-colors">VFX Layers</span>
+                      </div>
+                    </motion.div>
+
+                    {/* 4. SOUND DESIGN (Dynamic Waveform) */}
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } } }} className="flex items-center gap-4 group/item cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                      <div className="relative w-14 h-14 rounded-xl border border-white/10 bg-black/50 flex items-center justify-center shrink-0 gap-[2px] px-1">
+                        {[4, 10, 16, 6, 22, 12, 18, 8, 14, 4].map((h, i) => (
+                           <div key={i} className="w-[3px] rounded-full bg-white/40 group-hover/item:bg-accent transition-colors duration-300" style={{ height: `${h}px`, animation: `pulse-wave ${1 + (i % 3) * 0.2}s infinite ease-in-out ${i * 0.15}s` }} />
+                        ))}
+                      </div>
+                      <style dangerouslySetInnerHTML={{__html: `
+                        @keyframes pulse-wave {
+                          0%, 100% { transform: scaleY(1); }
+                          50% { transform: scaleY(1.8); }
+                        }
+                        @keyframes flow-noise { to { stroke-dashoffset: -12; } }
+                      `}} />
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-0.5 group-hover/item:text-accent/80 transition-colors">Immersive</span>
+                        <span className="font-sans text-base font-bold text-white/90 group-hover/item:text-white transition-colors">Sound Design</span>
+                      </div>
+                    </motion.div>
+
+                    {/* 5. VOICE ENHANCE (Audio Cleanup) */}
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } } }} className="flex items-center gap-4 group/item cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                      <div className="relative w-14 h-14 rounded-xl border border-white/10 bg-black/50 flex items-center justify-center overflow-hidden shrink-0">
+                         {/* Flowing Noisy Waveform (Default) */}
+                         <div className="absolute inset-0 flex items-center justify-center opacity-60 group-hover/item:opacity-0 transition-opacity duration-500">
+                           <svg viewBox="0 0 40 40" className="w-full h-full p-2">
+                             <path d="M 0 20 L 5 10 L 10 30 L 15 15 L 20 25 L 25 10 L 30 20 L 35 15 L 40 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/60" strokeDasharray="3 3" style={{ animation: 'flow-noise 0.5s linear infinite' }} />
+                           </svg>
+                         </div>
+                         {/* Clean Line (On Hover) */}
+                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity duration-500">
+                           <svg viewBox="0 0 40 40" className="w-full h-full p-2">
+                             <path d="M 5 20 L 35 20" fill="none" stroke="#ff4000" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_4px_rgba(255,64,0,0.8)]" />
+                             <circle cx="20" cy="20" r="3" fill="#fff" className="animate-pulse" />
+                           </svg>
+                         </div>
+                         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-accent/10 to-transparent" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-0.5 group-hover/item:text-accent/80 transition-colors">Audio Process</span>
+                        <span className="font-sans text-base font-bold text-white/90 group-hover/item:text-white transition-colors">Voice Enhance</span>
+                      </div>
+                    </motion.div>
+
+                    {/* 6. ELEMENTS ASSET (Motion Graphics) */}
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } } }} className="flex items-center gap-4 group/item cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                      <div className="relative w-14 h-14 rounded-xl border border-white/10 bg-black/50 flex items-center justify-center shrink-0 overflow-hidden">
+                         {/* Grid background */}
+                         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4px_4px]" />
+                         
+                         {/* Orbiting primitives */}
+                         <div className="absolute inset-0 animate-[spin_4s_linear_infinite]">
+                           <div className="absolute w-3 h-3 border border-blue-400 bg-blue-500/20 rounded-full top-2 left-6 group-hover/item:scale-150 transition-transform duration-500" />
+                         </div>
+                         <div className="absolute inset-0 animate-[spin_6s_linear_infinite_reverse]">
+                           <div className="absolute w-2.5 h-2.5 border border-accent bg-accent/20 rotate-45 bottom-2 right-6 group-hover/item:scale-150 transition-transform duration-500" />
+                         </div>
+                         <div className="absolute inset-0 animate-[spin_8s_linear_infinite]">
+                           <div className="absolute w-3 h-3 border border-white/60 bg-white/10 rounded-[3px] top-6 right-2 group-hover/item:scale-150 transition-transform duration-500" />
+                         </div>
+                         
+                         {/* Center glowing node */}
+                         <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] group-hover/item:shadow-[0_0_15px_rgba(255,64,0,0.8)] transition-shadow duration-500" />
+                            <div className="absolute w-8 h-8 border border-white/10 rounded-full border-t-transparent animate-[spin_3s_linear_infinite]" />
+                         </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-0.5 group-hover/item:text-accent/80 transition-colors">Motion Graph</span>
+                        <span className="font-sans text-base font-bold text-white/90 group-hover/item:text-white transition-colors">Elements Asset</span>
+                      </div>
+                    </motion.div>
+                 </motion.div>
+               ) : (
+                 /* --- INTERACTION GRID FOR PERFORMANCE --- */
+                 <div className="grid grid-cols-2 gap-x-12 gap-y-10">
+                    <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
+                      <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
+                        <Heart size={14} className="text-accent fill-accent/20 group-hover:fill-accent group-hover:scale-125 transition-all duration-300" />
+                        <span className="font-mono text-[9px] uppercase tracking-widest">Likes</span>
+                      </div>
+                      <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.likes || "-"}</span>
+                    </div>
+                    
+                    <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
+                      <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
+                        <MessageCircle size={14} className="text-accent fill-accent/20 group-hover:fill-accent group-hover:scale-125 transition-all duration-300" />
+                        <span className="font-mono text-[9px] uppercase tracking-widest">Comments</span>
+                      </div>
+                      <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.comments || "-"}</span>
+                    </div>
+
+                    <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
+                      <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
+                        <Bookmark size={14} className="text-accent fill-accent/20 group-hover:fill-accent group-hover:scale-125 transition-all duration-300" />
+                        <span className="font-mono text-[9px] uppercase tracking-widest">Saves</span>
+                      </div>
+                      <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.saves || "-"}</span>
+                    </div>
+
+                    <div className="flex flex-col gap-1 group cursor-default hover:bg-white/5 p-2 -m-2 rounded-xl transition-all duration-300">
+                      <div className="flex items-center gap-2 text-white/40 mb-1 group-hover:text-white/80 transition-colors">
+                        <Share2 size={14} className="text-accent group-hover:scale-125 transition-all duration-300" />
+                        <span className="font-mono text-[9px] uppercase tracking-widest">Shares</span>
+                      </div>
+                      <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.shares || "-"}</span>
+                    </div>
                  </div>
-                 <span className="font-sans text-2xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">{selectedVideo.stats.shares || "-"}</span>
-               </div>
+               )}
             </div>
           </div>
 
@@ -205,27 +348,24 @@ export default function SocialPlayerLayout({
           )}
 
           {/* Metadata */}
-          <div className="space-y-2 pt-6 border-t border-white/10">
-              <div className="flex justify-between items-center text-sm group cursor-default hover:bg-white/5 p-2 -mx-2 rounded-lg transition-colors">
-                <span className="text-white/40 font-mono text-[11px] uppercase tracking-wider group-hover:text-accent transition-colors">Channel</span>
-                <span className="font-sans text-white font-bold group-hover:translate-x-[-4px] transition-transform">{selectedVideo.brand}</span>
+          <motion.div 
+              key={`metadata-${selectedVideo.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
+              className="flex flex-wrap gap-x-12 gap-y-6 pt-8 border-t border-white/10"
+          >
+              <div className="flex flex-col gap-1.5 group cursor-default">
+                <span className="text-white/40 font-mono text-[10px] uppercase tracking-widest">Channel</span>
+                <span className="font-sans text-sm text-white/90 font-bold group-hover:text-white transition-colors">{selectedVideo.brand}</span>
               </div>
-              <div className="flex justify-between items-center text-sm group cursor-default hover:bg-white/5 p-2 -mx-2 rounded-lg transition-colors">
-                <span className="text-white/40 font-mono text-[11px] uppercase tracking-wider group-hover:text-accent transition-colors">Role</span>
-                <span className="font-sans text-white font-bold group-hover:translate-x-[-4px] transition-transform">{selectedVideo.role}</span>
+              <div className="flex flex-col gap-1.5 group cursor-default">
+                <span className="text-white/40 font-mono text-[10px] uppercase tracking-widest">Role</span>
+                <span className="font-sans text-sm text-white/90 font-bold group-hover:text-white transition-colors">{selectedVideo.role}</span>
               </div>
-              <div className="flex justify-between items-center text-sm group cursor-default hover:bg-white/5 p-2 -mx-2 rounded-lg transition-colors">
-                <span className="text-white/40 font-mono text-[11px] uppercase tracking-wider group-hover:text-accent transition-colors">Category</span>
-                <span className="font-sans text-white font-bold group-hover:translate-x-[-4px] transition-transform">{selectedVideo.category}</span>
-              </div>
-          </div>
+          </motion.div>
 
-          {/* Description */}
-          <div className="pt-4">
-              <p className="font-sans text-[14px] text-white/60 leading-relaxed italic border-l-2 border-accent/40 pl-4 hover:border-accent hover:text-white/90 hover:bg-white/5 p-3 -ml-3 rounded-r-xl transition-all duration-300 cursor-default">
-                &quot;{selectedVideo.description}&quot;
-              </p>
-          </div>
+
         </div>
 
         {/* Bottom Tags */}
