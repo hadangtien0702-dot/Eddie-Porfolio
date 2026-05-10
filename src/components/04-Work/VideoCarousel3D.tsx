@@ -48,7 +48,13 @@ export default function VideoCarousel3D({
   useEffect(() => {
     if (!isOpen) return;
     resetAutoPlay();
-    return () => clearInterval(autoPlayRef.current);
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      clearInterval(autoPlayRef.current);
+      document.body.style.overflow = "";
+    };
   }, [isOpen, resetAutoPlay, activeCategory]);
 
   const goTo = useCallback(
@@ -98,8 +104,7 @@ export default function VideoCarousel3D({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#050505]"
-          data-lenis-prevent="true"
+          className="fixed inset-0 z-[100] flex flex-col bg-[#050505]"
         >
           {/* Global Fixed Background Layer */}
           <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -320,7 +325,9 @@ export default function VideoCarousel3D({
 
             </>
           ) : (
-            <SocialGrid videos={filteredVideos} onSelectVideo={setSelectedVideo} />
+            <div className="flex-1 w-full overflow-y-auto min-h-0" data-lenis-prevent="true">
+              <SocialGrid videos={filteredVideos} onSelectVideo={setSelectedVideo} />
+            </div>
           )}
 
           {/* Full Video Modal Player (Enhanced Split View) */}
@@ -330,8 +337,10 @@ export default function VideoCarousel3D({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[200] bg-[#050505]/98 backdrop-blur-2xl flex items-center justify-center p-4 lg:p-12"
+                className="fixed inset-0 z-[200] bg-[#050505]/98 backdrop-blur-2xl overflow-y-auto"
+                data-lenis-prevent="true"
               >
+                <div className="min-h-full flex items-center justify-center p-4 lg:p-12 relative">
                 {/* Close Button */}
                 <button 
                   onClick={() => setSelectedVideo(null)}
@@ -345,6 +354,7 @@ export default function VideoCarousel3D({
                 ) : (
                   <AdsPlayerLayout selectedVideo={selectedVideo} getEmbedUrl={getEmbedUrl} />
                 )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

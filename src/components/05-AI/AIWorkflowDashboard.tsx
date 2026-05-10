@@ -28,72 +28,72 @@ interface WorkflowStep {
 const workflowSteps: WorkflowStep[] = [
   {
     id: "ideation",
-    title: "Ý tưởng & Kịch bản",
-    subtitle: "PHASE 01: CONCEPT",
+    title: "Intelligence Hub",
+    subtitle: "PHASE 01: INSIGHTS",
     icon: <BrainCircuit className="w-6 h-6" />,
-    description: "Sử dụng AI Agents để phân tích xu hướng thị trường và lên kịch bản tự động, tối ưu hóa tâm lý người xem.",
+    description: "Hệ thống điều phối đa nhân hợp tác (Multi-LLM Agents) để phân tích xu hướng thị trường và lên kịch bản Viral dựa trên dữ liệu thực tế.",
     details: [
-      "Trend Analysis via GPT-4o",
-      "Social Psychology Mapping",
-      "Scripting Autopilot"
+      "Quét xu hướng thời gian thực",
+      "Kỹ thuật tâm lý Viral",
+      "Tự động hóa Storyboard"
     ],
-    tech: ["ChatGPT", "Custom Agents", "Perplexity"],
+    tech: ["n8n", "GPT-4o", "Perplexity"],
     color: "#ff4000"
   },
   {
     id: "visuals",
-    title: "Sản xuất Hình ảnh",
-    subtitle: "PHASE 02: VISUALS",
+    title: "Visual Foundation",
+    subtitle: "PHASE 02: CONCEPTS",
     icon: <Palette className="w-6 h-6" />,
-    description: "Tạo ra các Key Visuals và Concept Art chất lượng cao làm nền tảng cho video cinematic.",
+    description: "Tạo ra các Key Visuals và Concept Art chất lượng cao, đảm bảo tính nhất quán của thương hiệu trên mọi tài sản hình ảnh AI.",
     details: [
-      "High-Fidelity Generation",
-      "Concept Art Creation",
-      "Style Consistency Control"
+      "Đồng nhất phong cách hình ảnh",
+      "Thiết kế Visual theo Brand",
+      "Quy trình Concept Art tự động"
     ],
-    tech: ["Flux", "Google Banana", "Higgfield"],
+    tech: ["Flux.1", "Midjourney", "ComfyUI"],
     color: "#ff8c00"
   },
   {
     id: "motion",
-    title: "Video & UGC Engine",
-    subtitle: "PHASE 03: MOTION",
+    title: "Digital Human Engine",
+    subtitle: "PHASE 03: PRODUCTION",
     icon: <Cpu className="w-6 h-6" />,
-    description: "Biến hình ảnh và kịch bản thành video cinematic hoặc nhân vật UGC nói chuyện tự nhiên.",
+    description: "Sử dụng nhân vật ảo và công nghệ Cinematic Video Gen để sản xuất nội dung có người dẫn dắt mà không cần quay phim truyền thống.",
     details: [
-      "Cinematic Video Gen",
-      "HeyGen Avatar Rendering",
-      "UGC Logic Animation"
+      "Render Avatar 4K",
+      "Lipsync đa ngôn ngữ",
+      "Cinematic Motion Gen"
     ],
-    tech: ["Kling", "Google Veo 3.1", "HeyGen"],
+    tech: ["HeyGen", "Kling AI", "Luma Dream Machine"],
     color: "#00d2ff"
   },
   {
     id: "refine",
-    title: "Tối ưu hóa Workflow",
-    subtitle: "PHASE 04: REFINE",
+    title: "Sonic & Visual Polish",
+    subtitle: "PHASE 04: REFINEMENT",
     icon: <Zap className="w-6 h-6" />,
-    description: "Nâng cấp chất lượng hình ảnh/video lên mức chuyên nghiệp và đồng bộ hóa âm thanh hoàn hảo.",
+    description: "Ứng dụng Voice Cloning và hậu kỳ AI để đảm bảo chất lượng âm thanh - hình ảnh đạt chuẩn Cinematic và thu hút người xem tối đa.",
     details: [
-      "Whisper Audio Sync",
-      "Magnific Upscaling",
-      "Style Refinement"
+      "Nhân bản giọng nói AI",
+      "Caption động tự động",
+      "Nâng cấp chất lượng Video"
     ],
-    tech: ["Whisper", "Magnific", "Freepik"],
+    tech: ["ElevenLabs", "Magnific AI", "CapCut AI"],
     color: "#5a189a"
   },
   {
     id: "automation",
-    title: "Tự động hóa & Public",
-    subtitle: "PHASE 05: AUTOMATION",
+    title: "Global Distribution",
+    subtitle: "PHASE 05: SCALE",
     icon: <Workflow className="w-6 h-6" />,
-    description: "Kết nối toàn bộ quy trình và tự động phân phối nội dung đa kênh (TikTok, Reels, Shorts).",
+    description: "Quy trình xuất bản tự động hoàn toàn, giúp phân phối nội dung quy mô lớn lên TikTok, Reels và YouTube Shorts với tối ưu hóa SEO.",
     details: [
-      "n8n Orchestration",
-      "Multi-Platform Sync",
-      "Auto-Distribution Hub"
+      "Trung tâm điều phối n8n",
+      "Tự động tối ưu Metadata",
+      "Phân phối đa kênh tự động"
     ],
-    tech: ["n8n", "Make", "Social APIs"],
+    tech: ["n8n", "Social APIs", "Google Cloud"],
     color: "#00ff88"
   }
 ];

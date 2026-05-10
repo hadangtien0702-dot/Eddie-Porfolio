@@ -18,6 +18,8 @@ export interface VideoPostItem {
     comments?: string;
     shares?: string;
     saves?: string;
+    hookRate?: string;
+    ctr?: string;
   };
   tags: string[];
   badge?: string; // Tùy chọn: Dùng cho các video thiên về kỹ năng thay vì view
@@ -42,7 +44,7 @@ export const videoPosts: VideoPostItem[] = [
     year: "2024",
     duration: "0:30",
     description: "Chiến dịch quảng cáo hiệu suất cao tập trung vào chuyển đổi cho sản phẩm bảo hiểm tài chính.",
-    stats: { views: "3.2M+", leads: "1.2K" },
+    stats: { views: "3.2M+", hookRate: "82%", retention: "48%", ctr: "5.1%" },
     tags: ["Commercial", "High-Performance", "Financial"],
   },
   {
@@ -120,7 +122,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-view-2",
-    title: "Bí Mật Tài Chính Tỷ Phú #thinksmartnews",
+    title: "Hàng Ngàn Người Có Thể Bị Trục Xuất Khỏi Cali #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7386935211629514004_v3.webp",
@@ -176,7 +178,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-view-6",
-    title: "Chiến Tranh Thương Mại Toàn Cầu #thinksmartnews",
+    title: "Có Thể Sẽ... #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7354178644236913937_v3.webp",
@@ -190,7 +192,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-view-10",
-    title: "Khủng Hoảng Năng Lượng Đang Tới #thinksmartnews",
+    title: "7 Bằng Phải Có Khi Định Cư Ở Mỹ #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7413933726838639880_v3.webp",
@@ -263,7 +265,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-creative-2",
-    title: "Nghệ Thuật Kể Chuyện Thị Giác #thinksmartnews",
+    title: "Giàu Lên #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7300958195294489858_v3.webp",
@@ -278,7 +280,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-creative-3",
-    title: "Góc Nhìn Điện Ảnh #thinksmartnews",
+    title: "Not Fair #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7302436708748938497_v3.webp",
@@ -293,7 +295,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-creative-4",
-    title: "Chuyển Động Trực Quan #thinksmartnews",
+    title: "4 Coin Sẽ... #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7308917956921019650_v3.webp",
@@ -308,7 +310,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-creative-5",
-    title: "Cắt Dựng Đỉnh Cao #thinksmartnews",
+    title: "Tiền Ảo #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7330830373611654401_v3.webp",
@@ -323,7 +325,7 @@ export const videoPosts: VideoPostItem[] = [
   },
   {
     id: "soc-creative-6",
-    title: "Trải Nghiệm Đắm Chìm (Best) #thinksmartnews",
+    title: "Trải Nghiệm Không Gian 3D #thinksmartnews",
     brand: "Thinksmart News",
     category: "Social Content",
     thumbnail: "/images/04-Work/Socials/Thumbnails/snaptik_7355280291772026113_v3.webp",

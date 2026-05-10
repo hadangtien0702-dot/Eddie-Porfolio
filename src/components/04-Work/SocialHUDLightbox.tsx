@@ -30,9 +30,10 @@ export default function SocialHUDLightbox({ post, onClose }: SocialHUDLightboxPr
         if (e.key === "ArrowLeft") prev();
       };
       window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    } else {
-      document.body.style.overflow = "unset";
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+        document.body.style.overflow = "";
+      };
     }
   }, [post]);
 

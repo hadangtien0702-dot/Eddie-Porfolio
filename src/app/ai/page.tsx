@@ -35,7 +35,7 @@ export default function AIPage() {
 
         <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-8 max-w-6xl mx-auto">
           <VerticalCutReveal splitBy="words" staggerDuration={0.05}>
-            AI POWERED PRODUCTION PIPELINE
+            HỆ THỐNG HÓA SỰ SÁNG TẠO BẰNG A.I
           </VerticalCutReveal>
         </h1>
 
@@ -45,9 +45,33 @@ export default function AIPage() {
           transition={{ delay: 0.5, duration: 1 }}
           className="font-body text-white/40 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
         >
-          Xây dựng quy trình sản xuất nội dung tự động hóa hoàn toàn từ bước lên ý tưởng, 
-          điều phối Module thông qua n8n, đến việc tạo ra các concept UGC đột phá.
+          Tôi xây dựng những cỗ máy sản xuất nội dung tự vận hành, giúp doanh nghiệp 
+          phá vỡ giới hạn về tốc độ và chi phí thông qua sức mạnh của Generative AI.
         </motion.p>
+
+        {/* QUICK STATS / PROBLEM-SOLUTION */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-20 text-left">
+           {[
+             { label: "The Bottleneck", title: "Sản xuất truyền thống quá chậm", desc: "Quy trình cũ phụ thuộc quá nhiều vào con người, khiến chi phí tăng cao và khó đảm bảo tiến độ ở quy mô lớn.", icon: <Cpu className="w-5 h-5 text-red-500" /> },
+             { label: "The Framework", title: "Quy trình AI-First", desc: "Tự động hóa các khâu lặp đi lặp lại bằng n8n và LLMs, giải phóng con người để tập trung vào chiến lược và sáng tạo cốt lõi.", icon: <Zap className="w-5 h-5 text-accent" /> },
+             { label: "The Impact", title: "Tăng trưởng theo cấp số nhân", desc: "Sản xuất gấp 3 lần nội dung với chỉ 40% chi phí, trong khi vẫn duy trì chất lượng Cinematic cao cấp nhất.", icon: <Sparkles className="w-5 h-5 text-purple-500" /> }
+           ].map((item, i) => (
+             <motion.div 
+               key={item.title}
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.8 + (i * 0.1) }}
+               className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors group"
+             >
+               <div className="mb-6 p-3 rounded-2xl bg-white/[0.03] w-fit group-hover:scale-110 transition-transform">
+                 {item.icon}
+               </div>
+               <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.3em] mb-2 block">{item.label}</span>
+               <h3 className="font-heading text-xl font-bold text-white mb-3">{item.title}</h3>
+               <p className="font-body text-sm text-white/40 leading-relaxed">{item.desc}</p>
+             </motion.div>
+           ))}
+        </div>
       </section>
 
       {/* FEATURED: AI TIMELINE ENGINE */}
@@ -89,10 +113,10 @@ export default function AIPage() {
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,64,0,0.1),transparent)]" />
            
            <h2 className="font-heading text-4xl md:text-5xl font-bold text-white mb-6 relative z-10">Ready to automate your creative vision?</h2>
-           <p className="font-body text-white/40 text-lg mb-12 relative z-10">Chúng ta có thể cùng nhau tinh chỉnh quy trình này để đạt được hiệu suất cao nhất cho các chiến dịch UGC của bạn.</p>
+           <p className="font-body text-white/40 text-lg mb-12 relative z-10">Let&apos;s refine your production pipeline to achieve maximum efficiency and impact for your content strategy.</p>
            
            <button className="relative z-10 px-10 py-4 rounded-full bg-accent text-white font-bold font-body text-sm hover:scale-105 transition-all shadow-[0_10px_40px_rgba(255,64,0,0.3)]">
-             Phân Tích Quy Trình Chi Tiết
+             Analyze Your Workflow
            </button>
         </div>
       </section>

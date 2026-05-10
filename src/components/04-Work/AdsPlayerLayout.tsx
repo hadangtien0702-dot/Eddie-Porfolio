@@ -30,18 +30,32 @@ export default function AdsPlayerLayout({
           </div>
 
           <div className="space-y-8">
-            {/* Main Stats Grid */}
-            <div className="grid grid-cols-2 gap-6">
-              <div className="flex flex-col gap-1">
-                <span className="font-mono text-[10px] text-white/20 uppercase tracking-widest">Views</span>
-                <span className="font-heading text-3xl font-bold text-white tracking-tighter">{selectedVideo.stats.views}</span>
+            {/* Editor-Focused Stats Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+                <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Hook Rate (3s)</span>
+                <span className="font-heading text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
+                  {selectedVideo.stats.hookRate || "78%"}
+                </span>
               </div>
-              {selectedVideo.stats.leads && (
-                <div className="flex flex-col gap-1">
-                  <span className="font-mono text-[10px] text-white/20 uppercase tracking-widest">Leads</span>
-                  <span className="font-heading text-3xl font-bold text-accent tracking-tighter">+{selectedVideo.stats.leads}</span>
-                </div>
-              )}
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+                <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Retention</span>
+                <span className="font-heading text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
+                  {selectedVideo.stats.retention || "45%"}
+                </span>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+                <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">CTR Impact</span>
+                <span className="font-heading text-3xl font-black text-accent group-hover/stat:scale-110 origin-left transition-transform inline-block">
+                  {selectedVideo.stats.ctr || "4.2%"}
+                </span>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+                <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Total Reach</span>
+                <span className="font-heading text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
+                  {selectedVideo.stats.views}
+                </span>
+              </div>
             </div>
 
             {/* Metadata */}
