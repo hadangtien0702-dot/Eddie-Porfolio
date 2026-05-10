@@ -117,9 +117,9 @@ export default function Overview() {
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-32 lg:pt-48 pb-16 lg:pb-24 min-h-screen flex flex-col justify-between">
 
         {/* ─── Hero Area: Text + Image overlap ─── */}
-        <div className="relative flex-1 flex items-center">
+        <div className="relative flex-1 flex flex-col lg:flex-row items-center lg:items-center gap-12 lg:gap-0">
           {/* ─── Cột trái: Overline + Heading cực lớn ─── */}
-          <div className="relative z-20 flex-shrink-0 max-w-[80%] lg:max-w-[65%]">
+          <div className="relative z-20 flex-shrink-0 w-full lg:max-w-[65%]">
             {/* Overline — letter reveal, bắt đầu 50% opacity */}
             <motion.p
               initial="hidden"
@@ -145,7 +145,6 @@ export default function Overview() {
               ))}
             </motion.p>
 
-            {/* Heading — word-aware letter reveal, không bị ngắt giữa từ */}
             <motion.h2
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
@@ -153,8 +152,8 @@ export default function Overview() {
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.08, delayChildren: 0.5 } },
               }}
-              className="font-heading text-[clamp(36px,6.5vw,88px)] font-bold leading-[0.95] text-white
-                         tracking-tight break-words"
+              className="font-heading text-[clamp(42px,8vw,88px)] font-bold leading-[0.9] text-white
+                         tracking-tight break-words text-left"
             >
               {overviewHeading.title.split(" ").map((word, wi) => (
                 <motion.span
@@ -237,7 +236,7 @@ export default function Overview() {
           */}
 
           {/* ─── Cột phải: Description text ─── */}
-          <div className="relative z-20 ml-auto max-w-[280px] lg:max-w-[320px] self-center">
+          <div className="relative z-20 lg:ml-auto w-full max-w-[400px] lg:max-w-[320px] self-start lg:self-center">
             <motion.h3
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -246,7 +245,7 @@ export default function Overview() {
                 delay: 0.35,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="font-heading text-h3 font-semibold leading-snug text-white mb-4"
+              className="font-heading text-xl sm:text-2xl font-semibold leading-snug text-white mb-4"
             >
               {overviewHeading.description.split(".")[0]}.
             </motion.h3>
@@ -259,7 +258,7 @@ export default function Overview() {
                 delay: 0.45,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="font-body text-[17px] md:text-[19px] text-white/60 leading-[1.8]"
+              className="font-body text-base sm:text-lg lg:text-[19px] text-white/60 leading-[1.7] lg:leading-[1.8]"
             >
               {overviewHeading.description.split(".").slice(1).join(".").trim()}
             </motion.p>

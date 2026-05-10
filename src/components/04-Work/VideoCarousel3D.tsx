@@ -10,7 +10,8 @@ import AdsPlayerLayout from "./AdsPlayerLayout";
 import SocialGrid from "./SocialGrid";
 
 const CARD_H = 360;
-const OFFSET_X = 290;
+const OFFSET_X_DESKTOP = 290;
+const OFFSET_X_MOBILE = 200;
 
 export default function VideoCarousel3D({
   isOpen,
@@ -208,24 +209,26 @@ export default function VideoCarousel3D({
 
                   if (!visible) return null;
 
-                  return (
-                    <motion.div
-                      key={video.id}
-                      layoutId={video.id}
-                      onClick={() => !isDragging && !isCenter && goTo(i)}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{
-                        x: offset * OFFSET_X,
-                        rotateY: offset * -45,
-                        scale: isCenter ? 1 : 1 - absOffset * 0.15,
-                        opacity: isCenter ? 1 : 0.4 - absOffset * 0.1,
-                        zIndex: 10 - absOffset,
-                      }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      className={`absolute w-[260px] md:w-[280px] h-[360px] md:h-[400px] rounded-2xl overflow-hidden cursor-pointer group ${isCenter ? 'ring-2 ring-accent shadow-[0_0_50px_rgba(255,64,0,0.2)]' : ''}`}
-                      style={{ transformStyle: "preserve-3d" }}
-                    >
+                   const offsetX = typeof window !== 'undefined' && window.innerWidth < 768 ? OFFSET_X_MOBILE : OFFSET_X_DESKTOP;
+
+                   return (
+                     <motion.div
+                       key={video.id}
+                       layoutId={video.id}
+                       onClick={() => !isDragging && !isCenter && goTo(i)}
+                       initial={{ opacity: 0, scale: 0.8 }}
+                       animate={{
+                         x: offset * offsetX,
+                         rotateY: offset * -45,
+                         scale: isCenter ? 1 : (typeof window !== 'undefined' && window.innerWidth < 768 ? 0.85 : 1) - absOffset * 0.15,
+                         opacity: isCenter ? 1 : 0.4 - absOffset * 0.1,
+                         zIndex: 10 - absOffset,
+                       }}
+                       exit={{ opacity: 0, scale: 0.8 }}
+                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                       className={`absolute w-[220px] sm:w-[260px] md:w-[280px] h-[320px] sm:h-[360px] md:h-[400px] rounded-2xl overflow-hidden cursor-pointer group ${isCenter ? 'ring-2 ring-accent shadow-[0_0_50px_rgba(255,64,0,0.2)]' : ''}`}
+                       style={{ transformStyle: "preserve-3d" }}
+                     >
                       <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
                       <div className={`absolute inset-0 transition-opacity duration-500 ${isCenter ? 'bg-gradient-to-t from-black via-black/20 to-transparent opacity-100' : 'bg-black/60 opacity-100 group-hover:opacity-40'}`} />
                       
@@ -259,9 +262,9 @@ export default function VideoCarousel3D({
                <button onClick={() => goTo(activeIndex - 1)} className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">
                   <ChevronLeft size={24} />
                </button>
-               <div className="flex gap-2">
+               <div className="flex gap-1.5 md:gap-2 max-w-[120px] md:max-w-none overflow-x-auto scrollbar-hide py-2 px-1">
                  {filteredVideos.map((_, i) => (
-                    <button key={i} onClick={() => goTo(i)} className={`w-2 h-2 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-8 bg-accent' : 'bg-white/20'}`} />
+                    <button key={i} onClick={() => goTo(i)} className={`flex-shrink-0 w-2 h-2 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-6 md:w-8 bg-accent' : 'bg-white/20'}`} />
                  ))}
                </div>
                <button onClick={() => goTo(activeIndex + 1)} className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">
@@ -276,7 +279,7 @@ export default function VideoCarousel3D({
               key={activeIndex + activeCategory}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12"
+              className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 md:gap-12"
             >
               <div>
                 <div className="flex items-center gap-4 mb-4">
@@ -297,19 +300,19 @@ export default function VideoCarousel3D({
               </div>
 
               <div className="flex flex-col md:items-end justify-between gap-6">
-                <div className="flex gap-8">
-                  <div className="flex flex-col items-end">
-                    <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest mb-1">Views</span>
-                    <span className="font-heading text-xl font-bold text-white flex items-center gap-2">
-                      <TrendingUp size={16} className="text-accent" />
-                      {currentVideo?.stats.views}
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest mb-1">Client</span>
-                    <span className="font-heading text-xl font-bold text-white">{currentVideo?.brand}</span>
-                  </div>
-                </div>
+                 <div className="flex gap-6 sm:gap-8">
+                   <div className="flex flex-col md:items-end">
+                     <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest mb-1">Views</span>
+                     <span className="font-heading text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                       <TrendingUp size={16} className="text-accent" />
+                       {currentVideo?.stats.views}
+                     </span>
+                   </div>
+                   <div className="flex flex-col md:items-end">
+                     <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest mb-1">Client</span>
+                     <span className="font-heading text-lg sm:text-xl font-bold text-white">{currentVideo?.brand}</span>
+                   </div>
+                 </div>
                 
                 <button 
                   onClick={() => setSelectedVideo(currentVideo)}
@@ -326,7 +329,7 @@ export default function VideoCarousel3D({
             </>
           ) : (
             <div className="flex-1 w-full overflow-y-auto min-h-0" data-lenis-prevent="true">
-              <SocialGrid videos={filteredVideos} onSelectVideo={setSelectedVideo} />
+              <SocialGrid videos={videoPosts} onSelectVideo={setSelectedVideo} />
             </div>
           )}
 

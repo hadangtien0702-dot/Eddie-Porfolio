@@ -158,7 +158,7 @@ export default function AITimelineEditor() {
   return (
     <div className="w-full bg-[#080808] border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl">
       {/* 1. TOP HEADER SECTION */}
-      <div className="p-8 lg:p-10 border-b border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent min-h-[220px]">
+      <div className="p-6 md:p-10 border-b border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent min-h-[auto] md:min-h-[220px]">
         <AnimatePresence mode="wait">
           <motion.div 
             key={displayBlockId}
@@ -166,7 +166,7 @@ export default function AITimelineEditor() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col md:flex-row items-center gap-8"
+            className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8"
           >
             <div className="flex-grow">
               <div className="flex items-center gap-3 mb-4">
@@ -185,7 +185,7 @@ export default function AITimelineEditor() {
                  </button>
               </div>
               
-              <h2 className="font-heading text-4xl md:text-5xl font-black text-white tracking-tighter mb-4 italic uppercase">
+              <h2 className="font-heading text-3xl md:text-5xl font-black text-white tracking-tighter mb-4 italic uppercase leading-[0.9]">
                 {details.title}
               </h2>
 
@@ -224,33 +224,34 @@ export default function AITimelineEditor() {
       </div>
 
       {/* 2. TIMELINE SECTION */}
-      <div className="p-6 lg:p-8 bg-black/40 relative select-none">
-        {/* Work Area Bar */}
-        <div className="absolute top-0 left-12 right-0 h-1 bg-white/5 overflow-hidden">
-           <div 
-             className="absolute h-full bg-accent/30 border-x border-accent/50"
-             style={{ left: `${inPoint}%`, right: `${100 - outPoint}%` }}
-           />
-        </div>
+      <div className="p-4 md:p-8 bg-black/40 relative select-none overflow-x-auto scrollbar-hide">
+        <div className="min-w-[800px] md:min-w-full relative">
+          {/* Work Area Bar */}
+          <div className="absolute top-0 left-12 right-0 h-1 bg-white/5 overflow-hidden">
+             <div 
+               className="absolute h-full bg-accent/30 border-x border-accent/50"
+               style={{ left: `${inPoint}%`, right: `${100 - outPoint}%` }}
+             />
+          </div>
 
-        {/* Time Markers */}
-        <div className="flex justify-between font-mono text-[9px] text-white/20 mb-6 px-12 border-b border-white/5 pb-2">
-           {Array.from({ length: 11 }).map((_, idx) => {
-             const pos = idx * 10;
-             const isInOut = Math.abs(pos - inPoint) < 5 || Math.abs(pos - outPoint) < 5;
-             return (
-              <div key={idx} className={cn("flex flex-col items-center gap-1", isInOut ? "text-accent" : "")}>
-                <span>00:00:{idx * 6 < 10 ? `0${idx * 6}` : idx * 6}</span>
-                <div className={cn("w-px h-1.5", isInOut ? "bg-accent" : "bg-white/10")} />
-              </div>
-             );
-           })}
-        </div>
+          {/* Time Markers */}
+          <div className="flex justify-between font-mono text-[9px] text-white/20 mb-6 px-12 border-b border-white/5 pb-2">
+             {Array.from({ length: 11 }).map((_, idx) => {
+               const pos = idx * 10;
+               const isInOut = Math.abs(pos - inPoint) < 5 || Math.abs(pos - outPoint) < 5;
+               return (
+                <div key={idx} className={cn("flex flex-col items-center gap-1", isInOut ? "text-accent" : "")}>
+                  <span>00:00:{idx * 6 < 10 ? `0${idx * 6}` : idx * 6}</span>
+                  <div className={cn("w-px h-1.5", isInOut ? "bg-accent" : "bg-white/10")} />
+                </div>
+               );
+             })}
+          </div>
 
-        {/* Tracks Grid */}
-        <div 
-          className="relative cursor-crosshair" 
-          ref={timelineRef}
+          {/* Tracks Grid */}
+          <div 
+            className="relative cursor-crosshair" 
+            ref={timelineRef}
           onMouseDown={(e) => {
             const percentage = getPercentageFromEvent(e);
             if (Math.abs(percentage - inPoint) < 2) setDragMode("in");
@@ -333,11 +334,12 @@ export default function AITimelineEditor() {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-x-[6px] border-x-transparent border-t-[8px] border-t-red-500" />
             <div className="absolute inset-y-0 w-[2px] bg-red-500/40 blur-[2px]" />
           </div>
+          </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="px-8 py-4 border-t border-white/5 bg-[#0a0a0a] flex items-center justify-between">
+      <div className="px-6 md:px-8 py-4 border-t border-white/5 bg-[#0a0a0a] flex flex-col sm:flex-row items-center justify-between gap-4">
          <div className="flex items-center gap-6">
             <button onClick={() => setIsPlaying(!isPlaying)} className="flex items-center gap-3 group">
                <div className={cn("w-8 h-8 rounded-full border border-white/10 flex items-center justify-center transition-all", isPlaying ? "bg-accent shadow-[0_0_20px_rgba(255,64,0,0.3)]" : "bg-white/5")}>

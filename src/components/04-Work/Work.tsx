@@ -101,11 +101,11 @@ function ServiceCard({
              transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
              className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6 pointer-events-none"
            >
-              <div className="flex flex-col gap-3 pointer-events-auto">
-                 <span className="font-body font-bold text-[12px] px-3 py-1 rounded border border-white/20 bg-white/10 backdrop-blur-md text-white w-fit uppercase tracking-[0.2em]">
+              <div className="flex flex-col gap-2 md:gap-3 pointer-events-auto">
+                 <span className="font-body font-bold text-[10px] md:text-[12px] px-2 md:px-3 py-1 rounded border border-white/20 bg-white/10 backdrop-blur-md text-white w-fit uppercase tracking-[0.2em]">
                     {svc.tag}
                  </span>
-                 <h3 className="font-heading font-black text-white text-3xl md:text-5xl lg:text-6xl tracking-tight leading-none drop-shadow-[0_10px_20px_rgba(0,0,0,1)]">
+                 <h3 className="font-heading font-black text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl tracking-tight leading-none drop-shadow-[0_10px_20px_rgba(0,0,0,1)]">
                     {svc.title}
                  </h3>
               </div>
@@ -214,11 +214,11 @@ export default function Work() {
 
         {/* ─── Cinematic Expanding Accordion Container ─── */}
         <motion.div
-          onMouseLeave={() => window.innerWidth > 1024 && setActiveId(services[0].id)}
+          onMouseLeave={() => typeof window !== 'undefined' && window.innerWidth > 1024 && setActiveId(services[0].id)}
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col lg:flex-row gap-3 lg:gap-4 w-full h-[650px] lg:h-[600px] xl:h-[700px]"
+          className="flex flex-col lg:flex-row gap-3 lg:gap-4 w-full h-[700px] sm:h-[800px] lg:h-[600px] xl:h-[700px]"
         >
           {services.map((svc, i) => (
             <ServiceCard

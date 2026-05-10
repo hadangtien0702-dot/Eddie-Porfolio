@@ -17,7 +17,7 @@ export default function AdsPlayerLayout({
       className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-[380px_1fr] bg-white/[0.02] border border-white/10 rounded-[32px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.5)]"
     >
       {/* LEFT: Stats & Data */}
-      <div className="p-8 lg:p-12 flex flex-col justify-between border-r border-white/5 bg-gradient-to-b from-white/[0.03] to-transparent">
+      <div className="p-6 md:p-10 lg:p-12 flex flex-col justify-between border-r border-white/5 bg-gradient-to-b from-white/[0.03] to-transparent">
         <div>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center border border-accent/30">
@@ -25,34 +25,34 @@ export default function AdsPlayerLayout({
             </div>
             <div>
               <p className="font-mono text-[9px] text-accent font-bold uppercase tracking-[0.2em]">Campaign Results</p>
-              <h4 className="font-heading text-xl font-bold text-white tracking-tight">Performance Data</h4>
+              <h4 className="font-heading text-lg sm:text-xl font-bold text-white tracking-tight">Performance Data</h4>
             </div>
           </div>
 
           <div className="space-y-8">
             {/* Editor-Focused Stats Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
                 <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Hook Rate (3s)</span>
-                <span className="font-heading text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
+                <span className="font-heading text-2xl sm:text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
                   {selectedVideo.stats.hookRate || "78%"}
                 </span>
               </div>
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+              <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
                 <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Retention</span>
-                <span className="font-heading text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
+                <span className="font-heading text-2xl sm:text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
                   {selectedVideo.stats.retention || "45%"}
                 </span>
               </div>
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+              <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
                 <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">CTR Impact</span>
-                <span className="font-heading text-3xl font-black text-accent group-hover/stat:scale-110 origin-left transition-transform inline-block">
+                <span className="font-heading text-2xl sm:text-3xl font-black text-accent group-hover/stat:scale-110 origin-left transition-transform inline-block">
                   {selectedVideo.stats.ctr || "4.2%"}
                 </span>
               </div>
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
+              <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
                 <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Total Reach</span>
-                <span className="font-heading text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
+                <span className="font-heading text-2xl sm:text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
                   {selectedVideo.stats.views}
                 </span>
               </div>
