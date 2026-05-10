@@ -80,7 +80,7 @@ export const videoPosts: VideoPostItem[] = [
     title: "Insurance Benefits 101",
     brand: "Manulife",
     category: "Ads Performance",
-    thumbnail: "https://images.unsplash.com/photo-1454165833767-027ffea9e77b?q=80&w=800&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=800&auto=format&fit=crop",
     fullVideoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     role: "Post-Production",
     year: "2023",
