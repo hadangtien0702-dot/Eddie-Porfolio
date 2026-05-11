@@ -277,7 +277,7 @@ export function CaseCard({
         <div className="relative z-10 h-full flex flex-col justify-between">
           <span className="font-heading font-bold text-8xl md:text-9xl opacity-10" style={{ color: cs.color }}>{String(index + 1).padStart(2, "0")}</span>
           <div>
-            <h3 className="font-heading text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight leading-[1.1]">
+            <h3 className="font-heading text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight leading-[1.1] min-h-[2.2em] flex items-end">
               {isInView && (
                 <VerticalCutReveal
                   splitBy="characters"
@@ -288,7 +288,7 @@ export function CaseCard({
                 </VerticalCutReveal>
               )}
             </h3>
-            <p className="font-body text-[17px] md:text-[19px] text-white/40">{cs.tagline}</p>
+            <p className="font-body text-[17px] md:text-[19px] text-white/40 min-h-[3em]">{cs.tagline}</p>
           </div>
           <div className="flex justify-between items-end border-t border-white/10 pt-6">
             <div>

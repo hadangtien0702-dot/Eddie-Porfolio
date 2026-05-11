@@ -19,7 +19,7 @@ export default function CaseStudy() {
     <section
       ref={sectionRef}
       id="case-study"
-      className="relative w-full py-24 lg:py-40 overflow-hidden bg-primary"
+      className="relative w-full pt-24 lg:pt-40 pb-12 lg:pb-16 overflow-hidden bg-primary"
     >
       {/* ─── Decorative background glow ─── */}
       <div

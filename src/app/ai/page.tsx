@@ -33,7 +33,7 @@ export default function AIPage() {
           </div>
         </motion.div>
 
-        <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-8 max-w-6xl mx-auto">
+        <h1 className="font-heading text-6xl md:text-[clamp(3.5rem,8vw,4.5rem)] lg:text-9xl font-black tracking-tighter mb-8 max-w-6xl mx-auto leading-[0.9] md:leading-tight">
           <VerticalCutReveal splitBy="words" staggerDuration={0.05}>
             HỆ THỐNG HÓA SỰ SÁNG TẠO BẰNG A.I
           </VerticalCutReveal>
@@ -67,8 +67,8 @@ export default function AIPage() {
                  {item.icon}
                </div>
                <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.3em] mb-2 block">{item.label}</span>
-               <h3 className="font-heading text-xl font-bold text-white mb-3">{item.title}</h3>
-               <p className="font-body text-sm text-white/40 leading-relaxed">{item.desc}</p>
+               <h3 className="font-heading text-xl font-bold text-white mb-3 min-h-[2.5em] flex items-end">{item.title}</h3>
+               <p className="font-body text-sm text-white/40 leading-relaxed min-h-[4em]">{item.desc}</p>
              </motion.div>
            ))}
         </div>

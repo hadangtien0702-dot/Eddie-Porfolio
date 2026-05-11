@@ -26,6 +26,11 @@ export default function SocialGrid({
   onSelectVideo: (video: VideoPostItem) => void;
 }) {
   const [activeFilter, setActiveFilter] = useState("ALL PROJECTS");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const filters = ["ALL PROJECTS", "ADS (PAID)", "ORGANIC CONTENT", "CREATIVE"];
 
@@ -36,6 +41,8 @@ export default function SocialGrid({
     if (activeFilter === "CREATIVE") return videos.filter(v => v.badge === "#creative");
     return videos;
   }, [activeFilter, videos]);
+
+  if (!isMounted) return <div className="min-h-screen bg-[#020202]" />;
 
   return (
     <div className="relative z-30 w-full pb-32 bg-[#020202] text-white">
@@ -138,18 +145,18 @@ export default function SocialGrid({
       </div>
 
       {/* ─── FILTERS & NAVIGATION ─── */}
-      <div className="max-w-[1500px] mx-auto px-6 border-y border-white/5 py-6 mb-12 flex flex-col md:flex-row items-center justify-between gap-6">
-         <div className="flex items-center gap-8 overflow-x-auto w-full md:w-auto no-scrollbar">
+      <div className="max-w-[1500px] mx-auto px-6 border-y border-white/5 py-8 mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
+         <div className="flex items-center gap-10 md:gap-14 overflow-x-auto w-full md:w-auto no-scrollbar">
             {filters.map((f) => (
               <button
                 key={f}
                 onClick={() => setActiveFilter(f)}
-                className={`relative font-mono text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-300 pb-2 whitespace-nowrap
-                  ${activeFilter === f ? 'text-accent' : 'text-white/40 hover:text-white/70'}`}
+                className={`relative font-heading text-[13px] md:text-[15px] font-black tracking-[0.2em] uppercase transition-all duration-300 pb-3 whitespace-nowrap
+                  ${activeFilter === f ? 'text-accent scale-110' : 'text-white/30 hover:text-white/70 hover:scale-105'}`}
               >
                 {f}
                 {activeFilter === f && (
-                  <motion.div layoutId="filter-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent" />
+                  <motion.div layoutId="filter-underline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-accent shadow-[0_0_15px_rgba(255,64,0,0.5)]" />
                 )}
               </button>
             ))}

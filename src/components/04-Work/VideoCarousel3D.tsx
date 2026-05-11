@@ -23,8 +23,19 @@ export default function VideoCarousel3D({
   const [activeCategory, setActiveCategory] = useState<"Ads Performance" | "Social Content">("Ads Performance");
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoPostItem | null>(null);
   const autoPlayRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+  // ─── Lifecycle & Responsive ───
+  useEffect(() => {
+    setIsMounted(true);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Filter videos based on active category
   const filteredVideos = useMemo(() => 
@@ -97,6 +108,8 @@ export default function VideoCarousel3D({
     return url;
   };
 
+  if (!isMounted) return null;
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -106,6 +119,7 @@ export default function VideoCarousel3D({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
           className="fixed inset-0 z-[100] flex flex-col bg-[#050505]"
+          suppressHydrationWarning
         >
           {/* Global Fixed Background Layer */}
           <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -209,7 +223,7 @@ export default function VideoCarousel3D({
 
                   if (!visible) return null;
 
-                   const offsetX = typeof window !== 'undefined' && window.innerWidth < 768 ? OFFSET_X_MOBILE : OFFSET_X_DESKTOP;
+                  const offsetX = isMobile ? OFFSET_X_MOBILE : OFFSET_X_DESKTOP;
 
                    return (
                      <motion.div
@@ -220,7 +234,7 @@ export default function VideoCarousel3D({
                        animate={{
                          x: offset * offsetX,
                          rotateY: offset * -45,
-                         scale: isCenter ? 1 : (typeof window !== 'undefined' && window.innerWidth < 768 ? 0.85 : 1) - absOffset * 0.15,
+                         scale: isCenter ? 1 : (isMobile ? 0.85 : 1) - absOffset * 0.15,
                          opacity: isCenter ? 1 : 0.4 - absOffset * 0.1,
                          zIndex: 10 - absOffset,
                        }}

@@ -171,8 +171,9 @@ export default function Work() {
       id="work"
       className="relative w-full overflow-hidden"
       style={{ background: "#FBFBFB" }}
+      suppressHydrationWarning
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-24 lg:py-40">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-12 lg:pt-16 pb-24 lg:pb-40">
         {/* ─── Heading ─── */}
         <div className="relative mb-16 lg:mb-24">
           <div className="flex items-start justify-between gap-8 mb-5">
