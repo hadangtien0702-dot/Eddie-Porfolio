@@ -150,13 +150,13 @@ export default function AICaseStudy() {
             {mainKpis.map((kpi, i) => (
               <div key={kpi.label} className="p-12 group hover:bg-white/[0.02] transition-all duration-500 relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-                   {React.cloneElement(kpi.icon as React.ReactElement, { className: "w-32 h-32" })}
+                   {React.cloneElement(kpi.icon as React.ReactElement<any>, { className: "w-32 h-32" })}
                 </div>
 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-10">
                     <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-xl">
-                      {React.cloneElement(kpi.icon as React.ReactElement, { className: "w-6 h-6" })}
+                      {React.cloneElement(kpi.icon as React.ReactElement<any>, { className: "w-6 h-6" })}
                     </div>
                     <div className={`px-4 py-1 rounded-full font-mono text-[10px] font-black tracking-[0.2em] uppercase ${kpi.trend === "Viral" ? "bg-blue-500/20 text-blue-400" : "bg-accent/20 text-accent shadow-[0_0_30px_rgba(255,64,0,0.15)]"}`}>
                       {kpi.trend}
