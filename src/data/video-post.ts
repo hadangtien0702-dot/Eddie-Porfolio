@@ -212,7 +212,8 @@ export const videoPosts: VideoPostItem[] = [
     year: "2024",
     duration: "1:30",
     description: "Một trong những video đẹp và ấn tượng nhất trong bộ sưu tập Ads.",
-    stats: { badge: "Featured" },
+    stats: {},
+    badge: "Featured",
     tags: ["Creative", "High-End", "Showcase"],
   },
 
