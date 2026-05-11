@@ -146,7 +146,7 @@ export default function SocialGrid({
 
       {/* ─── FILTERS & NAVIGATION ─── */}
       <div className="max-w-[1500px] mx-auto px-6 border-y border-white/5 py-8 mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
-         <div className="flex items-center gap-10 md:gap-14 overflow-x-auto w-full md:w-auto no-scrollbar">
+         <div className="flex items-center gap-10 md:gap-14 overflow-x-auto w-full md:w-auto scrollbar-hide">
             {filters.map((f) => (
               <button
                 key={f}
