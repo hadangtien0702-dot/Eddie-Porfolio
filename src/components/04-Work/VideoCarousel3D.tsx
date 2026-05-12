@@ -37,11 +37,11 @@ export default function VideoCarousel3D({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Filter videos based on active category
-  const filteredVideos = useMemo(() => 
-    videoPosts.filter(v => v.category === activeCategory),
-    [activeCategory]
-  );
+  // Filter videos based on active category and sort by pinned status
+  const filteredVideos = useMemo(() => {
+    const result = videoPosts.filter(v => v.category === activeCategory);
+    return [...result].sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
+  }, [activeCategory]);
 
   const total = filteredVideos.length;
   const currentVideo = filteredVideos[activeIndex];

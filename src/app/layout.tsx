@@ -3,8 +3,7 @@
 // Font: Clash Display (heading) + Inter (body) theo RULES_1.md
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import localFont from "next/font/local";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 
@@ -15,27 +14,12 @@ const inter = Inter({
   display: "swap",
 });
 
-// ─── Heading Font — Clash Display từ local files ───
-const clashDisplay = localFont({
-  src: [
-    {
-      path: "../../public/fonts/ClashDisplay-Medium.otf",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/ClashDisplay-Semibold.otf",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/ClashDisplay-Bold.otf",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-clash",
+// ─── Heading Font — Outfit từ Google Fonts ───
+const outfit = Outfit({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-outfit",
   display: "swap",
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 // ─── SEO Metadata ───
@@ -51,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${inter.variable} ${clashDisplay.variable}`} suppressHydrationWarning>
+    <html lang="vi" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <body className="antialiased bg-[#050505] text-white overflow-x-hidden min-h-screen relative" suppressHydrationWarning>
         
         {/* ─── Global Tech Motif Background ─── */}

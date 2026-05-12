@@ -35,11 +35,13 @@ export default function SocialGrid({
   const filters = ["ALL PROJECTS", "ADS (PAID)", "ORGANIC CONTENT", "CREATIVE"];
 
   const filteredVideos = useMemo(() => {
-    if (activeFilter === "ALL PROJECTS") return videos;
-    if (activeFilter === "ADS (PAID)") return videos.filter(v => v.category === "Ads Performance");
-    if (activeFilter === "ORGANIC CONTENT") return videos.filter(v => v.category === "Social Content" && !v.badge);
-    if (activeFilter === "CREATIVE") return videos.filter(v => v.badge === "#creative");
-    return videos;
+    let result = videos;
+    if (activeFilter === "ADS (PAID)") result = videos.filter(v => v.category === "Ads Performance");
+    else if (activeFilter === "ORGANIC CONTENT") result = videos.filter(v => v.category === "Social Content" && !v.badge);
+    else if (activeFilter === "CREATIVE") result = videos.filter(v => v.badge === "#creative");
+    
+    // Sort by pinned status
+    return [...result].sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
   }, [activeFilter, videos]);
 
   if (!isMounted) return <div className="min-h-screen bg-[#020202]" />;
@@ -199,8 +201,16 @@ export default function SocialGrid({
                 onClick={() => onSelectVideo(video)}
               >
                 {/* Tactical Index Badge */}
-                <div className="absolute -top-3 -left-3 z-30 bg-accent text-white font-mono text-[12px] font-black px-2.5 py-1 rounded-sm shadow-[0_5px_15px_rgba(255,64,0,0.4)] transition-transform group-hover:scale-110">
-                   {(i + 1).toString().padStart(2, '0')}
+                <div className="absolute -top-3 -left-3 z-30 flex items-center gap-1">
+                  <div className="bg-accent text-white font-mono text-[12px] font-black px-2.5 py-1 rounded-sm shadow-[0_5px_15px_rgba(255,64,0,0.4)] transition-transform group-hover:scale-110">
+                     {(i + 1).toString().padStart(2, '0')}
+                  </div>
+                  {video.isPinned && (
+                    <div className="bg-white text-black font-mono text-[9px] font-black px-2 py-1 rounded-sm shadow-[0_5px_15px_rgba(255,255,255,0.1)] flex items-center gap-1">
+                      <Sparkles size={10} className="text-accent" />
+                      PINNED
+                    </div>
+                  )}
                 </div>
 
                 {/* Thumbnail Container */}

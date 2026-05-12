@@ -314,7 +314,7 @@ export default function AICaseStudy() {
                 href="https://www.facebook.com/hanguyen.suckhoecuocsongmy/reels/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-14 rounded-[4rem] bg-accent group transition-all duration-500 hover:scale-[1.02] shadow-[0_40px_100px_rgba(255,64,0,0.3)] hover:shadow-accent/50"
+                className="flex items-center justify-between p-14 rounded-[4rem] bg-accent group transition-all duration-500 hover:scale-[1.02] shadow-[0_40px_100px_rgba(255,64,0,0.3)] hover:shadow-accent/50 mb-6"
               >
                 <div className="flex items-center gap-10">
                   <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-white shadow-inner">
@@ -326,6 +326,24 @@ export default function AICaseStudy() {
                   </div>
                 </div>
                 <ArrowUpRight className="w-12 h-12 text-white group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform duration-500" />
+              </a>
+
+              <a 
+                href="https://drive.google.com/drive/folders/1Q6RI5z_G1jU6eP815x8zCGEumAfdPq4s?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-10 rounded-[3rem] bg-white/[0.03] border border-white/10 group transition-all duration-500 hover:bg-white/[0.08]"
+              >
+                <div className="flex items-center gap-8">
+                  <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-white border border-white/10">
+                    <ExternalLink className="w-8 h-8 text-white/40 group-hover:text-accent transition-colors" />
+                  </div>
+                  <div>
+                    <div className="font-heading text-2xl font-black text-white tracking-[-0.03em] uppercase leading-none group-hover:text-accent transition-colors">RAW ASSET VAULT</div>
+                    <div className="font-mono text-[10px] text-white/30 font-black uppercase tracking-[0.3em] mt-2">View 100+ AI-Generated Samples</div>
+                  </div>
+                </div>
+                <ArrowUpRight className="w-8 h-8 text-white/10 group-hover:text-accent group-hover:translate-x-2 group-hover:-translate-y-2 transition-all" />
               </a>
             </div>
           </div>
