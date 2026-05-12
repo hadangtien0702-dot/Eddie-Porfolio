@@ -26,8 +26,8 @@
   --color-border-subtle: #1a1a1a;
 
   /* Font — tham chiếu từ CSS variables mà Next.js tạo ra */
-  --font-heading: var(--font-outfit), system-ui, sans-serif;
-  --font-body: var(--font-inter-display), "Inter", system-ui, sans-serif;
+  --font-heading: var(--font-be-vietnam), system-ui, sans-serif;
+  --font-body: var(--font-inter-display), system-ui, sans-serif;
 
   /* Gradient */
   --gradient-hero: linear-gradient(
@@ -68,8 +68,8 @@
   --color-grey: #dedede;
 
   /* Font Family — tham chiếu đúng biến Next.js */
-  --font-heading: var(--font-clash), system-ui, sans-serif;
-  --font-body: var(--font-inter-display), "Inter", system-ui, sans-serif;
+  --font-heading: var(--font-be-vietnam), system-ui, sans-serif;
+  --font-body: var(--font-inter-display), system-ui, sans-serif;
 
   /* Font Size — Typography hierarchy optimized for Desktop & Mobile */
   --font-size-display: clamp(38px, 8vw, 76px);

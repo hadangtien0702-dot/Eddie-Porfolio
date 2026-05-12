@@ -17,7 +17,7 @@ Bảng này tổng hợp toàn bộ tài nguyên video, dùng để theo dõi tr
 | A06 | Sự Thật Chi Phí Max Funded IUL | ThinkSmart | [YouTube](https://www.youtube.com/watch?v=pyd7slVeV-g) | 75K+ Views | ✅ Online | (Video mới bổ sung) |
 | A07 | Podcast: Sự Thật IUL | ThinkSmart | [YouTube](https://www.youtube.com/watch?v=PoUWP--0CDU) | 200K+ Views | ✅ Online | |
 | A08 | Bảo Hiểm Mỹ - Đừng Mua... | ThinkSmart | [YouTube](https://www.youtube.com/watch?v=Cv34FraF6TI) | 155K+ Views | ✅ Online | |
-| A09 | Premium Creative Showcase | ThinkSmart | [Drive](https://drive.google.com/file/d/1OPZ7iSVnJ6hOkfR3q72tptIL4TGccjUD/view) | **Pinned** | ✅ Online | Video đẹp nè |
+| A09 | Premium Creative Showcase | ThinkSmart | [Drive](https://drive.google.com/file/d/1OPZ7iSVnJ6hOkfR3q72tptIL4TGccjUD/view) | **Pinned** | ✅ Integrated | Video đẹp nè (Downloaded) |
 | A10 | Bảo Hiểm Y Tế Tại Mỹ | ThinkSmart | [Drive](https://drive.google.com/file/d/1hwaTa5Q1M5f9euU03ZR6wMbjdyvzoUZ1/view) | 42K+ Views | ✅ Online | |
 | A11 | Facebook Marketing Strategy | ThinkSmart | [Drive](https://drive.google.com/file/d/1rtXMUI0Q_45Uo2ATZYwuJxzYPnduw2pJ/view) | 68K+ Views | ✅ Online | |
 | A12 | Financial Strategy - Plan B | ThinkSmart | [Drive](https://drive.google.com/file/d/1Jq7fTkTfpwrrUivRUJO-P87zZCc0nSd8/view) | - | ❌ **ERROR** | **404 / Cần Quyền Truy Cập** |

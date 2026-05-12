@@ -1,25 +1,47 @@
 // ─── Root Layout ───
 // Mô tả: Layout chính của toàn bộ trang portfolio
-// Font: Clash Display (heading) + Inter (body) theo RULES_1.md
+// Font: Be Vietnam Pro (heading) + Inter Display (body)
+// Giải pháp: Sử dụng Be Vietnam Pro để hỗ trợ tiếng Việt hoàn hảo cho tiêu đề
 
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Be_Vietnam_Pro } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 
-// ─── Body Font — Inter Display từ Google Fonts ───
-const inter = Inter({
+// ─── Heading Font: Be Vietnam Pro (Google Fonts) ───
+const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  variable: "--font-inter-display",
-  display: "swap",
-});
-
-// ─── Heading Font — Outfit từ Google Fonts ───
-const outfit = Outfit({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-outfit",
+  variable: "--font-be-vietnam",
   display: "swap",
   weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+// ─── Local Font: Inter Display (Body) ───
+const interDisplay = localFont({
+  src: [
+    {
+      path: "../../assets/fonts/Inter Display/InterDisplay-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../assets/fonts/Inter Display/InterDisplay-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../assets/fonts/Inter Display/InterDisplay-SemiBold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../assets/fonts/Inter Display/InterDisplay-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-inter-display",
 });
 
 // ─── SEO Metadata ───
@@ -35,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang="vi" className={`${beVietnam.variable} ${interDisplay.variable}`} suppressHydrationWarning>
       <body className="antialiased bg-[#050505] text-white overflow-x-hidden min-h-screen relative" suppressHydrationWarning>
         
         {/* ─── Global Tech Motif Background ─── */}
