@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Cpu, 
@@ -131,8 +131,13 @@ const useCases = [
 ];
 
 export default function AIUseCaseCards() {
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState(useCases[0].id);
   const [activePlayground, setActivePlayground] = useState<"tools" | "scripts" | "layout" | "design">("tools");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const currentUC = useCases.find(u => u.id === activeTab) || useCases[0];
 
@@ -338,7 +343,7 @@ export default function AIUseCaseCards() {
                         </svg>
 
                         {/* NEURAL DUST PARTICLES */}
-                        {[...Array(12)].map((_, i) => (
+                        {mounted && [...Array(12)].map((_, i) => (
                            <motion.div
                              key={`dust-${i}`}
                              className="absolute w-1 h-1 bg-accent/20 rounded-full blur-[1px]"
