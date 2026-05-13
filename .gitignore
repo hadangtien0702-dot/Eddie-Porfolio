@@ -54,6 +54,9 @@ secrets.md
 # raw source images (originals, not for repo)
 public/HUONG_DAN_HINH_ANH/
 
+# credentials & secrets (never push)
+docs/CREDENTIALS.md
+
 # large video files
 public/images/**/*.mp4
 public/videos/ads/*.mp4
