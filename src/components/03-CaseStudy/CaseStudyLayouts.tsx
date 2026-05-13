@@ -149,8 +149,53 @@ export function StorySection({
 
   return (
     <motion.div ref={ref} id={section.id} initial={{ opacity: 0, y: 60 }} animate={isInView ? { opacity: 1, y: 0 } : {}} className="relative py-8 md:py-12">
-      <motion.div className="absolute -top-4 -right-4 md:right-0 pointer-events-none select-none opacity-10">
-        <span className="font-heading text-[200px] md:text-[380px] font-bold leading-none" style={{ color: `${caseColor}12` }}>{num}</span>
+      {/* ─── PREMIUM HUD BACKGROUND NUMBER (ENHANCED) ─── */}
+      <motion.div 
+        className="absolute -top-12 -right-12 md:-right-24 pointer-events-none select-none z-0"
+        initial={{ opacity: 0, scale: 0.9, x: 20 }}
+        whileInView={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <svg 
+          width="600" 
+          height="450" 
+          viewBox="0 0 400 300" 
+          className="w-[350px] md:w-[650px] h-auto opacity-40"
+        >
+          <defs>
+            <linearGradient id={`grad-${num}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={caseColor} stopOpacity="0.2" />
+              <stop offset="50%" stopColor={caseColor} stopOpacity="1" />
+              <stop offset="100%" stopColor={caseColor} stopOpacity="0.2" />
+            </linearGradient>
+            <filter id="glow-heavy" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="8" result="blur8" />
+              <feGaussianBlur stdDeviation="3" result="blur3" />
+              <feMerge>
+                <feMergeNode in="blur8" />
+                <feMergeNode in="blur3" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            className="font-heading font-black"
+            style={{
+              fontSize: "300px",
+              fill: "none",
+              stroke: `url(#grad-${num})`,
+              strokeWidth: "1.2px",
+              filter: "url(#glow-heavy)",
+              letterSpacing: "-0.05em"
+            }}
+          >
+            {num}
+          </text>
+        </svg>
       </motion.div>
       <div className="relative z-10 flex items-center gap-4 mb-10">
         <span className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full font-body text-[11px] font-bold uppercase tracking-[0.3em] border" style={{ color: caseColor, borderColor: `${caseColor}40`, backgroundColor: `${caseColor}10` }}>
