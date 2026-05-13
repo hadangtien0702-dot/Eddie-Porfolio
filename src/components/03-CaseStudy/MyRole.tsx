@@ -300,55 +300,78 @@ export function MyRole() {
         </motion.div>
 
         {/* ─── Ultra-Premium Scanning Cards ─── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 w-full relative z-30">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full relative z-30">
           {cards.map((card, i) => (
             <motion.div
               key={card.id}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.8 + i * 0.2, duration: 1 }}
-              whileHover={{ y: -20 }}
-              className="group relative"
+              transition={{ delay: 0.5 + i * 0.15, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className="group relative h-full"
             >
-              <div 
-                className="relative p-12 bg-white/[0.01] backdrop-blur-3xl border border-white/[0.05] transition-all duration-700 group-hover:bg-white/[0.03] group-hover:border-orange-500/20 h-full overflow-hidden"
-                style={{ clipPath: "polygon(0 0, 92% 0, 100% 12%, 100% 100%, 0 100%)" }}
-              >
-                <motion.div 
-                  animate={{ y: ["-100%", "400%"] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "linear", delay: i * 2 }}
-                  className="absolute inset-0 bg-gradient-to-b from-transparent via-orange-500/5 to-transparent w-full h-40 pointer-events-none"
-                />
+              {/* HUD BORDER CONTAINER */}
+              <div className="relative p-10 h-full bg-[#080808]/40 backdrop-blur-3xl border border-white/5 overflow-hidden transition-all duration-500 group-hover:border-orange-500/30 group-hover:bg-orange-500/[0.02]">
+                
+                {/* ─── HUD ELEMENTS ─── */}
+                {/* Corner Brackets */}
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-white/10 group-hover:border-orange-500/40 transition-colors duration-500" />
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-white/10 group-hover:border-orange-500/40 transition-colors duration-500" />
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-white/10 group-hover:border-orange-500/40 transition-colors duration-500" />
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-white/10 group-hover:border-orange-500/40 transition-colors duration-500" />
 
-                <div className="flex flex-col gap-6 mb-12">
-                  <div className="flex items-center justify-between">
-                    <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:bg-orange-500/10 group-hover:border-orange-500/40">
+                {/* Scanning Line Animation */}
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                  <motion.div 
+                    animate={{ y: ["-100%", "300%"] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: i * 0.5 }}
+                    className="w-full h-1/2 bg-gradient-to-b from-transparent via-orange-500/5 to-transparent blur-xl"
+                  />
+                </div>
+
+                {/* Top Metadata Hub */}
+                <div className="flex items-start justify-between mb-12 relative z-10">
+                   <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_8px_#ff5a00]" />
+                        <span className="font-mono text-[9px] text-orange-500 font-black uppercase tracking-[0.2em]">{card.tag}</span>
+                      </div>
+                      <span className="font-mono text-[8px] text-white/20 uppercase tracking-widest pl-3.5">SYS_STABLE_v.4.2</span>
+                   </div>
+                   <div className="font-mono text-[10px] text-white/10 group-hover:text-white/30 transition-colors font-black uppercase tracking-widest">
+                      ID: 0{i+1}
+                   </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-8 transition-all duration-500 group-hover:bg-orange-500/10 group-hover:border-orange-500/20 group-hover:scale-110">
+                    <div className="text-white transition-colors group-hover:text-orange-500">
                       {card.icon}
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className="font-mono text-[9px] text-white/30 tracking-[0.2em] mb-1 uppercase bg-white/[0.05] px-2 py-0.5 rounded-sm">
-                        {card.tag}
-                      </span>
-                      <div className="w-12 h-[1px] bg-white/10 group-hover:bg-orange-500/40 transition-colors" />
+                  </div>
+
+                  <h3 className="font-heading text-4xl font-black text-white leading-none tracking-tighter uppercase mb-6 italic transition-all duration-500 group-hover:translate-x-2 group-hover:text-orange-500">
+                    {card.title}
+                  </h3>
+                  
+                  <p className="font-body text-lg text-white/30 leading-relaxed group-hover:text-white/60 transition-colors">
+                    {card.text}
+                  </p>
+
+                  <div className="mt-12 pt-8 border-t border-white/5 flex items-center justify-between opacity-40 group-hover:opacity-100 transition-all duration-500">
+                    <div className="flex items-center gap-3">
+                       <div className="flex gap-0.5">
+                          {[1,2,3,4].map(j => <div key={j} className="w-1 h-3 bg-orange-500/40 rounded-full" />)}
+                       </div>
+                       <span className="font-mono text-[9px] text-white font-black uppercase tracking-[0.3em]">Access_Core</span>
                     </div>
+                    <ArrowRight className="w-5 h-5 text-orange-500 group-hover:translate-x-2 transition-transform" />
                   </div>
                 </div>
 
-                <h3 className="font-heading text-h3 font-bold mb-5 text-white group-hover:text-orange-500 transition-colors tracking-tight">
-                  {card.title}
-                </h3>
-                <p className="font-body text-[16px] text-white/30 leading-relaxed transition-colors group-hover:text-white/60">
-                  {card.text}
-                </p>
-
-                <div className="mt-10 flex items-center gap-3 text-white/20 text-[10px] font-bold tracking-[0.5em] uppercase transition-all duration-500 group-hover:text-orange-500 group-hover:translate-x-4">
-                  Access_Core <ArrowRight className="w-3 h-3" />
-                </div>
-                
-                <div 
-                  className="absolute bottom-0 right-0 w-24 h-24 opacity-0 transition-opacity duration-700 group-hover:opacity-10 blur-3xl"
-                  style={{ background: card.accent }}
-                />
+                {/* Subtle Ambient Glow */}
+                <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-orange-500/10 blur-[80px] rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-700" />
               </div>
             </motion.div>
           ))}

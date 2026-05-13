@@ -11,6 +11,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 // ─── Reusable Physics-based 3D Premium Card ───
 export interface PremiumHoverCardProps {
@@ -324,192 +325,166 @@ export function ContextCard({ color }: { color: string }) {
   const revenueCount = useAnimatedCounter(2000000, isInView, 2500);
   const cpaCount = useAnimatedCounter(180, isInView, 1800);
 
-  const formatRevenue = (n: number) => "$" + n.toLocaleString("en-US");
+  const formatRevenue = (n: number) => "$" + (n / 1000000).toFixed(1) + "M";
 
   return (
-    <div ref={ref} id="chart-context" className="w-full relative py-4">
-      {/* Dynamic Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
+    <div ref={ref} id="chart-context" className="w-full relative py-8">
+      {/* ─── HUD BENTO GRID ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* ─── CARD 1: THE CRISIS (Spans 2 columns) ─── */}
-        <PremiumHoverCard
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          accentColor={`${color}30`}
-          className="lg:col-span-2 flex flex-col justify-between !rounded-3xl"
-          style={{ borderColor: "rgba(255,255,255,0.06)", border: "1px solid" }}
-        >
-
-          {/* Abstract Ambient Glow */}
-          <div className="absolute top-0 right-0 w-[400px] h-[300px] bg-[#ef4444]/5 rounded-full blur-[100px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none" />
-
-          <div className="relative z-10 p-6 md:p-10 h-full flex flex-col justify-between min-h-[300px] md:min-h-[380px]">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        {/* ─── MAIN MODULE: THE STAGNATION (Spans 8 cols) ─── */}
+        <div className="lg:col-span-8 group relative">
+          <div className="relative p-10 md:p-12 h-full bg-[#080808]/60 backdrop-blur-3xl border border-white/5 overflow-hidden transition-all duration-500 group-hover:border-red-500/20">
+            {/* HUD Elements */}
+            <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-white/10 group-hover:border-red-500/30 transition-colors" />
+            <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-white/10 group-hover:border-red-500/30 transition-colors" />
+            
+            {/* Metadata */}
+            <div className="flex items-center justify-between mb-12 relative z-10">
               <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: "#ef4444" }} />
-                <span className="font-body text-[12px] text-[#ef4444] uppercase tracking-[0.2em] font-bold flex items-center gap-2">
-                   The Challenge
-                </span>
+                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                 <span className="font-mono text-[10px] text-red-500 font-black uppercase tracking-[0.3em]">Module: Challenge_Report</span>
               </div>
-              <div className="px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.03] font-body text-[12px] font-bold text-white/40 uppercase tracking-[0.2em] backdrop-blur-sm">
-                June 2022
+              <div className="px-3 py-1 bg-white/[0.03] border border-white/5 rounded-sm font-mono text-[9px] text-white/30 uppercase tracking-widest">
+                 REF: JS-2022-STAG
               </div>
             </div>
 
-            {/* Content Flex */}
-            <div className="flex flex-col gap-8 mt-4">
-              {/* Frozen Revenue Box */}
-              <div>
-                <p className="font-body text-[12px] text-white/40 uppercase tracking-[0.2em] mb-1">Annual Revenue Stagnated</p>
-                <div className="relative inline-block">
-                  <h3 className="font-heading font-bold leading-none tracking-[-0.03em] text-[clamp(42px,6vw,72px)] text-white/90">
-                    {formatRevenue(revenueCount)}
-                  </h3>
-                  {/* Subtle texture overlay */}
-                  <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/diagonal-striped-brick.png')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
-                </div>
+            <div className="flex flex-col md:flex-row gap-12 relative z-10">
+              <div className="flex-1">
+                 <p className="font-mono text-[10px] text-white/20 uppercase tracking-[0.2em] mb-3">Baseline_Annual_Revenue</p>
+                 <h3 className="font-heading text-[clamp(48px,8vw,80px)] font-black text-white leading-none tracking-tighter mb-4 italic">
+                   {formatRevenue(revenueCount)}
+                 </h3>
+                 <div className="flex items-center gap-4">
+                    <div className="flex gap-1">
+                       {[1,2,3,4,5,6].map(j => <div key={j} className="w-4 h-1 bg-white/10" />)}
+                    </div>
+                    <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest">Status: Frozen</span>
+                 </div>
               </div>
 
-              {/* Skyrocketing CPA Arrow & Chart */}
-              <div className="relative w-full border-t border-white/10 pt-6 flex flex-col">
-                <p className="font-body text-[12px] text-[#ef4444]/60 font-bold uppercase tracking-[0.2em] mb-4">
-                  While Acquisition Costs Surged
-                </p>
-                <div className="flex flex-col sm:flex-row sm:items-end gap-6">
-                  {/* Fake Line Chart SVG */}
-                  <div className="relative flex-1 h-[60px] w-full min-w-[150px]">
-                    <svg className="w-full h-full overflow-visible" viewBox="0 0 200 60" preserveAspectRatio="none">
-                      <motion.path
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
-                        transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
-                        d="M0,50 Q40,45 80,30 T150,15 T200,5"
-                        fill="none"
-                        stroke="#ef4444"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        className="drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]"
-                      />
+              <div className="w-full md:w-64 flex flex-col justify-end">
+                 <div className="h-20 w-full relative mb-4">
+                    {/* Sparkline: Flat/Stagnant */}
+                    <svg viewBox="0 0 200 60" className="w-full h-full">
+                       <motion.path 
+                         d="M 0 30 L 40 32 L 80 28 L 120 31 L 160 29 L 200 30"
+                         fill="none" stroke="white" strokeWidth="2" strokeOpacity="0.2"
+                         initial={{ pathLength: 0 }} animate={isInView ? { pathLength: 1 } : {}}
+                         transition={{ duration: 2, delay: 1 }}
+                       />
+                       <motion.circle 
+                         cx="200" cy="30" r="3" fill="white" fillOpacity="0.4"
+                         initial={{ scale: 0 }} animate={isInView ? { scale: 1 } : {}}
+                         transition={{ delay: 3 }}
+                       />
                     </svg>
-                  </div>
-                  <div className="flex flex-col items-start sm:items-end flex-shrink-0">
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={isInView ? { scale: 1, opacity: 1 } : {}}
-                      transition={{ duration: 0.6, delay: 1 }}
-                      className="inline-flex flex-col items-start sm:items-end"
-                    >
-                      <span className="font-heading text-[42px] md:text-[56px] font-bold text-[#ef4444] leading-none mb-1 shadow-[#ef4444]/20 drop-shadow-lg pt-2 sm:pt-0">
-                        ${cpaCount}
-                      </span>
-                      <span className="font-body text-[11px] text-white/40 font-bold uppercase tracking-[0.2em] pl-1 sm:pl-0">
-                        Target: $67
-                      </span>
-                    </motion.div>
-                  </div>
-                </div>
+                 </div>
+                 <p className="font-body text-sm text-white/30 leading-relaxed italic">
+                   "Marketing lacked a unified acquisition system. Video was just content—not revenue."
+                 </p>
               </div>
             </div>
-            
-            {/* Gradient border bottom accent */}
-            <div className="absolute bottom-0 left-0 w-full h-[4px] bg-gradient-to-r from-transparent via-[#ef4444]/40 to-transparent opacity-50" />
+
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] font-mono text-[8px] text-white leading-tight pointer-events-none uppercase">
+               DATA_STREAM_01: STAGNANT<br/>
+               REVENUE_LOCK: ENABLED<br/>
+               TRAFFIC_SOURCE: ADHOC
+            </div>
           </div>
-        </PremiumHoverCard>
+        </div>
 
-        {/* ─── COLUMN RIGHT: The Funnel & Strategy ─── */}
-        <div className="lg:col-span-1 flex flex-col gap-4 md:gap-5">
-          
-          {/* Card 2: Functional Leaks */}
-          <PremiumHoverCard
-            initial={{ opacity: 0, x: 20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            accentColor={`${color}30`}
-            className="flex-1 p-6 h-full min-h-[180px] flex flex-col justify-between !rounded-3xl"
-            style={{ borderColor: "rgba(255,255,255,0.06)", border: "1px solid" }}
-          >
-            {/* Visual background abstraction */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 select-none pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-700">
-               <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-white/50">
-                 <path d="M3 3h18l-6 8v8l-6-4v-4L3 3z" strokeDasharray="3 3"/>
-               </svg>
-            </div>
+        {/* ─── SIDE MODULE: THE CPA SURGE (Spans 4 cols) ─── */}
+        <div className="lg:col-span-4 group relative">
+          <div className="relative p-10 h-full bg-[#080808]/60 backdrop-blur-3xl border border-white/5 overflow-hidden transition-all duration-500 group-hover:border-red-500/40">
+            {/* Brackets */}
+            <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-white/5 group-hover:border-red-500/20 transition-colors" />
             
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                 <span className="text-[14px]">⊘</span>
-                 <p className="font-body text-[12px] text-white/40 font-bold uppercase tracking-[0.2em]">System Architecture</p>
+            <div className="relative z-10 flex flex-col h-full justify-between">
+               <div>
+                  <div className="flex items-center gap-2 mb-8">
+                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]" />
+                     <span className="font-mono text-[10px] text-white/40 uppercase tracking-[0.2em]">CPA_INFLATION</span>
+                  </div>
+                  
+                  <div className="relative">
+                     <span className="font-mono text-[11px] text-red-500/50 uppercase block mb-1">Surging_To</span>
+                     <h4 className="font-heading text-6xl font-black text-red-500 leading-none tracking-tighter mb-4">
+                       ${cpaCount}
+                     </h4>
+                     
+                     {/* Surge Line */}
+                     <div className="h-16 w-full relative">
+                        <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible">
+                           <motion.path 
+                             d="M 0 35 Q 30 35 50 20 T 100 5"
+                             fill="none" stroke="#ef4444" strokeWidth="3"
+                             initial={{ pathLength: 0 }} animate={isInView ? { pathLength: 1 } : {}}
+                             transition={{ duration: 1.5, delay: 0.5 }}
+                           />
+                           <motion.circle 
+                             cx="100" cy="5" r="4" fill="#ef4444"
+                             initial={{ scale: 0 }} animate={isInView ? { scale: 1 } : {}}
+                             transition={{ delay: 2 }}
+                             className="shadow-[0_0_12px_#ef4444]"
+                           />
+                        </svg>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="mt-8">
+                  <div className="flex items-center justify-between font-mono text-[9px] text-white/20 uppercase tracking-widest mb-2">
+                     <span>Efficiency_Lost</span>
+                     <span>92%</span>
+                  </div>
+                  <div className="w-full h-[1px] bg-white/5 relative">
+                     <motion.div 
+                        initial={{ width: 0 }} animate={isInView ? { width: "92%" } : {}}
+                        transition={{ duration: 1.5, delay: 1 }}
+                        className="absolute inset-0 bg-red-500/40"
+                     />
+                  </div>
+                  <p className="font-body text-xs text-white/20 mt-4 leading-relaxed">
+                    Target was $67. The gap was unsustainable.
+                  </p>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── BOTTOM STRIP: SYSTEM STATUS ─── */}
+        <div className="lg:col-span-12 group relative">
+           <div className="relative p-6 bg-white/[0.02] border border-white/5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-500 group-hover:bg-white/[0.04]">
+              <div className="flex items-center gap-6">
+                 <div className="flex flex-col">
+                    <span className="font-mono text-[8px] text-white/20 uppercase tracking-[0.4em]">Current_Status</span>
+                    <span className="font-mono text-[10px] text-white font-black uppercase tracking-[0.2em]">Ready_For_Architectural_Overhaul</span>
+                 </div>
+                 <div className="hidden md:flex gap-1">
+                    {[1,2,3,4,5,6,7,8].map(j => <div key={j} className="w-1 h-1 rounded-full bg-orange-500/20" />)}
+                 </div>
               </div>
-              <h4 className="font-heading text-[24px] font-bold text-white/90">0% Funnel</h4>
-            </div>
-            
-            <p className="font-body text-[13px] text-white/50 leading-relaxed mt-4">
-              Marketing operated without a conversion bridge. Video generated views, but <strong className="text-white/80">no system</strong> existed to capture leads or attribute sales.
-            </p>
-          </PremiumHoverCard>
-
-          {/* Card 3: Chaotic Video Strategy */}
-          <PremiumHoverCard
-            initial={{ opacity: 0, x: 20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            accentColor={`${color}30`}
-            className="flex-1 p-6 h-full min-h-[180px] flex flex-col justify-between !rounded-3xl"
-            style={{ borderColor: "rgba(255,255,255,0.06)", border: "1px solid" }}
-          >
-            <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none flex flex-col gap-1 p-4">
-               {[
-                 { i: 1, delay: 2.4, width: 35 },
-                 { i: 2, delay: 1.8, width: 48 },
-                 { i: 3, delay: 3.2, width: 24 },
-                 { i: 4, delay: 1.1, width: 52 },
-                 { i: 5, delay: 2.9, width: 30 }
-               ].map(({ i, delay, width }) => (
-                 <motion.div key={i} 
-                   animate={{ x: [0, (i%2===0 ? -5 : 5), 0] }}
-                   transition={{ duration: 0.2, repeat: Infinity, repeatDelay: delay }}
-                   className="h-[2px] bg-white rounded-full"
-                   style={{ width: `${width}px` }} 
-                 />
-               ))}
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                 <span className="text-[14px]">◇</span>
-                 <p className="font-body text-[12px] text-white/40 font-bold uppercase tracking-[0.2em]">Creative Approach</p>
+              
+              <div className="flex items-center gap-4">
+                 <span className="font-body text-[13px] text-white/40 italic">
+                    "A team with immense potential, restricted by an incomplete architecture."
+                 </span>
+                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-white/20" />
+                 </div>
               </div>
-              <h4 className="font-heading text-[24px] font-bold text-white/90">Ad-hoc Video</h4>
-            </div>
-            
-            <p className="font-body text-[13px] text-white/50 leading-relaxed mt-4">
-              Content was produced blindly. <strong className="text-white/80 border-b border-white/20">No scripting</strong>, <strong className="text-white/80 border-b border-white/20 border-dashed">no hook A/B testing</strong>, <strong className="text-white/80 border-b border-white/20 border-dotted">no iteration</strong> based on ad performance data.
-            </p>
-          </PremiumHoverCard>
 
+              {/* Scanning Glow */}
+              <motion.div 
+                animate={{ x: ["-100%", "200%"] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-orange-500/5 to-transparent pointer-events-none"
+              />
+           </div>
         </div>
       </div>
-      
-      {/* ─── Bottom Quote Strip ─── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mt-4 p-5 md:px-8 rounded-2xl border flex items-center gap-6"
-        style={{ 
-          borderColor: `${color}20`,
-          background: `linear-gradient(90deg, ${color}05, transparent)`
-        }}
-      >
-        <span className="font-heading text-[48px] text-white/10 leading-[0] pt-4 select-none">&ldquo;</span>
-        <p className="font-body text-[14px] text-white/60 italic leading-relaxed">
-          That was the reality when I joined as an Editor and Media Leader<span className="opacity-40"> — a team with immense potential, restricted by an incomplete architecture.</span>
-        </p>
-      </motion.div>
-
     </div>
   );
 }

@@ -88,11 +88,7 @@ const thinksmartSections: CaseStudySection[] = [
     headline: "The Starting Point\n& Challenge",
     subtitle: "ThinkSmart Insurance — Head of Video Production & Media Manager",
     body: "ThinkSmart Insurance had strong sales, but marketing operated without a unified acquisition system. CPA had skyrocketed to $180–$200 while revenue stagnated. My mission was clear: restructure the media operations, drive acquisition costs down, and directly supply Sales with high-converting marketing leads.",
-    stats: [
-      { label: "CPA in 2022", value: "$180–$200" },
-      { label: "Revenue in 2022", value: "$1.8M–$2M" },
-      { label: "Mission", value: "CPA ↓ Revenue ↑" },
-    ],
+    visualType: "context",
   },
   {
     id: "thinksmart-role",

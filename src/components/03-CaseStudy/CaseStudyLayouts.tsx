@@ -182,9 +182,9 @@ export function StorySection({
         </div>
       )}
 
-      {/* ─── ENHANCED STATS/HIGHLIGHTS GRID ─── */}
+      {/* ─── ENHANCED HUD STATS GRID ─── */}
       {section.stats && section.stats.length > 0 && (
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 mb-16">
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {section.stats.map((stat: { label: string; value: string }, i: number) => (
             <motion.div
               key={i}
@@ -192,24 +192,47 @@ export function StorySection({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative"
+              className="group relative h-full"
             >
-              <div className="relative p-8 rounded-[2rem] bg-white/[0.03] border border-white/10 backdrop-blur-md overflow-hidden transition-all duration-500 hover:bg-white/[0.06] hover:border-white/20 hover:-translate-y-2">
-                {/* Abstract background shape */}
-                <div className="absolute -right-4 -top-4 w-24 h-24 blur-3xl rounded-full opacity-10 group-hover:opacity-20 transition-opacity" style={{ backgroundColor: caseColor }} />
+              {/* HUD MODULE CONTAINER */}
+              <div className="relative p-10 h-full bg-[#080808]/40 backdrop-blur-3xl border border-white/5 overflow-hidden transition-all duration-500 group-hover:border-white/20 group-hover:bg-white/[0.02]">
                 
-                <span className="font-mono text-[10px] text-white/40 uppercase tracking-[0.3em] block mb-6">
-                  {stat.label}
-                </span>
+                {/* Corner Brackets */}
+                <div className="absolute top-0 left-0 w-6 h-6 border-t border-l border-white/10 group-hover:border-white/30 transition-colors" />
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-white/10 group-hover:border-white/30 transition-colors" />
+
+                {/* Metadata */}
+                <div className="flex items-center justify-between mb-8 relative z-10">
+                   <div className="flex items-center gap-2">
+                      <div className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-white animate-pulse" />
+                      <span className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em] font-black group-hover:text-white/40">Data_Readout</span>
+                   </div>
+                   <span className="font-mono text-[8px] text-white/10 uppercase font-black">0{i+1}</span>
+                </div>
+
+                <div className="relative z-10">
+                  <h4 className="font-heading text-[clamp(32px,4vw,52px)] font-black text-white leading-none tracking-tighter mb-4 group-hover:scale-105 transition-transform origin-left">
+                    {stat.value}
+                  </h4>
+                  <p className="font-mono text-[10px] text-white/30 uppercase tracking-[0.2em] font-black leading-relaxed">
+                    {stat.label}
+                  </p>
+                </div>
+
+                {/* Scanning line */}
+                <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                   <motion.div 
+                      animate={{ x: ["-100%", "200%"] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent"
+                   />
+                </div>
                 
-                <h4 className="font-heading text-[clamp(32px,5vw,56px)] font-bold text-white leading-none tracking-tighter">
-                  {stat.value}
-                </h4>
-                
-                {/* Technical accent corner */}
-                <div className="absolute bottom-0 right-0 p-3 opacity-20">
-                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
-                     <path d="M20 4v16H4" stroke="currentColor" strokeWidth="0.5" />
+                {/* Visual anchor */}
+                <div className="absolute bottom-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5">
+                     <rect x="2" y="2" width="20" height="20" rx="2" />
+                     <path d="M7 12h10M12 7v10" />
                    </svg>
                 </div>
               </div>
@@ -379,11 +402,20 @@ export function ThinksmartStory({
       ) : null}
 
       <div className="grid lg:grid-cols-[240px_1fr] gap-12 md:gap-24">
-        {/* SIDEBAR */}
+        {/* SIDEBAR - HUD CONTROL PANEL */}
         <aside className="hidden lg:block">
           <div className="sticky top-32">
-            <div className="relative flex flex-col gap-2 pl-6 border-l border-white/5">
-              {cs.sections.map((s: CaseStudySection) => {
+            {/* Sidebar Header Metadata */}
+            <div className="mb-10 px-6">
+               <div className="flex items-center gap-3 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                  <span className="font-mono text-[9px] text-white font-black tracking-[0.4em] uppercase">Status: Live_Sync</span>
+               </div>
+               <div className="font-mono text-[7px] text-white/20 uppercase tracking-[0.5em]">Session_ID: {cs.id.toUpperCase()}_042</div>
+            </div>
+
+            <div className="relative flex flex-col gap-1 pl-6 border-l border-white/5">
+              {cs.sections.map((s: CaseStudySection, idx: number) => {
                 const isActive = activeSection === s.id;
                 return (
                   <button
@@ -400,36 +432,53 @@ export function ThinksmartStory({
                         }
                       }
                     }}
-                    className="group relative w-full text-left py-2 outline-none"
+                    className="group relative w-full text-left py-3 outline-none"
                   >
                     {isActive && (
                       <motion.div
                         layoutId="active-nav"
-                        className="absolute -left-[25px] top-1/2 -translate-y-1/2 w-[2px] h-6"
-                        style={{ backgroundColor: cs.color, boxShadow: `0 0 15px ${cs.color}` }}
+                        className="absolute -left-[25px] top-1/2 -translate-y-1/2 w-[3px] h-8 bg-accent"
+                        style={{ boxShadow: `0 0 20px ${cs.color}` }}
                       />
                     )}
-                    <span className={cn(
-                      "font-body text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300",
-                      isActive ? "text-white scale-105" : "text-white/20 group-hover:text-white/50"
-                    )}>
-                      {s.label || s.title}
-                    </span>
+                    
+                    <div className="flex flex-col">
+                      <span className={cn(
+                        "font-mono text-[8px] tracking-[0.3em] mb-1 transition-colors",
+                        isActive ? "text-accent font-black" : "text-white/10"
+                      )}>
+                        STEP_0{idx + 1}
+                      </span>
+                      <span className={cn(
+                        "font-heading text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300",
+                        isActive ? "text-white translate-x-1" : "text-white/30 group-hover:text-white/60"
+                      )}>
+                        {s.label || s.title}
+                      </span>
+                    </div>
                   </button>
                 );
               })}
             </div>
             
-            <div className="mt-20 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-               <span className="font-body text-[10px] text-white/30 uppercase tracking-widest block mb-4">Project Meta</span>
-               <div className="space-y-4">
+            {/* System Info Box */}
+            <div className="mt-20 p-8 bg-[#080808] border border-white/5 relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-3 font-mono text-[6px] text-white/10 uppercase tracking-widest">System_Meta</div>
+               <div className="absolute top-0 left-0 w-1 h-full bg-accent/20 group-hover:bg-accent transition-colors" />
+               
+               <div className="space-y-6 relative z-10">
                   <div>
-                    <span className="text-[10px] text-white/20 block mb-1">Duration</span>
-                    <span className="text-[13px] text-white/60 font-bold">{cs.duration}</span>
+                    <span className="font-mono text-[9px] text-white/20 block mb-2 uppercase tracking-widest">Project Duration</span>
+                    <span className="text-[14px] text-white font-black italic uppercase tracking-tight">{cs.duration}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-white/20 block mb-1">Direct URL</span>
-                    <a href={cs.website} target="_blank" rel="noopener" className="text-[13px] text-white/60 hover:text-white transition-colors underline decoration-white/20 underline-offset-4 font-bold">Visit Live Site</a>
+                    <span className="font-mono text-[9px] text-white/20 block mb-2 uppercase tracking-widest">Network Access</span>
+                    <a href={cs.website} target="_blank" rel="noopener" className="group/link inline-flex items-center gap-2 text-[12px] text-accent font-bold uppercase tracking-widest hover:text-white transition-colors">
+                      Visit Live System
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
+                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                      </svg>
+                    </a>
                   </div>
                </div>
             </div>
