@@ -19,6 +19,7 @@ interface WorkflowStep {
   title: string;
   subtitle: string;
   icon: React.ReactNode;
+  logo?: string;
   description: string;
   details: string[];
   tech: string[];
@@ -31,6 +32,7 @@ const workflowSteps: WorkflowStep[] = [
     title: "Intelligence Hub",
     subtitle: "PHASE 01: INSIGHTS",
     icon: <BrainCircuit className="w-6 h-6" />,
+    logo: "chatgpt.svg",
     description: "Hệ thống điều phối đa nhân hợp tác (Multi-LLM Agents) để phân tích xu hướng thị trường và lên kịch bản Viral dựa trên dữ liệu thực tế.",
     details: [
       "Quét xu hướng thời gian thực",
@@ -45,6 +47,7 @@ const workflowSteps: WorkflowStep[] = [
     title: "Visual Foundation",
     subtitle: "PHASE 02: CONCEPTS",
     icon: <Palette className="w-6 h-6" />,
+    logo: "flux.svg",
     description: "Tạo ra các Key Visuals và Concept Art chất lượng cao, đảm bảo tính nhất quán của thương hiệu trên mọi tài sản hình ảnh AI.",
     details: [
       "Đồng nhất phong cách hình ảnh",
@@ -59,6 +62,7 @@ const workflowSteps: WorkflowStep[] = [
     title: "Digital Human Engine",
     subtitle: "PHASE 03: PRODUCTION",
     icon: <Cpu className="w-6 h-6" />,
+    logo: "heygen.png",
     description: "Sử dụng nhân vật ảo và công nghệ Cinematic Video Gen để sản xuất nội dung có người dẫn dắt mà không cần quay phim truyền thống.",
     details: [
       "Render Avatar 4K",
@@ -73,6 +77,7 @@ const workflowSteps: WorkflowStep[] = [
     title: "Sonic & Visual Polish",
     subtitle: "PHASE 04: REFINEMENT",
     icon: <Zap className="w-6 h-6" />,
+    logo: "elevenlabs.svg",
     description: "Ứng dụng Voice Cloning và hậu kỳ AI để đảm bảo chất lượng âm thanh - hình ảnh đạt chuẩn Cinematic và thu hút người xem tối đa.",
     details: [
       "Nhân bản giọng nói AI",
@@ -87,6 +92,7 @@ const workflowSteps: WorkflowStep[] = [
     title: "Global Distribution",
     subtitle: "PHASE 05: SCALE",
     icon: <Workflow className="w-6 h-6" />,
+    logo: "n8n.svg",
     description: "Quy trình xuất bản tự động hoàn toàn, giúp phân phối nội dung quy mô lớn lên TikTok, Reels và YouTube Shorts với tối ưu hóa SEO.",
     details: [
       "Trung tâm điều phối n8n",
@@ -98,13 +104,28 @@ const workflowSteps: WorkflowStep[] = [
   }
 ];
 
+const ToolLogo = ({ logo, title, icon }: { logo?: string, title: string, icon: React.ReactNode }) => {
+  const [error, setError] = React.useState(false);
+
+  if (!logo || error) return <>{icon}</>;
+
+  return (
+    <img 
+      src={`/images/logos/${logo}`} 
+      alt={title} 
+      className="w-full h-full object-contain p-2" 
+      onError={() => setError(true)}
+    />
+  );
+};
+
 export default function AIWorkflowDashboard() {
   const [activeStep, setActiveStep] = useState<string>("ideation");
 
   const currentStep = workflowSteps.find(s => s.id === activeStep) || workflowSteps[0];
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-20 px-6 lg:px-12">
+    <div className="relative">
       <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[1fr_400px] lg:gap-24">
         
         {/* LEFT SIDE: THE INTERACTIVE MAP */}
@@ -132,12 +153,12 @@ export default function AIWorkflowDashboard() {
                 <div className="flex items-center gap-6 relative z-10">
                   <div 
                     className={cn(
-                      "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500",
+                      "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 overflow-hidden",
                       activeStep === step.id ? "bg-accent text-white scale-110 shadow-[0_0_20px_rgba(255,64,0,0.4)]" : "bg-white/5 text-white/40"
                     )}
                     style={activeStep === step.id ? { backgroundColor: step.color } : {}}
                   >
-                    {step.icon}
+                    <ToolLogo logo={step.logo} title={step.title} icon={step.icon} />
                   </div>
                   
                   <div className="flex flex-col">

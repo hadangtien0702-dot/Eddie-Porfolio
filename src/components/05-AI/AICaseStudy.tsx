@@ -71,7 +71,7 @@ const mainKpis = [
 
 export default function AICaseStudy() {
   return (
-    <section className="relative py-32 px-6 lg:px-12 bg-[#050505] overflow-hidden">
+    <section className="relative pt-12 pb-20 px-6 lg:px-12 bg-[#050505] overflow-hidden">
       {/* Cinematic Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-accent/5 blur-[180px] rounded-full" />
@@ -123,105 +123,266 @@ export default function AICaseStudy() {
           className="relative mb-20 rounded-[3rem] border border-white/10 bg-[#080808] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)]"
         >
           {/* Dashboard Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-12 border-b border-white/5 bg-white/[0.01]">
-            <div className="flex items-center gap-6">
-              <div className="flex -space-x-4">
-                {["/images/logos/n8n.svg", "/images/logos/chatgpt.svg"].map((img, i) => (
-                  <div key={i} className="w-12 h-12 rounded-full border-4 border-[#080808] bg-white overflow-hidden shadow-2xl">
-                    <img src={img} alt="tool" className="w-full h-full object-contain p-2" />
+          <div className="flex flex-col sm:flex-row items-center justify-between px-10 py-8 border-b border-white/5 bg-white/[0.02] relative overflow-hidden">
+            <div className="absolute inset-0 bg-[grid-white/5] [mask-image:linear-gradient(to_bottom,white,transparent)] opacity-20 pointer-events-none" />
+            
+            <div className="flex items-center gap-6 relative z-10">
+              <div className="flex -space-x-3">
+                {["n8n.svg", "chatgpt.svg", "claude.svg", "perplexity.svg", "meta.svg"].map((img, i) => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-[#080808] bg-white overflow-hidden shadow-xl">
+                    <img src={`/images/logos/${img}`} alt="tool" className="w-full h-full object-contain p-2" />
                   </div>
                 ))}
               </div>
+              <div className="h-10 w-px bg-white/10 mx-2 hidden sm:block" />
               <div>
-                <h4 className="font-heading font-black text-2xl text-white tracking-[-0.03em] uppercase">AI PERFORMANCE HUB</h4>
-                <div className="font-mono text-[10px] text-accent uppercase tracking-[0.4em] flex items-center gap-2 mt-2 font-bold">
+                <h4 className="font-heading font-black text-2xl text-white tracking-tighter uppercase">AI PERFORMANCE HUB</h4>
+                <div className="font-mono text-[9px] text-accent uppercase tracking-[0.4em] flex items-center gap-3 mt-1 font-bold">
                    <div className="w-2 h-2 rounded-full bg-accent animate-pulse shadow-[0_0_10px_#ff4000]" />
-                   Live Aggregated Intelligence
+                   SENS_DATA_STREAM_v4.2
                 </div>
               </div>
             </div>
-            <div className="mt-4 sm:mt-0 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 font-mono text-[11px] text-white/50 tracking-wider font-bold">
-              REPORTING PERIOD: <span className="text-white font-black">28 DAYS</span>
+
+            <div className="mt-4 sm:mt-0 flex items-center gap-6 relative z-10">
+              <div className="flex flex-col items-end gap-1">
+                 <span className="font-mono text-[8px] text-white/20 uppercase">Network Load</span>
+                 <div className="flex gap-1">
+                    {[1,2,3,4,5].map(i => <div key={i} className={`w-1 h-3 rounded-full ${i < 4 ? "bg-accent" : "bg-white/10"}`} />)}
+                 </div>
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 font-mono text-[10px] text-white tracking-widest font-black">
+                SYST_LOG: <span className="text-accent">28_DAYS</span>
+              </div>
             </div>
           </div>
 
-          {/* Dashboard Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5">
-            {mainKpis.map((kpi, i) => (
-              <div key={kpi.label} className="p-12 group hover:bg-white/[0.02] transition-all duration-500 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-                   {React.cloneElement(kpi.icon as React.ReactElement<any>, { className: "w-32 h-32" })}
-                </div>
+          {/* Dashboard Grid - ADVANCED BENTO HUD */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-px bg-white/5">
+            
+            {/* CARD 1: MONTHLY REACH (Large 7-col) */}
+            <div className="md:col-span-7 p-12 bg-[#080808] relative group overflow-hidden">
+               {/* HUD Background Details */}
+               <div className="absolute top-0 right-0 p-4 font-mono text-[8px] text-white/5 tracking-[0.5em] pointer-events-none uppercase">Metric_ID: REF_01</div>
+               <div className="absolute bottom-0 left-0 p-10 w-full h-1/2 bg-gradient-to-t from-accent/[0.03] to-transparent pointer-events-none" />
+               
+               <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div className="flex justify-between items-start mb-12">
+                     <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                           <div className="p-3 rounded-xl bg-accent text-white shadow-[0_0_30px_rgba(255,64,0,0.3)]">
+                              <Eye className="w-6 h-6" />
+                           </div>
+                           <h5 className="font-mono text-[11px] text-white/30 uppercase tracking-[0.3em] font-black">Monthly Reach</h5>
+                        </div>
+                        <div className="font-heading text-8xl font-black text-white tracking-tighter leading-none">
+                           366K<span className="text-accent">+</span>
+                        </div>
+                     </div>
+                     <div className="flex flex-col items-end gap-2">
+                        <div className="px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent font-mono text-[10px] font-black">+43% YOY</div>
+                        <div className="font-mono text-[8px] text-white/10 uppercase tracking-widest">Confidence: 99.8%</div>
+                     </div>
+                  </div>
 
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-10">
-                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-xl">
-                      {React.cloneElement(kpi.icon as React.ReactElement<any>, { className: "w-6 h-6" })}
-                    </div>
-                    <div className={`px-4 py-1 rounded-full font-mono text-[10px] font-black tracking-[0.2em] uppercase ${kpi.trend === "Viral" ? "bg-blue-500/20 text-blue-400" : "bg-accent/20 text-accent shadow-[0_0_30px_rgba(255,64,0,0.15)]"}`}>
-                      {kpi.trend}
-                    </div>
+                  {/* LARGE AREA CHART */}
+                  <div className="h-32 w-full mt-4">
+                     <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                        <defs>
+                           <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="rgba(255,64,0,0.2)" />
+                              <stop offset="100%" stopColor="rgba(255,64,0,0)" />
+                           </linearGradient>
+                        </defs>
+                        <motion.path
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          whileInView={{ pathLength: 1, opacity: 1 }}
+                          transition={{ duration: 2, ease: "easeInOut" }}
+                          d="M0,35 Q10,30 20,32 T40,20 T60,25 T80,5 T100,2 L100,40 L0,40 Z"
+                          fill="url(#areaGrad)"
+                        />
+                        <motion.path
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          whileInView={{ pathLength: 1, opacity: 1 }}
+                          transition={{ duration: 2, ease: "easeInOut" }}
+                          d="M0,35 Q10,30 20,32 T40,20 T60,25 T80,5 T100,2"
+                          fill="none"
+                          stroke="#ff4000"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                        />
+                     </svg>
+                  </div>
+               </div>
+            </div>
+
+            {/* RIGHT SIDE STACK (5-col) */}
+            <div className="md:col-span-5 grid grid-rows-2 gap-px bg-white/5">
+               
+               {/* CARD 2: DISCOVERY RATE (Half-height) */}
+               <div className="p-10 bg-[#080808] relative group flex items-center justify-between overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 font-mono text-[8px] text-white/5 tracking-[0.5em] pointer-events-none uppercase">Metric_ID: REF_02</div>
+                  <div className="relative z-10 flex-1">
+                     <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-400">
+                           <Users className="w-5 h-5" />
+                        </div>
+                        <h5 className="font-mono text-[10px] text-white/30 uppercase tracking-[0.2em] font-black">Discovery Rate</h5>
+                     </div>
+                     <div className="font-heading text-6xl font-black text-white tracking-tighter leading-none mb-4">
+                        96.8<span className="text-blue-400 text-3xl">%</span>
+                     </div>
+                     <div className="flex items-center gap-2">
+                        <div className="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
+                           <motion.div 
+                              initial={{ width: 0 }}
+                              whileInView={{ width: "96.8%" }}
+                              transition={{ duration: 1.5, delay: 0.5 }}
+                              className="h-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"
+                           />
+                        </div>
+                        <span className="font-mono text-[10px] text-blue-400 font-bold italic uppercase tracking-widest">Viral</span>
+                     </div>
                   </div>
                   
-                  <div className="space-y-4 mb-10">
-                    <div className="font-heading text-6xl font-black text-white tracking-[-0.05em] group-hover:text-accent transition-all duration-500 flex items-baseline gap-1">
-                      {kpi.value}
-                    </div>
-                    <div className="font-mono text-[11px] text-white/30 uppercase tracking-[0.3em] font-black leading-none">
-                      {kpi.label}
-                    </div>
+                  {/* PROGRESS RING DECOR */}
+                  <div className="w-32 h-32 relative hidden lg:flex items-center justify-center opacity-20">
+                     <svg className="w-full h-full transform -rotate-90">
+                        <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/5" />
+                        <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="376.8" strokeDashoffset="12" className="text-blue-500" />
+                     </svg>
                   </div>
+               </div>
 
-                  {/* SMOOTH SVG SPARKLINE */}
-                  <div className="h-16 w-full opacity-60 group-hover:opacity-100 transition-opacity">
-                    <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible">
-                      <motion.path
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        whileInView={{ pathLength: 1, opacity: 1 }}
-                        transition={{ duration: 2, ease: "easeInOut", delay: i * 0.2 }}
-                        d={i === 0 ? "M0,35 Q10,30 20,32 T40,20 T60,25 T80,5 T100,2" :
-                           i === 1 ? "M0,38 Q20,38 40,25 T60,20 T80,5 T100,2" :
-                           i === 2 ? "M0,15 Q20,12 40,14 T60,10 T80,12 T100,8" :
-                           "M0,30 Q20,25 40,35 T60,15 T80,10 T100,5"}
-                        fill="none"
-                        stroke={kpi.trend === "Viral" ? "#3b82f6" : "#ff4000"}
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        className="drop-shadow-[0_0_8px_rgba(255,64,0,0.5)]"
-                      />
-                    </svg>
+               {/* BOTTOM STACK (Two cards side by side) */}
+               <div className="grid grid-cols-2 gap-px bg-white/5">
+                  {/* CARD 3: WATCH TIME */}
+                  <div className="p-8 bg-[#080808] relative group overflow-hidden">
+                     <div className="absolute top-0 right-0 p-4 font-mono text-[7px] text-white/5 tracking-[0.5em] pointer-events-none uppercase">ID: 03</div>
+                     <div className="relative z-10">
+                        <Clock className="w-5 h-5 text-white/20 mb-6 group-hover:text-accent transition-colors" />
+                        <div className="font-heading text-4xl font-black text-white tracking-tighter mb-2">75 DAYS</div>
+                        <div className="font-mono text-[9px] text-white/20 uppercase tracking-[0.2em] font-black">Total Watch Time</div>
+                        <div className="mt-6 flex gap-1">
+                           {[1,2,3,4,5,6,7,8].map(i => <div key={i} className={`h-1 flex-1 ${i < 6 ? "bg-accent/40" : "bg-white/5"}`} />)}
+                        </div>
+                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                  
+                  {/* CARD 4: ENGAGEMENT */}
+                  <div className="p-8 bg-[#080808] relative group overflow-hidden">
+                     <div className="absolute top-0 right-0 p-4 font-mono text-[7px] text-white/5 tracking-[0.5em] pointer-events-none uppercase">ID: 04</div>
+                     <div className="relative z-10">
+                        <TrendingUp className="w-5 h-5 text-white/20 mb-6 group-hover:text-blue-400 transition-colors" />
+                        <div className="font-heading text-4xl font-black text-white tracking-tighter mb-2">8,180</div>
+                        <div className="font-mono text-[9px] text-white/20 uppercase tracking-[0.2em] font-black">Monthly Eng.</div>
+                        <div className="mt-6 text-blue-400 font-mono text-[8px] font-black uppercase tracking-widest flex items-center gap-2">
+                           <ArrowUpRight className="w-3 h-3" />
+                           +14.5% TREND
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
           </div>
         </motion.div>
 
-        {/* MAIN CONTENT SPLIT - PRIORITIZING VIDEO CONTENT */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        {/* MAIN CONTENT BENTO GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* LEFT: VIDEO LEADERBOARD (3 cols) */}
-          <div className="lg:col-span-3 flex flex-col gap-10 order-2 lg:order-1">
-            <div className="flex items-center justify-between px-6">
-              <div className="flex items-center gap-5">
-                 <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent shadow-lg shadow-accent/5">
-                    <TrendingUp className="w-6 h-6" />
-                 </div>
-                 <h4 className="font-heading text-4xl font-black text-white italic tracking-[-0.04em] uppercase">VIRAL INDEX</h4>
-              </div>
-              <div className="font-mono text-[11px] text-white/30 uppercase tracking-[0.4em] font-black">
-                 EST. REACH: <span className="text-accent">1.5M+</span>
+          {/* LEFT: STRATEGIC INSIGHTS (Col 1-4) */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="p-10 rounded-[2.5rem] bg-[#0A0A0A] border border-white/5 relative overflow-hidden group shadow-2xl">
+              <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-accent/[0.03] to-transparent pointer-events-none" />
+              
+              <h3 className="font-heading text-4xl font-black text-white mb-8 italic tracking-tighter uppercase">THE STRATEGY</h3>
+
+              <div className="space-y-10 font-body text-white/40 text-lg leading-relaxed">
+                <p>
+                  I engineered a <span className="text-white font-black italic underline decoration-accent decoration-4 underline-offset-4">NEURAL CONTENT ENGINE</span> that 
+                  obliterates traditional production bottlenecks.
+                </p>
+                
+                <div className="space-y-8">
+                   {[
+                     { label: "Cost Reduction", val: "-90%", desc: "Zero crew. Zero studio costs." },
+                     { label: "Viral Velocity", val: "1.5M+", desc: "Optimized for Meta organic reach." },
+                     { label: "Output Frequency", val: "DAILY", desc: "30+ high-fidelity reels monthly." }
+                   ].map(item => (
+                     <div key={item.label} className="group/item border-l-2 border-white/5 pl-6 hover:border-accent transition-colors">
+                        <div className="flex items-baseline justify-between mb-1">
+                           <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">{item.label}</span>
+                           <span className="font-heading text-2xl text-accent font-black tracking-tighter">{item.val}</span>
+                        </div>
+                        <p className="text-[13px] text-white/20 leading-snug">{item.desc}</p>
+                     </div>
+                   ))}
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* REFINED ACTION HUB */}
+            <div className="grid grid-cols-1 gap-4">
+              <a 
+                href="https://www.facebook.com/hanguyen.suckhoecuocsongmy/reels/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-6 rounded-[2rem] bg-accent group transition-all duration-500 hover:scale-[1.02] shadow-[0_20px_50px_rgba(255,64,0,0.2)]"
+              >
+                <div className="flex items-center gap-5">
+                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white">
+                    <Play className="w-5 h-5 fill-white ml-0.5" />
+                  </div>
+                  <div>
+                    <div className="font-heading text-xl font-black text-white uppercase leading-none">LIVE FEED</div>
+                    <div className="font-mono text-[9px] text-white/70 font-black uppercase tracking-widest mt-1.5">Watch in action</div>
+                  </div>
+                </div>
+                <ArrowUpRight className="w-6 h-6 text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </a>
+
+              <a 
+                href="https://drive.google.com/drive/folders/1Q6RI5z_G1jU6eP815x8zCGEumAfdPq4s?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-6 rounded-[2rem] bg-white/[0.02] border border-white/10 group transition-all duration-500 hover:bg-white/[0.06]"
+              >
+                <div className="flex items-center gap-5">
+                  <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white border border-white/10">
+                    <ExternalLink className="w-5 h-5 text-white/40 group-hover:text-accent transition-colors" />
+                  </div>
+                  <div>
+                    <div className="font-heading text-lg font-black text-white uppercase leading-none group-hover:text-accent transition-colors">ASSET VAULT</div>
+                    <div className="font-mono text-[9px] text-white/30 font-black uppercase tracking-widest mt-1.5">100+ AI Samples</div>
+                  </div>
+                </div>
+                <ArrowUpRight className="w-5 h-5 text-white/10 group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+              </a>
+            </div>
+          </div>
+          
+          {/* RIGHT: COMPACT VIDEO GRID (Col 5-12) */}
+          <div className="lg:col-span-8 flex flex-col gap-8">
+            <div className="flex items-center justify-between px-4">
+              <div className="flex items-center gap-4">
+                 <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                    <TrendingUp className="w-5 h-5" />
+                 </div>
+                 <h4 className="font-heading text-3xl font-black text-white italic tracking-tighter uppercase">VIRAL INDEX</h4>
+              </div>
+              <div className="font-mono text-[10px] text-white/30 uppercase tracking-[0.3em]">
+                 EST. REACH: <span className="text-accent font-bold">1.5M+</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {topVideos.map((v, i) => (
                 <motion.div
                   key={v.title}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.8 }}
+                  transition={{ delay: i * 0.05, duration: 0.6 }}
                   onMouseEnter={(e) => {
                     const video = e.currentTarget.querySelector('video');
                     if (video) video.play();
@@ -233,118 +394,48 @@ export default function AICaseStudy() {
                       video.currentTime = 0;
                     }
                   }}
-                  className="relative aspect-[4/5] rounded-[3rem] bg-white/[0.02] border border-white/10 overflow-hidden group cursor-pointer shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-accent/30"
+                  className="relative aspect-[9/16] rounded-[2rem] bg-white/[0.02] border border-white/10 overflow-hidden group cursor-pointer shadow-xl transition-all duration-500 hover:border-accent/40 hover:shadow-accent/5"
                 >
-                  {/* Background Video/Thumbnail Layer */}
+                  {/* Background Video Layer */}
                   <div className="absolute inset-0 z-0">
                     <video 
                       src={v.videoUrl} 
                       muted 
                       loop 
                       playsInline
-                      className="w-full h-full object-cover transition-all duration-1000 opacity-[0.15] group-hover:opacity-100 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-all duration-1000 opacity-[0.2] group-hover:opacity-100 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent z-10 group-hover:via-transparent transition-all duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10 group-hover:via-transparent transition-all duration-700" />
                   </div>
 
                   {/* Content Overlay */}
-                  <div className="absolute inset-0 z-20 p-10 flex flex-col justify-between">
+                  <div className="absolute inset-0 z-20 p-6 flex flex-col justify-between">
                     <div className="flex items-start justify-between">
-                       <span className="w-12 h-12 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center font-mono text-sm text-white font-black">
+                       <span className="w-8 h-8 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center font-mono text-[10px] text-white font-black">
                          {String(i + 1).padStart(2, "0")}
                        </span>
                        <div className="flex flex-col items-end">
-                          <div className="font-heading text-4xl font-black text-accent tracking-[-0.05em] drop-shadow-[0_0_15px_rgba(255,64,0,0.5)]">
+                          <div className="font-heading text-2xl font-black text-accent tracking-tighter drop-shadow-[0_0_10px_rgba(255,64,0,0.4)]">
                              {v.views}
                           </div>
-                          <span className="font-mono text-[10px] text-white/50 uppercase tracking-[0.2em] font-black">REACH</span>
+                          <span className="font-mono text-[8px] text-white/50 uppercase tracking-widest">REACH</span>
                        </div>
                     </div>
 
-                    <div className="space-y-6">
-                      <h5 className="font-heading text-2xl font-black text-white leading-tight group-hover:text-accent transition-colors tracking-tight">
+                    <div className="space-y-3">
+                      <h5 className="font-heading text-sm font-black text-white leading-tight group-hover:text-accent transition-colors line-clamp-2">
                         {v.title}
                       </h5>
                       {(v as any).likes && (
-                        <div className="flex gap-5 p-4 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 w-fit shadow-xl">
-                          <span className="font-mono text-xs text-white/80 font-bold tracking-tight">👍 {v.likes}</span>
-                          <span className="font-mono text-xs text-white/80 font-bold tracking-tight">💬 {(v as any).comments}</span>
+                        <div className="flex gap-3 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 w-fit">
+                          <span className="font-mono text-[8px] text-white/80 font-bold">👍 {v.likes}</span>
+                          <span className="font-mono text-[8px] text-white/80 font-bold">💬 {(v as any).comments}</span>
                         </div>
                       )}
                     </div>
                   </div>
                 </motion.div>
               ))}
-            </div>
-          </div>
-
-          {/* RIGHT: STRATEGIC INSIGHTS (2 cols) */}
-          <div className="lg:col-span-2 flex flex-col gap-12 order-1 lg:order-2">
-            <div className="sticky top-24 space-y-12">
-              <div className="p-14 rounded-[4rem] bg-[#0A0A0A] border border-white/5 relative overflow-hidden group shadow-2xl">
-                <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-accent/[0.03] to-transparent pointer-events-none" />
-                
-                <h3 className="font-heading text-5xl font-black text-white mb-12 italic tracking-tighter uppercase">THE STRATEGY</h3>
-
-                <div className="space-y-14 font-body text-white/40 text-xl leading-[1.7] tracking-wide">
-                  <p>
-                    I engineered a <span className="text-white font-black italic underline decoration-accent decoration-8 underline-offset-8">NEURAL CONTENT ENGINE</span> that 
-                    obliterates traditional production bottlenecks.
-                  </p>
-                  
-                  <div className="space-y-12">
-                     {[
-                       { label: "Cost Reduction", val: "-90%", desc: "Zero crew. Zero studio costs. Zero manual editing." },
-                       { label: "Viral Velocity", val: "1.5M+", desc: "Optimized for maximum organic reach on Meta." },
-                       { label: "Output Frequency", val: "DAILY", desc: "30+ high-fidelity reels delivered monthly." }
-                     ].map(item => (
-                       <div key={item.label} className="group/item">
-                          <div className="flex items-center justify-between mb-3">
-                             <span className="font-heading text-xl text-white font-black uppercase tracking-tight">{item.label}</span>
-                             <span className="font-heading text-4xl text-accent font-black tracking-tighter">{item.val}</span>
-                          </div>
-                          <p className="text-base text-white/20 leading-relaxed font-medium">{item.desc}</p>
-                       </div>
-                     ))}
-                  </div>
-                </div>
-              </div>
-
-              <a 
-                href="https://www.facebook.com/hanguyen.suckhoecuocsongmy/reels/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-14 rounded-[4rem] bg-accent group transition-all duration-500 hover:scale-[1.02] shadow-[0_40px_100px_rgba(255,64,0,0.3)] hover:shadow-accent/50 mb-6"
-              >
-                <div className="flex items-center gap-10">
-                  <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-white shadow-inner">
-                    <Play className="w-10 h-10 fill-white ml-1" />
-                  </div>
-                  <div>
-                    <div className="font-heading text-4xl font-black text-white tracking-[-0.05em] uppercase leading-none">LIVE FEED</div>
-                    <div className="font-mono text-sm text-white/70 font-black uppercase tracking-[0.3em] mt-3">Watch the engine in action</div>
-                  </div>
-                </div>
-                <ArrowUpRight className="w-12 h-12 text-white group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform duration-500" />
-              </a>
-
-              <a 
-                href="https://drive.google.com/drive/folders/1Q6RI5z_G1jU6eP815x8zCGEumAfdPq4s?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-10 rounded-[3rem] bg-white/[0.03] border border-white/10 group transition-all duration-500 hover:bg-white/[0.08]"
-              >
-                <div className="flex items-center gap-8">
-                  <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-white border border-white/10">
-                    <ExternalLink className="w-8 h-8 text-white/40 group-hover:text-accent transition-colors" />
-                  </div>
-                  <div>
-                    <div className="font-heading text-2xl font-black text-white tracking-[-0.03em] uppercase leading-none group-hover:text-accent transition-colors">RAW ASSET VAULT</div>
-                    <div className="font-mono text-[10px] text-white/30 font-black uppercase tracking-[0.3em] mt-2">View 100+ AI-Generated Samples</div>
-                  </div>
-                </div>
-                <ArrowUpRight className="w-8 h-8 text-white/10 group-hover:text-accent group-hover:translate-x-2 group-hover:-translate-y-2 transition-all" />
-              </a>
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ import SocialPlayerLayout from "./SocialPlayerLayout";
 import AdsPlayerLayout from "./AdsPlayerLayout";
 import SocialGrid from "./SocialGrid";
 
-const CARD_H = 480;
+const CARD_H = 380;
 const OFFSET_X_DESKTOP = 450;
 const OFFSET_X_MOBILE = 200;
 
@@ -118,7 +118,8 @@ export default function VideoCarousel3D({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-[100] flex flex-col bg-[#050505]"
+          className="fixed inset-0 z-[100] flex flex-col bg-[#050505] overflow-hidden"
+          data-lenis-prevent="true"
           suppressHydrationWarning
         >
           {/* Global Fixed Background Layer */}
@@ -203,13 +204,13 @@ export default function VideoCarousel3D({
           {activeCategory === "Ads Performance" ? (
             <>
               {/* Main Carousel Area */}
-              <div className="relative z-30 w-full max-w-5xl mx-auto px-8 md:px-16 mb-6 mt-2 border-l-2 border-accent/20 pl-6">
+              <div className="relative z-30 w-full max-w-5xl mx-auto px-8 md:px-16 mb-2 mt-2 border-l-2 border-accent/20 pl-6">
                 <div key={currentVideo?.id} className="space-y-3">
                   <div className="flex items-center gap-3">
                     <span className="px-2 py-0.5 bg-accent text-[9px] font-mono font-black text-white uppercase tracking-widest rounded-sm">{currentVideo?.year || "2024"}</span>
                     <span className="font-mono text-[10px] text-accent/80 uppercase tracking-[0.2em] font-bold">{currentVideo?.role}</span>
                   </div>
-                  <h2 className="font-heading text-3xl md:text-5xl font-black text-white uppercase tracking-tighter leading-none lg:max-w-4xl drop-shadow-2xl">
+                  <h2 className="font-heading text-2xl md:text-4xl font-black text-white uppercase tracking-tighter leading-none lg:max-w-4xl drop-shadow-2xl">
                     {currentVideo?.title}
                   </h2>
                   <p className="text-white/40 text-sm md:text-base leading-relaxed font-medium max-w-3xl line-clamp-2">
@@ -334,12 +335,25 @@ export default function VideoCarousel3D({
                 })}
               </AnimatePresence>
             </div>
-
-
+            
+            {/* Navigation Controls - Moved Up */}
+            <div className="relative z-30 flex items-center justify-center gap-6 py-4 mt-2">
+              <button onClick={() => goTo(activeIndex - 1)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-white hover:border-white/20 transition-all">
+                <ChevronLeft size={20} />
+              </button>
+              <div className="flex gap-1.5">
+                {filteredVideos.map((_, i) => (
+                  <button key={i} onClick={() => goTo(i)} className={`h-1 rounded-full transition-all duration-500 ${i === activeIndex ? 'w-6 bg-accent' : 'w-1.5 bg-white/10'}`} />
+                ))}
+              </div>
+              <button onClick={() => goTo(activeIndex + 1)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-white hover:border-white/20 transition-all">
+                <ChevronRight size={20} />
+              </button>
+            </div>
           </div>
 
           {/* Detailed Info Panel */}
-          <div className="relative z-30 w-full pt-10 pb-12 px-8 md:px-16 border-t border-white/5 bg-[#050505]/40 backdrop-blur-md">
+          <div className="relative z-30 w-full pt-4 pb-6 px-8 md:px-16 border-t border-white/5 bg-[#050505]/40 backdrop-blur-md">
             <motion.div 
               key={activeIndex + activeCategory}
               initial={{ opacity: 0, y: 20 }}
@@ -347,7 +361,7 @@ export default function VideoCarousel3D({
               className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-end"
             >
               <div className="lg:col-span-12">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center bg-white/[0.03] border border-white/10 rounded-[40px] p-10 md:p-14 backdrop-blur-3xl relative overflow-hidden group hover:border-accent/30 transition-all duration-700 shadow-2xl">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center bg-white/[0.03] border border-white/10 rounded-[32px] p-6 md:p-8 backdrop-blur-3xl relative overflow-hidden group hover:border-accent/30 transition-all duration-700 shadow-2xl">
                   {/* Decorative Background Elements */}
                   <div className="absolute top-0 right-0 w-80 h-80 bg-accent/10 blur-[120px] rounded-full -mr-40 -mt-40" />
                   <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/10 blur-[120px] rounded-full -ml-40 -mb-40" />
@@ -414,20 +428,6 @@ export default function VideoCarousel3D({
             </motion.div>
           </div>
 
-          {/* Navigation Controls - Moved to Bottom */}
-          <div className="relative z-30 flex items-center justify-center gap-8 py-8 border-t border-white/5">
-            <button onClick={() => goTo(activeIndex - 1)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-white hover:border-white/20 transition-all">
-              <ChevronLeft size={20} />
-            </button>
-            <div className="flex gap-2">
-              {filteredVideos.map((_, i) => (
-                <button key={i} onClick={() => goTo(i)} className={`h-1 rounded-full transition-all duration-500 ${i === activeIndex ? 'w-8 bg-accent' : 'w-2 bg-white/10'}`} />
-              ))}
-            </div>
-            <button onClick={() => goTo(activeIndex + 1)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-white hover:border-white/20 transition-all">
-              <ChevronRight size={20} />
-            </button>
-          </div>
 
             </>
           ) : (

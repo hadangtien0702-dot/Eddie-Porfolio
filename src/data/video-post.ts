@@ -106,7 +106,7 @@ export const videoPosts: VideoPostItem[] = [
     duration: "3:45",
     stats: { views: "42K+", cpa: "$91", retention3s: "71%" },
     tags: ["Finance", "Health"],
-    aspectRatio: "16:9",
+    aspectRatio: "1:1",
   },
   {
     id: "A11",
@@ -120,7 +120,7 @@ export const videoPosts: VideoPostItem[] = [
     duration: "4:20",
     stats: { views: "68K+", cpa: "$79", retention3s: "76%" },
     tags: ["Marketing", "Strategy"],
-    aspectRatio: "4:5",
+    aspectRatio: "1:1",
   },
   {
     id: "A13",
@@ -151,7 +151,7 @@ export const videoPosts: VideoPostItem[] = [
     stats: { hookRate: "79%", cpa: "$83", retention3s: "74%" },
     badge: "Featured",
     tags: ["Social", "Campaign"],
-    aspectRatio: "9:16",
+    aspectRatio: "1:1",
     isPinned: true,
   },
 

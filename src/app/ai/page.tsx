@@ -97,25 +97,41 @@ export default function AIPage() {
       {/* ─── SECTION 2: THE TOOLKIT (Modules) ─── */}
       <AIUseCaseCards />
 
-      {/* ─── SECTION 3: THE NEURAL ENGINE (Diagram) ─── */}
-      <AutomationFlowDiagram />
+      {/* ─── SECTION 3: NEURAL INFRASTRUCTURE (Map + Diagram) ─── */}
+      <section className="relative pt-24 pb-16 px-6 lg:px-12 bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col gap-4 mb-20">
+             <span className="font-mono text-[11px] text-accent uppercase tracking-[0.5em]">The Infrastructure</span>
+             <h2 className="font-heading text-6xl md:text-8xl font-black text-white italic uppercase tracking-tighter leading-none">
+               NEURAL <span className="text-accent not-italic">ARCHITECTURE</span>
+             </h2>
+          </div>
+          
+          <div className="space-y-32">
+            <AIWorkflowDashboard />
+            <div className="pt-20 border-t border-white/5">
+              <AutomationFlowDiagram />
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* ─── SECTION 4: THE MISSION (Case Study) ─── */}
+      {/* ─── SECTION 5: THE MISSION (Case Study) ─── */}
       <AICaseStudy />
 
-      {/* ─── SECTION 5: THE PRODUCTION ENGINE (Timeline) ─── */}
-      <section className="relative py-32 px-6 lg:px-12">
+      {/* ─── SECTION 6: THE PRODUCTION ENGINE (Timeline) ─── */}
+      <section className="relative pt-12 pb-24 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4 mb-16">
              <span className="font-mono text-[11px] text-accent uppercase tracking-[0.5em]">Phase breakdown</span>
-             <h2 className="font-heading text-5xl font-black text-white italic">OPERATIONAL TIMELINE</h2>
+             <h2 className="font-heading text-5xl font-black text-white italic uppercase tracking-tighter">OPERATIONAL TIMELINE</h2>
           </div>
           <AITimelineEditor />
         </div>
       </section>
 
-      {/* ─── SECTION 6: SCALE CALL ─── */}
-      <section className="relative py-40 px-6 lg:px-12 text-center">
+      {/* ─── SECTION 7: SCALE CALL ─── */}
+      <section className="relative pt-12 pb-40 px-6 lg:px-12 text-center">
          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,64,0,0.05)_0%,transparent_70%)] pointer-events-none" />
          
          <motion.div
@@ -140,12 +156,16 @@ export default function AIPage() {
               >
                 REQUEST SYSTEM AUDIT
               </a>
-              <a
-                href="/#work"
-                className="px-12 py-5 rounded-full border border-white/10 text-white font-black font-heading text-sm hover:bg-white/5 transition-all"
-              >
-                VIEW AD PORTFOLIO
-              </a>
+              <div className="flex items-center gap-4 px-6 py-4 rounded-full bg-white/5 border border-white/10">
+                <div className="flex -space-x-2">
+                  {["n8n.svg", "chatgpt.svg", "claude.svg", "perplexity.svg", "meta.svg"].map((img, i) => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-[#050505] bg-white overflow-hidden shadow-xl">
+                      <img src={`/images/logos/${img}`} alt="tool" className="w-full h-full object-contain p-1.5" />
+                    </div>
+                  ))}
+                </div>
+                <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest ml-2">Orchestrated Stack</span>
+              </div>
             </div>
          </motion.div>
       </section>

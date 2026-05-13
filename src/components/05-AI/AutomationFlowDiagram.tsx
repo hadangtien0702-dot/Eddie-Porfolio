@@ -128,13 +128,13 @@ export default function AutomationFlowDiagram() {
   const getNodeById = (id: string) => nodes.find(n => n.id === id);
 
   return (
-    <section className="relative py-24 px-6 lg:px-12 bg-[#050505] overflow-hidden">
+    <div className="relative pt-12 pb-16 overflow-hidden">
       {/* Background Decor */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,64,0,0.05)_0%,transparent_70%)]" />
       </div>
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           
           {/* LEFT: INFO PANEL */}
@@ -146,15 +146,12 @@ export default function AutomationFlowDiagram() {
               </span>
             </div>
             
-            <h2 className="font-heading text-4xl md:text-5xl font-black text-white tracking-tighter leading-[0.9]">
-              THE AI <br />
-              <span className="text-accent italic">NEURAL ENGINE</span>
-            </h2>
-            
-            <p className="font-body text-white/40 text-lg leading-relaxed">
-              Every tool is connected through a custom N8N orchestrator. 
-              The system operates as a single organism from trend analysis to publishing.
-            </p>
+            <div className="space-y-4">
+              <p className="font-body text-white/40 text-lg leading-relaxed">
+                Every tool is connected through a custom N8N orchestrator. 
+                The system operates as a single organism from trend analysis to publishing.
+              </p>
+            </div>
 
             {/* LIVE CONSOLE */}
             <div className="mt-8 p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl">
@@ -280,6 +277,6 @@ export default function AutomationFlowDiagram() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
