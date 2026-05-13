@@ -443,9 +443,10 @@ export default function VideoCarousel3D({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[200] bg-[#050505]/98 backdrop-blur-2xl overflow-y-auto"
+                className="fixed inset-0 z-[200] bg-[#050505]/98 backdrop-blur-2xl"
                 data-lenis-prevent="true"
               >
+                <div className="h-full overflow-y-auto overscroll-contain" data-lenis-prevent="true">
                 <div className="min-h-full flex items-center justify-center p-4 lg:p-12 relative">
                 {/* Close Button */}
                 <button 
@@ -460,6 +461,7 @@ export default function VideoCarousel3D({
                 ) : (
                   <AdsPlayerLayout selectedVideo={selectedVideo} getEmbedUrl={getEmbedUrl} />
                 )}
+                </div>
                 </div>
               </motion.div>
             )}
