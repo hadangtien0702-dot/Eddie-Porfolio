@@ -187,7 +187,6 @@ export default function Overview() {
 
           {/* ─── Hero Image — giữa, overlap với heading + parallax layer 2 ─── */}
           {/* ─── Hero Image — Hide as requested ─── */}
-          {/* 
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
@@ -233,7 +232,6 @@ export default function Overview() {
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8 }}
             />
           </motion.div>
-          */}
 
           {/* ─── Cột phải: Description text ─── */}
           <div className="relative z-20 lg:ml-auto w-full max-w-[400px] lg:max-w-[320px] self-start lg:self-center">
