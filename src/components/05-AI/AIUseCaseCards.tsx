@@ -165,23 +165,74 @@ export default function AIUseCaseCards() {
             </h2>
           </div>
 
-          {/* TAB SWITCHER */}
-          <div className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
-            {useCases.map((uc) => (
-              <button 
-                key={uc.id} 
-                onClick={() => { setActiveTab(uc.id); setActivePlayground("tools"); }} 
-                className={cn(
-                  "px-8 py-4 rounded-xl transition-all duration-500 font-mono text-xs font-bold uppercase tracking-widest flex items-center gap-3", 
-                  activeTab === uc.id 
-                    ? "bg-accent text-white shadow-[0_0_30px_rgba(255,64,0,0.3)]" 
-                    : "text-white/40 hover:text-white hover:bg-white/5"
-                )}
-              >
-                {uc.icon}
-                <span className="hidden sm:inline">{uc.title}</span>
-              </button>
-            ))}
+          {/* HUD COMMAND HUB - MODE SWITCHER */}
+          <div className="relative p-px rounded-[2rem] bg-white/5 border border-white/10 overflow-hidden group/hub shadow-2xl">
+             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:15px_15px] opacity-20 pointer-events-none" />
+             
+             <div className="relative z-10 flex flex-col md:flex-row bg-black/40 backdrop-blur-3xl">
+                <div className="px-6 py-4 border-r border-white/5 flex items-center gap-3 bg-white/[0.02]">
+                   <div className="w-1 h-8 bg-accent rounded-full" />
+                   <div className="flex flex-col">
+                      <span className="font-mono text-[8px] text-white/40 uppercase tracking-widest font-black leading-none mb-1">Select_Mode</span>
+                      <span className="font-heading text-lg font-black text-white leading-none tracking-tighter">CMD_CTRL</span>
+                   </div>
+                </div>
+
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-3">
+                  {useCases.map((uc, i) => (
+                    <button 
+                      key={uc.id} 
+                      onClick={() => { setActiveTab(uc.id); setActivePlayground("tools"); }} 
+                      className={cn(
+                        "relative px-8 py-6 transition-all duration-500 group/tab border-l border-white/5 first:border-l-0 overflow-hidden", 
+                        activeTab === uc.id ? "bg-accent/[0.03]" : "hover:bg-white/[0.02]"
+                      )}
+                    >
+                      {/* Active Indicator */}
+                      {activeTab === uc.id && (
+                        <>
+                           <motion.div 
+                              layoutId="activeTabGlow"
+                              className="absolute inset-0 bg-accent/[0.05] z-0" 
+                           />
+                           <motion.div 
+                              layoutId="activeTabLine"
+                              className="absolute top-0 left-0 right-0 h-0.5 bg-accent shadow-[0_0_15px_#ff4000] z-20" 
+                           />
+                        </>
+                      )}
+
+                      <div className="relative z-10 flex flex-col items-start gap-1">
+                        <div className="flex items-center gap-3">
+                           <div className={cn(
+                              "w-1.5 h-1.5 rounded-full",
+                              activeTab === uc.id ? "bg-accent animate-pulse shadow-[0_0_10px_#ff4000]" : "bg-white/10"
+                           )} />
+                           <span className={cn(
+                              "font-heading text-sm font-black uppercase tracking-tight transition-colors",
+                              activeTab === uc.id ? "text-white" : "text-white/30 group-hover/tab:text-white/60"
+                           )}>
+                              {uc.title.split(' ')[1] || uc.title}
+                           </span>
+                        </div>
+                        <span className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em] font-black pl-4">
+                           {uc.tag}
+                        </span>
+                      </div>
+
+                      {/* Micro-UI Corner Brackets (Hover) */}
+                      <div className="absolute inset-0 opacity-0 group-hover/tab:opacity-100 transition-opacity pointer-events-none">
+                         <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-white/20" />
+                         <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-white/20" />
+                      </div>
+
+                      <div className="absolute bottom-2 right-4 font-mono text-[6px] text-white/5 uppercase tracking-widest font-black">
+                         _X-0{i+1}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+             </div>
           </div>
         </div>
 
@@ -201,6 +252,10 @@ export default function AIUseCaseCards() {
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none" />
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:30px_30px]" />
                 
+                {/* NEURAL GRID BACKGROUND */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,64,0,0.05),transparent_70%)]" />
+
                 {/* Top Bar Info */}
                 <div className="absolute top-0 left-0 right-0 h-12 px-6 flex items-center justify-between border-b border-white/5 bg-white/[0.02] z-10">
                    <div className="flex items-center gap-4">
@@ -208,10 +263,7 @@ export default function AIUseCaseCards() {
                         <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                         <span className="font-mono text-[9px] text-accent font-bold uppercase tracking-widest">Neural_Orchestrator_v2.0</span>
                       </div>
-                      <div className="h-3 w-[1px] bg-white/10" />
-                      <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em]">LATENCY: 0.04ms</span>
                    </div>
-                   <Activity className="w-3 h-3 text-accent/50" />
                 </div>
 
                 {/* Content Area */}
@@ -220,36 +272,189 @@ export default function AIUseCaseCards() {
                     {activePlayground === "tools" && (
                       <motion.div 
                         key="tools" 
-                        initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }} 
-                        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} 
-                        exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }} 
-                        className="grid grid-cols-12 gap-4 auto-rows-[minmax(100px,1fr)] w-full max-w-2xl h-full max-h-[400px]"
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        exit={{ opacity: 0 }} 
+                        className="relative w-full h-full min-h-[400px] flex items-center justify-center"
                       >
-                        {currentUC.logos?.map((logo, i) => {
-                          const spans = ["col-span-8 row-span-2", "col-span-4 row-span-1", "col-span-4 row-span-1", "col-span-4 row-span-1", "col-span-4 row-span-1", "col-span-4 row-span-1"];
-                          return (
-                            <motion.div 
-                              key={`${activeTab}-${logo}`} 
-                              initial={{ opacity: 0, y: 20 }} 
-                              animate={{ opacity: 1, y: 0 }} 
-                              transition={{ duration: 0.5, delay: i * 0.05 }}
-                              className={cn(
-                                "relative rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center p-6 group/tool hover:border-accent/30 transition-all duration-500", 
-                                spans[i] || "col-span-4"
-                              )}
-                            >
-                               <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover/tool:opacity-100 blur-xl transition-opacity rounded-2xl" />
-                               <img 
-                                 src={`/images/logos/${logo}`} 
-                                 alt="tool" 
-                                 className="w-full h-full object-contain brightness-0 invert transition-transform duration-700 group-hover/tool:scale-110" 
-                                 onError={(e) => { (e.target as any).style.display = 'none'; (e.target as any).parentElement.innerHTML = '<div class="font-black text-white/10 text-2xl">AI</div>'; }} 
-                               />
-                               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 opacity-0 group-hover/tool:opacity-100 transition-all duration-300 font-mono text-[9px] font-black text-accent uppercase tracking-widest bg-black/80 border border-accent/20 px-3 py-1 rounded-md z-20 whitespace-nowrap">
-                                 {currentUC.tools[i]}
-                               </div>
-                            </motion.div>
-                          );
+                        {/* SVG CONNECTION LAYER */}
+                        <svg 
+                          viewBox="0 0 100 100" 
+                          preserveAspectRatio="none"
+                          className="absolute inset-0 w-full h-full pointer-events-none z-10"
+                        >
+                          <defs>
+                            <filter id="hyper-glow">
+                              <feGaussianBlur stdDeviation="0.8" result="coloredBlur" />
+                              <feMerge>
+                                <feMergeNode in="coloredBlur" />
+                                <feMergeNode in="coloredBlur" />
+                                <feMergeNode in="SourceGraphic" />
+                              </feMerge>
+                            </filter>
+                          </defs>
+
+                          {currentUC.tools.map((_, i) => {
+                             const total = currentUC.tools.length;
+                             const angle = (i / total) * 360;
+                             const radius = 35; 
+                             const x = 50 + radius * Math.cos((angle - 90) * (Math.PI / 180));
+                             const y = 50 + radius * Math.sin((angle - 90) * (Math.PI / 180));
+                             
+                             const isLeft = x < 50;
+                             const portX = isLeft ? x + 6.5 : x - 6.5; 
+                             const portY = y;
+
+                             return (
+                               <g key={`wire-${i}`} filter="url(#hyper-glow)">
+                                 <path
+                                   d={`M 50 50 C 50 ${portY}, ${portX} 50, ${portX} ${portY}`}
+                                   fill="none"
+                                   stroke="rgba(255,64,0,0.05)"
+                                   strokeWidth="0.8"
+                                 />
+                                 
+                                 <motion.path
+                                   d={`M 50 50 C 50 ${portY}, ${portX} 50, ${portX} ${portY}`}
+                                   fill="none"
+                                   stroke="#ff4000"
+                                   strokeWidth="1.5"
+                                   strokeLinecap="round"
+                                   initial={{ pathLength: 0.05, pathOffset: 0, opacity: 0 }}
+                                   animate={{ 
+                                     pathOffset: [0, 1],
+                                     opacity: [0, 1, 0.8, 0]
+                                   }}
+                                   transition={{ 
+                                     duration: 3, 
+                                     repeat: Infinity, 
+                                     delay: i * 0.6,
+                                     ease: "linear"
+                                   }}
+                                 />
+                               </g>
+                             );
+                          })}
+                        </svg>
+
+                        {/* NEURAL DUST PARTICLES */}
+                        {[...Array(12)].map((_, i) => (
+                           <motion.div
+                             key={`dust-${i}`}
+                             className="absolute w-1 h-1 bg-accent/20 rounded-full blur-[1px]"
+                             initial={{ 
+                               x: Math.random() * 100 + "%", 
+                               y: Math.random() * 100 + "%",
+                               opacity: 0 
+                             }}
+                             animate={{ 
+                               y: ["-10%", "110%"],
+                               opacity: [0, 0.5, 0]
+                             }}
+                             transition={{ 
+                               duration: 10 + Math.random() * 20, 
+                               repeat: Infinity,
+                               delay: Math.random() * 10
+                             }}
+                           />
+                        ))}
+
+                        {/* CENTRAL CORE NODE */}
+                        <motion.div 
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          className="relative z-20 w-48 h-48 rounded-full flex items-center justify-center group/core"
+                        >
+                           {/* Holographic Scan Rings */}
+                           <motion.div 
+                             animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
+                             transition={{ duration: 2, repeat: Infinity }}
+                             className="absolute inset-0 rounded-full border border-accent/40 bg-accent/5" 
+                           />
+                           <motion.div 
+                             animate={{ scale: [1, 1.8], opacity: [0.3, 0] }}
+                             transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+                             className="absolute inset-0 rounded-full border border-accent/20" 
+                           />
+
+                           <div className="relative z-10 w-full h-full rounded-full bg-black/40 border border-white/10 backdrop-blur-3xl flex flex-col items-center justify-center p-8 shadow-[0_0_100px_rgba(255,64,0,0.25)]">
+                              <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent,rgba(255,64,0,0.1),transparent)] animate-spin-slow" />
+                              
+                              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-accent mb-4 shadow-[0_0_30px_rgba(255,64,0,0.3)]">
+                                 {currentUC.icon}
+                              </div>
+                              <div className="text-center">
+                                <div className="font-heading text-2xl font-black text-white leading-none tracking-tighter uppercase mb-1">SYSTEM</div>
+                                <div className="font-mono text-[8px] text-accent font-black tracking-[0.5em] uppercase">NEURAL_HUB</div>
+                              </div>
+                           </div>
+                        </motion.div>
+
+                        {/* TOOL NODES (SATELLITES) */}
+                        {currentUC.tools.map((tool, i) => {
+                             const total = currentUC.tools.length;
+                             const angle = (i / total) * 360;
+                             const radius = 35;
+                             const x = 50 + radius * Math.cos((angle - 90) * (Math.PI / 180));
+                             const y = 50 + radius * Math.sin((angle - 90) * (Math.PI / 180));
+                             const isLeft = x < 50;
+
+                             return (
+                               <motion.div 
+                                 key={tool}
+                                 initial={{ opacity: 0, scale: 0.5 }}
+                                 animate={{ 
+                                   opacity: 1, 
+                                   scale: 1, 
+                                   left: `${x}%`, 
+                                   top: `${y}%`
+                                 }}
+                                 transition={{ type: "spring", stiffness: 100, damping: 15, delay: i * 0.1 }}
+                                 className="absolute z-30 w-36 -translate-x-1/2 -translate-y-1/2 perspective-1000"
+                               >
+                                  <motion.div 
+                                    whileHover={{ rotateY: isLeft ? -15 : 15, rotateX: -5, scale: 1.05 }}
+                                    className="relative group/node cursor-pointer"
+                                  >
+                                     {/* Floating Status Label */}
+                                     <motion.div 
+                                       animate={{ y: [0, -4, 0] }}
+                                       transition={{ duration: 4, repeat: Infinity, delay: i * 0.5 }}
+                                       className={`absolute -top-8 ${isLeft ? 'right-0' : 'left-0'} flex items-center gap-2`}
+                                     >
+                                        <div className="w-1 h-1 rounded-full bg-accent animate-pulse" />
+                                        <span className="font-mono text-[6px] text-white/30 uppercase tracking-widest font-black">NODE_ACTIVE: {2.4 + i*0.1}MS</span>
+                                     </motion.div>
+
+                                     {/* Holographic Card */}
+                                     <div className="rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl p-6 flex flex-col items-center justify-center transition-all duration-500 group-hover/node:border-accent/60 group-hover/node:bg-black/80 group-hover/node:shadow-[0_0_50px_rgba(255,64,0,0.25)] overflow-hidden">
+                                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+                                        
+                                        <div className="w-14 h-14 flex items-center justify-center mb-4">
+                                           <img 
+                                             src={`/images/logos/${currentUC.logos[i]}`} 
+                                             alt={tool}
+                                             className="w-full h-full object-contain brightness-0 invert transition-transform duration-700 group-hover/node:scale-110"
+                                             onError={(e) => { (e.target as any).style.display = 'none'; (e.target as any).parentElement.innerHTML = `<div class="font-black text-white/10 text-2xl">${tool.substring(0,2)}</div>`; }} 
+                                           />
+                                        </div>
+                                        <span className="font-mono text-[10px] text-white/40 group-hover/node:text-accent transition-colors uppercase font-black tracking-[0.2em] text-center leading-none">
+                                          {tool}
+                                        </span>
+                                        
+                                        {/* Precision Input Port - Dynamic Placement */}
+                                        <div className={`absolute top-1/2 ${isLeft ? '-right-1' : '-left-1'} -translate-y-1/2 w-2 h-2 rounded-full bg-accent border border-white/20 shadow-[0_0_10px_rgba(255,64,0,0.5)]`} />
+                                     </div>
+
+                                     {/* HUD Label */}
+                                     <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover/node:opacity-100 transition-all duration-300 transform group-hover/node:-translate-y-1">
+                                        <div className="bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-sm backdrop-blur-md">
+                                           <span className="font-mono text-[6px] text-accent font-black tracking-widest uppercase">SYNC_NODE_0x{i}</span>
+                                        </div>
+                                     </div>
+                                  </motion.div>
+                               </motion.div>
+                             );
                         })}
                       </motion.div>
                     )}

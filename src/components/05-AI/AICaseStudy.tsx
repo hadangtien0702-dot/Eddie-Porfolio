@@ -291,73 +291,90 @@ export default function AICaseStudy() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* LEFT: STRATEGIC INSIGHTS (Col 1-4) */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="p-10 rounded-[2.5rem] bg-[#0A0A0A] border border-white/5 relative overflow-hidden group shadow-2xl">
-              <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-accent/[0.03] to-transparent pointer-events-none" />
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            {/* INTEGRATED STRATEGY CONSOLE */}
+            <div className="flex-1 relative p-12 rounded-[3rem] bg-[#0A0A0A] border border-white/10 overflow-hidden group shadow-[0_30px_100px_rgba(0,0,0,0.8)]">
+              {/* HUD Background Decoration */}
+              <div className="absolute top-0 right-0 p-8 font-mono text-[8px] text-white/5 tracking-[0.4em] pointer-events-none uppercase">MODULE: STRAT_CTRL_v2.0</div>
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_0%_0%,rgba(255,64,0,0.05),transparent_50%)] pointer-events-none" />
               
-              <h3 className="font-heading text-4xl font-black text-white mb-8 italic tracking-tighter uppercase">THE STRATEGY</h3>
+              <div className="relative z-10 h-full flex flex-col">
+                {/* Header */}
+                <div className="mb-16">
+                  <h3 className="font-heading text-5xl font-black text-white leading-[0.9] tracking-tighter uppercase mb-8">
+                    THE<br/><span className="text-accent italic">STRATEGY</span>
+                  </h3>
+                  <p className="text-white/40 text-lg leading-relaxed max-w-[280px] font-medium tracking-tight">
+                    I engineered a <span className="text-white font-bold underline decoration-accent decoration-2 underline-offset-4 uppercase italic">Neural Content Engine</span> that obliterates traditional production bottlenecks.
+                  </p>
+                </div>
 
-              <div className="space-y-10 font-body text-white/40 text-lg leading-relaxed">
-                <p>
-                  I engineered a <span className="text-white font-black italic underline decoration-accent decoration-4 underline-offset-4">NEURAL CONTENT ENGINE</span> that 
-                  obliterates traditional production bottlenecks.
-                </p>
-                
-                <div className="space-y-8">
-                   {[
-                     { label: "Cost Reduction", val: "-90%", desc: "Zero crew. Zero studio costs." },
-                     { label: "Viral Velocity", val: "1.5M+", desc: "Optimized for Meta organic reach." },
-                     { label: "Output Frequency", val: "DAILY", desc: "30+ high-fidelity reels monthly." }
-                   ].map(item => (
-                     <div key={item.label} className="group/item border-l-2 border-white/5 pl-6 hover:border-accent transition-colors">
-                        <div className="flex items-baseline justify-between mb-1">
-                           <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">{item.label}</span>
-                           <span className="font-heading text-2xl text-accent font-black tracking-tighter">{item.val}</span>
+                {/* Stats Grid - Strict Alignment */}
+                <div className="space-y-10 flex-1">
+                  {[
+                    { label: "Cost Reduction", value: "-90%", desc: "Zero crew. Zero studio costs." },
+                    { label: "Viral Velocity", value: "1.5M+", desc: "Optimized for Meta organic reach." },
+                    { label: "Output Frequency", value: "DAILY", desc: "30+ high-fidelity reels monthly." }
+                  ].map((stat, i) => (
+                    <div key={i} className="flex justify-between items-start group/stat">
+                      <div className="space-y-1">
+                        <h6 className="font-mono text-[9px] text-white/20 uppercase tracking-[0.3em] font-black group-hover/stat:text-accent transition-colors">{stat.label}</h6>
+                        <p className="text-white/30 text-xs font-medium">{stat.desc}</p>
+                      </div>
+                      <div className="font-heading text-3xl font-black text-white tracking-tighter group-hover/stat:text-accent transition-all">
+                        {stat.value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* INTEGRATED ACTION PANEL */}
+                <div className="mt-16 pt-10 border-t border-white/5 flex flex-col gap-4">
+                  <a 
+                    href="https://www.facebook.com/hanguyen.suckhoecuocsongmy/reels/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full group/btn relative p-6 rounded-2xl bg-accent overflow-hidden transition-all duration-500 hover:scale-[1.02] active:scale-95 shadow-[0_20px_40px_rgba(255,64,0,0.3)]"
+                  >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]" />
+                      <div className="relative z-10 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-accent">
+                              <Play className="w-5 h-5 fill-current" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-heading text-xl font-black text-white uppercase tracking-tighter">LIVE FEED</div>
+                              <div className="font-mono text-[8px] text-white/60 uppercase tracking-widest font-black">Watch in Action</div>
+                            </div>
                         </div>
-                        <p className="text-[13px] text-white/20 leading-snug">{item.desc}</p>
-                     </div>
-                   ))}
+                        <ArrowUpRight className="w-6 h-6 text-white opacity-40 group-hover/btn:opacity-100 transition-opacity" />
+                      </div>
+                  </a>
+
+                  <a 
+                    href="https://drive.google.com/drive/folders/1Q6RI5z_G1jU6eP815x8zCGEumAfdPq4s?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full group/btn relative p-6 rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden transition-all duration-500 hover:bg-white/[0.06] hover:border-white/20"
+                  >
+                      <div className="relative z-10 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 group-hover/btn:text-white transition-colors">
+                              <ExternalLink className="w-5 h-5" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-heading text-xl font-black text-white uppercase tracking-tighter">ASSET VAULT</div>
+                              <div className="font-mono text-[8px] text-white/40 uppercase tracking-widest font-black">100+ AI Samples</div>
+                            </div>
+                        </div>
+                        <ArrowUpRight className="w-5 h-5 text-white opacity-20 group-hover/btn:opacity-100 transition-opacity" />
+                      </div>
+                  </a>
                 </div>
               </div>
-            </div>
 
-            {/* REFINED ACTION HUB */}
-            <div className="grid grid-cols-1 gap-4">
-              <a 
-                href="https://www.facebook.com/hanguyen.suckhoecuocsongmy/reels/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-6 rounded-[2rem] bg-accent group transition-all duration-500 hover:scale-[1.02] shadow-[0_20px_50px_rgba(255,64,0,0.2)]"
-              >
-                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white">
-                    <Play className="w-5 h-5 fill-white ml-0.5" />
-                  </div>
-                  <div>
-                    <div className="font-heading text-xl font-black text-white uppercase leading-none">LIVE FEED</div>
-                    <div className="font-mono text-[9px] text-white/70 font-black uppercase tracking-widest mt-1.5">Watch in action</div>
-                  </div>
-                </div>
-                <ArrowUpRight className="w-6 h-6 text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </a>
-
-              <a 
-                href="https://drive.google.com/drive/folders/1Q6RI5z_G1jU6eP815x8zCGEumAfdPq4s?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-6 rounded-[2rem] bg-white/[0.02] border border-white/10 group transition-all duration-500 hover:bg-white/[0.06]"
-              >
-                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white border border-white/10">
-                    <ExternalLink className="w-5 h-5 text-white/40 group-hover:text-accent transition-colors" />
-                  </div>
-                  <div>
-                    <div className="font-heading text-lg font-black text-white uppercase leading-none group-hover:text-accent transition-colors">ASSET VAULT</div>
-                    <div className="font-mono text-[9px] text-white/30 font-black uppercase tracking-widest mt-1.5">100+ AI Samples</div>
-                  </div>
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-white/10 group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
-              </a>
+              {/* Micro-UI Corner Accent */}
+              <div className="absolute bottom-4 right-4 font-mono text-[6px] text-white/10 uppercase tracking-[0.5em] [writing-mode:vertical-lr]">SYSTEM_SECURE</div>
             </div>
           </div>
           
@@ -394,44 +411,91 @@ export default function AICaseStudy() {
                       video.currentTime = 0;
                     }
                   }}
-                  className="relative aspect-[9/16] rounded-[2rem] bg-white/[0.02] border border-white/10 overflow-hidden group cursor-pointer shadow-xl transition-all duration-500 hover:border-accent/40 hover:shadow-accent/5"
+                  className="relative aspect-[9/16] rounded-[2rem] bg-black border border-white/10 overflow-hidden group cursor-pointer shadow-2xl transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(255,64,0,0.1)]"
                 >
+                  {/* HUD Corner Brackets */}
+                  <div className="absolute inset-0 z-30 pointer-events-none">
+                    <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-white/20 rounded-tl-lg group-hover:border-accent transition-colors" />
+                    <div className="absolute top-4 right-4 w-4 h-4 border-t border-r border-white/20 rounded-tr-lg group-hover:border-accent transition-colors" />
+                    <div className="absolute bottom-4 left-4 w-4 h-4 border-b border-l border-white/20 rounded-bl-lg group-hover:border-accent transition-colors" />
+                    <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-white/20 rounded-br-lg group-hover:border-accent transition-colors" />
+                  </div>
+
+                  {/* Scanning Animation */}
+                  <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity">
+                    <motion.div 
+                      animate={{ y: ["-100%", "200%"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      className="w-full h-20 bg-gradient-to-b from-transparent via-accent/10 to-transparent blur-md"
+                    />
+                  </div>
+
                   {/* Background Video Layer */}
-                  <div className="absolute inset-0 z-0">
+                  <div className="absolute inset-0 z-0 scale-105 group-hover:scale-100 transition-transform duration-1000">
                     <video 
                       src={v.videoUrl} 
                       muted 
                       loop 
                       playsInline
-                      className="w-full h-full object-cover transition-all duration-1000 opacity-[0.2] group-hover:opacity-100 group-hover:scale-105"
+                      className="w-full h-full object-cover opacity-[0.3] group-hover:opacity-100 transition-all duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10 group-hover:via-transparent transition-all duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10 group-hover:via-transparent transition-all duration-700" />
+                  </div>
+
+                  {/* Top HUD Metadata */}
+                  <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full px-6 z-20 flex justify-between items-center opacity-40 group-hover:opacity-100 transition-opacity">
+                     <div className="flex items-center gap-2">
+                        <div className={`w-1.5 h-1.5 rounded-full ${i === 0 ? "bg-red-500 animate-pulse" : "bg-white/40"}`} />
+                        <span className="font-mono text-[7px] text-white font-black tracking-widest uppercase">
+                           {i === 0 ? "ANALYZING" : "ARCHIVE_SYNC"}
+                        </span>
+                     </div>
+                     <span className="font-mono text-[7px] text-white/50 tracking-widest font-bold">NODE: US-W0{i+1}</span>
                   </div>
 
                   {/* Content Overlay */}
-                  <div className="absolute inset-0 z-20 p-6 flex flex-col justify-between">
-                    <div className="flex items-start justify-between">
-                       <span className="w-8 h-8 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center font-mono text-[10px] text-white font-black">
-                         {String(i + 1).padStart(2, "0")}
-                       </span>
-                       <div className="flex flex-col items-end">
-                          <div className="font-heading text-2xl font-black text-accent tracking-tighter drop-shadow-[0_0_10px_rgba(255,64,0,0.4)]">
-                             {v.views}
+                  <div className="absolute inset-0 z-20 p-8 flex flex-col justify-between">
+                    <div className="flex items-start justify-between mt-6">
+                       <span className="font-mono text-[9px] text-white/40 uppercase tracking-[0.2em] [writing-mode:vertical-lr]">RANK_{String(i + 1).padStart(2, "0")}</span>
+                       
+                       {/* HOLOGRAPHIC VIEW COUNT TAG */}
+                       <div className="relative group/tag">
+                          <div className="absolute inset-0 bg-accent/20 blur-md rounded-xl opacity-0 group-hover/tag:opacity-100 transition-opacity" />
+                          <div className="relative px-4 py-2 rounded-xl bg-white/[0.05] backdrop-blur-xl border border-white/10 flex flex-col items-end">
+                             <div className="font-heading text-3xl font-black text-white tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                                {v.views}
+                             </div>
+                             <span className="font-mono text-[7px] text-accent font-black uppercase tracking-[0.3em] leading-none">REACH</span>
                           </div>
-                          <span className="font-mono text-[8px] text-white/50 uppercase tracking-widest">REACH</span>
                        </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <h5 className="font-heading text-sm font-black text-white leading-tight group-hover:text-accent transition-colors line-clamp-2">
+                    <div className="space-y-4">
+                      {/* WAVEFORM DECOR */}
+                      <div className="h-4 flex items-end gap-0.5 opacity-30 group-hover:opacity-60">
+                         {[1,2,3,4,5,6,7,8,9,10].map(j => (
+                           <motion.div 
+                              key={j}
+                              animate={{ height: ["20%", "100%", "40%", "80%", "20%"] }}
+                              transition={{ duration: 1.5, repeat: Infinity, delay: j * 0.1 }}
+                              className="w-1 bg-accent rounded-full"
+                           />
+                         ))}
+                      </div>
+
+                      <h5 className="font-heading text-lg font-black text-white leading-tight group-hover:text-accent transition-colors line-clamp-2 uppercase tracking-tight italic">
                         {v.title}
                       </h5>
-                      {(v as any).likes && (
-                        <div className="flex gap-3 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 w-fit">
-                          <span className="font-mono text-[8px] text-white/80 font-bold">👍 {v.likes}</span>
-                          <span className="font-mono text-[8px] text-white/80 font-bold">💬 {(v as any).comments}</span>
-                        </div>
-                      )}
+                      
+                      <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                         {(v as any).likes && (
+                           <div className="flex gap-4">
+                             <span className="font-mono text-[8px] text-white/40 font-bold uppercase tracking-widest">👍 {v.likes}</span>
+                             <span className="font-mono text-[8px] text-white/40 font-bold uppercase tracking-widest">💬 {(v as any).comments}</span>
+                           </div>
+                         )}
+                         <span className="font-mono text-[7px] text-white/20 uppercase tracking-[0.4em]">60_FPS</span>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
