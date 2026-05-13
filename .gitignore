@@ -56,3 +56,5 @@ public/HUONG_DAN_HINH_ANH/
 
 # large video files
 public/images/**/*.mp4
+public/videos/ads/*.mp4
+upload-videos.mjs

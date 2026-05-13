@@ -43,15 +43,15 @@ export default function AdsPlayerLayout({
             {/* Editor-Focused Stats Grid */}
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
-                <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Hook Rate (3s)</span>
+                <span className="font-mono text-[9px] text-accent font-black uppercase tracking-[0.2em] mb-1 block">Performance CPA</span>
                 <span className="font-heading text-2xl sm:text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
-                  {selectedVideo.stats.hookRate || "78%"}
+                  {selectedVideo.stats.cpa || "$72"}
                 </span>
               </div>
               <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
-                <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Retention</span>
+                <span className="font-mono text-[9px] text-white/30 uppercase tracking-[0.2em] mb-1 block">Hook Rate (5s)</span>
                 <span className="font-heading text-2xl sm:text-3xl font-black text-white group-hover/stat:text-accent transition-colors">
-                  {selectedVideo.stats.retention || "45%"}
+                  {selectedVideo.stats.retention3s || "65%"}
                 </span>
               </div>
               <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 group/stat">
@@ -104,7 +104,11 @@ export default function AdsPlayerLayout({
       </div>
 
       {/* RIGHT: Video Player */}
-      <div className="relative aspect-video lg:aspect-auto bg-black flex items-center justify-center group">
+      <div className={`relative ${
+        selectedVideo.aspectRatio === '1:1' ? 'aspect-square' : 
+        selectedVideo.aspectRatio === '4:5' ? 'aspect-[4/5]' : 
+        'aspect-video'
+      } lg:aspect-auto bg-black flex items-center justify-center group`}>
         <iframe
           src={getEmbedUrl(selectedVideo.fullVideoUrl)}
           className="absolute inset-0 w-full h-full"

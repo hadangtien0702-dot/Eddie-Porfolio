@@ -148,13 +148,13 @@ export default function SocialGrid({
 
       {/* ─── FILTERS & NAVIGATION ─── */}
       <div className="max-w-[1500px] mx-auto px-6 border-y border-white/5 py-8 mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
-         <div className="flex items-center gap-10 md:gap-14 overflow-x-auto w-full md:w-auto scrollbar-hide">
+         <div className="flex items-center gap-10 md:gap-14 overflow-x-auto w-full md:w-auto scrollbar-hide pb-2 px-2">
             {filters.map((f) => (
               <button
                 key={f}
                 onClick={() => setActiveFilter(f)}
                 className={`relative font-heading text-[13px] md:text-[15px] font-black tracking-[0.2em] uppercase transition-all duration-300 pb-3 whitespace-nowrap
-                  ${activeFilter === f ? 'text-accent scale-110' : 'text-white/30 hover:text-white/70 hover:scale-105'}`}
+                  ${activeFilter === f ? 'text-accent scale-110 translate-x-1' : 'text-white/30 hover:text-white/70 hover:scale-105'}`}
               >
                 {f}
                 {activeFilter === f && (
@@ -164,12 +164,12 @@ export default function SocialGrid({
             ))}
          </div>
 
-         <div className="flex items-center gap-4 text-[11px] font-mono text-white/30 tracking-widest uppercase">
-            <span>Sort By</span>
-            <button className="flex items-center gap-2 text-white font-bold group">
-               Latest
-               <motion.div animate={{ rotate: 0 }} className="group-hover:translate-y-0.5 transition-transform">
-                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+         <div className="flex items-center gap-6 text-[13px] font-mono text-white/30 tracking-widest uppercase">
+            <span className="opacity-60">Sort By:</span>
+            <button className="flex items-center gap-3 text-white font-black group px-4 py-2 bg-white/5 rounded-lg border border-white/5 hover:border-accent/40 transition-all">
+               <span className="text-sm">Latest</span>
+               <motion.div animate={{ rotate: 0 }} className="group-hover:translate-y-0.5 transition-transform text-accent">
+                 <svg width="12" height="8" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                </motion.div>
             </button>
          </div>
@@ -257,13 +257,15 @@ export default function SocialGrid({
                         </div>
                       </div>
 
-                      <div className="flex flex-col items-end">
-                         <div className="flex items-center gap-2 text-accent">
-                            <TrendingUp size={isVertical ? 12 : 14} />
-                            <span className={`font-heading font-black drop-shadow-[0_0_10px_rgba(255,64,0,0.3)] ${isVertical ? 'text-xl' : 'text-2xl'}`}>{video.stats.views || "Viral"}</span>
-                         </div>
-                         <span className="text-[9px] font-mono text-white/20 uppercase tracking-widest">Views</span>
-                      </div>
+                      {video.badge !== "#creative" && (
+                        <div className="flex flex-col items-end">
+                           <div className="flex items-center gap-2 text-accent">
+                              <TrendingUp size={isVertical ? 12 : 14} />
+                              <span className={`font-heading font-black drop-shadow-[0_0_10px_rgba(255,64,0,0.3)] ${isVertical ? 'text-xl' : 'text-2xl'}`}>{video.stats.views || "Viral"}</span>
+                           </div>
+                           <span className="text-[9px] font-mono text-white/20 uppercase tracking-widest">Views</span>
+                        </div>
+                      )}
                    </div>
 
                    {/* Tags Row */}
