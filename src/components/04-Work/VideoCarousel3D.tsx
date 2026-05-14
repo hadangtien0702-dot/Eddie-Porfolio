@@ -225,7 +225,7 @@ export default function VideoCarousel3D({
               onPanEnd={handlePanEnd}
             />
 
-            <div className="relative flex items-center justify-center w-full" style={{ height: CARD_H + 100, transformStyle: "preserve-3d" }}>
+            <div className="relative flex items-center justify-center w-full" style={{ height: isMobile ? 420 : 700, transformStyle: "preserve-3d" }}>
               <AnimatePresence mode="popLayout">
                 {filteredVideos.map((video, i) => {
                   let offset = i - activeIndex;
@@ -336,8 +336,8 @@ export default function VideoCarousel3D({
               </AnimatePresence>
             </div>
             
-            {/* Navigation Controls - Moved Up */}
-            <div className="relative z-30 flex items-center justify-center gap-6 py-4 mt-2">
+            {/* Navigation Controls */}
+            <div className="relative z-30 flex items-center justify-center gap-6 py-4 mt-8">
               <button onClick={() => goTo(activeIndex - 1)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-white hover:border-white/20 transition-all">
                 <ChevronLeft size={20} />
               </button>

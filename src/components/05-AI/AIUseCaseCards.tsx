@@ -307,7 +307,7 @@ export default function AIUseCaseCards() {
                              const y = 50 + radius * Math.sin((angle - 90) * (Math.PI / 180));
                              
                              const isLeft = x < 50;
-                             const portX = isLeft ? x + 6.5 : x - 6.5; 
+                             const portX = isLeft ? x + 4.5 : x - 4.5; 
                              const portY = y;
 
                              return (
