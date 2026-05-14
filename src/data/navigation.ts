@@ -4,14 +4,15 @@
 
 export const navItems = [
   { label: "Overview", href: "#overview" },
-  { label: "Case Study", href: "#case-study" },
-  { label: "Work", href: "#work" },
-  { label: "Showreel", href: "#showreel" },
-  { label: "Contact", href: "#contact" },
+  { label: "Video Editor", href: "#work" },
+  { label: "Design", href: "#design" },
+  { label: "A.I", href: "#ai" },
+  { label: "Setup & Web Design", href: "#setup" },
+  { label: "Case Study & Contact", href: "#case-study" },
 ];
 
 // ─── Brand info ───
 export const brand = {
   name: "EDDIE",
-  tagline: "Creative Video Strategist",
+  tagline: "Creative Production Team Lead",
 };

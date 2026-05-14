@@ -17,14 +17,27 @@ import { uiSounds } from "@/utils/ui-sounds";
 import { Maximize, Layers, Gauge, Target, Activity, Cpu } from "lucide-react";
 
 const BackgroundParticles = () => {
-  const particles = useMemo(() => Array.from({ length: 40 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 2 + 1,
-    duration: Math.random() * 20 + 10,
-    delay: Math.random() * 5
-  })), []);
+  const [particles, setParticles] = useState<{
+    id: number;
+    x: number;
+    y: number;
+    size: number;
+    duration: number;
+    delay: number;
+  }[]>([]);
+
+  useEffect(() => {
+    setParticles(Array.from({ length: 40 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 2 + 1,
+      duration: Math.random() * 20 + 10,
+      delay: Math.random() * 5
+    })));
+  }, []);
+
+  if (particles.length === 0) return null;
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">

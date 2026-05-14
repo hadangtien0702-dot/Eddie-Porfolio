@@ -66,6 +66,89 @@ export default function Overview() {
     return () => section.removeEventListener("mousemove", handleMouseMove);
   }, [handleMouseMove]);
 
+  // ─── Lắng nghe sự kiện Cuộn (Wheel / Touch) để nhảy xuống #work một cách mạnh mẽ ───
+  useEffect(() => {
+    let isScrolling = false;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Nếu đang trong quá trình tự động cuộn, chặn luôn thao tác cuộn tay của user
+      if (isScrolling) {
+        e.preventDefault();
+        return;
+      }
+
+      // Nếu người dùng cuộn xuống VÀ vẫn đang ở trong vùng Overview
+      if (e.deltaY > 0 && window.scrollY < window.innerHeight - 100) {
+        e.preventDefault(); 
+        isScrolling = true;
+        
+        // Vô hiệu hóa thanh cuộn tạm thời để triệt tiêu quán tính của trackpad/chuột
+        document.body.style.overflow = "hidden";
+        
+        const workSection = document.getElementById("work");
+        if (workSection) {
+          workSection.scrollIntoView({ behavior: "smooth" });
+        }
+        
+        // Khóa cuộn trong 1.2s để animation hoàn tất, sau đó nhả thanh cuộn
+        setTimeout(() => {
+          document.body.style.overflow = "";
+          isScrolling = false;
+        }, 1200);
+      }
+    };
+
+    // Mobile swipe
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isScrolling) {
+        e.preventDefault();
+        return;
+      }
+      
+      const touchEndY = e.touches[0].clientY;
+      const diff = touchStartY - touchEndY;
+      
+      // Vuốt lên (cuộn màn hình xuống)
+      if (diff > 20 && window.scrollY < window.innerHeight - 100) {
+        isScrolling = true;
+        
+        document.body.style.overflow = "hidden";
+        const workSection = document.getElementById("work");
+        if (workSection) {
+          workSection.scrollIntoView({ behavior: "smooth" });
+        }
+        
+        setTimeout(() => {
+          document.body.style.overflow = "";
+          isScrolling = false;
+        }, 1200);
+      }
+    };
+
+    // Bắt sự kiện trên window với passive: false để can thiệp được e.preventDefault()
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
+
+  const scrollToWork = () => {
+    const workSection = document.getElementById("work");
+    if (workSection) {
+      workSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section
       ref={sectionRef}
@@ -119,7 +202,7 @@ export default function Overview() {
         {/* ─── Hero Area: Text + Image overlap ─── */}
         <div className="relative flex-1 flex flex-col lg:flex-row items-center lg:items-center gap-12 lg:gap-0">
           {/* ─── Cột trái: Overline + Heading cực lớn ─── */}
-          <div className="relative z-20 flex-shrink-0 w-full lg:max-w-[65%]">
+          <div className="relative z-20 flex-shrink-0 w-full lg:max-w-[70%]">
             {/* Overline — letter reveal, bắt đầu 50% opacity */}
             <motion.p
               initial="hidden"
@@ -153,7 +236,7 @@ export default function Overview() {
                 visible: { transition: { staggerChildren: 0.08, delayChildren: 0.5 } },
               }}
               className="font-heading text-[clamp(42px,8vw,88px)] font-bold leading-[0.9] text-white
-                         tracking-tight break-words text-left"
+                         tracking-tight break-words text-left text-balance"
             >
               {overviewHeading.title.split(" ").map((word, wi) => (
                 <motion.span
@@ -268,9 +351,10 @@ export default function Overview() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 cursor-pointer group"
+          onClick={scrollToWork}
         >
-          <span className="font-body text-[12px] font-bold text-white/40 uppercase tracking-[0.2em]">
+          <span className="font-body text-[12px] font-bold text-white/40 group-hover:text-white/80 transition-colors uppercase tracking-[0.2em]">
             Scroll
           </span>
           <motion.div
@@ -279,7 +363,8 @@ export default function Overview() {
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
               stroke="rgba(255,255,255,0.3)" strokeWidth="2"
-              strokeLinecap="round" strokeLinejoin="round">
+              strokeLinecap="round" strokeLinejoin="round"
+              className="group-hover:stroke-white/80 transition-colors">
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </motion.div>

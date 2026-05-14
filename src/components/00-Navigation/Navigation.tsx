@@ -68,7 +68,7 @@ export default function Navigation() {
     });
 
     return () => observers.forEach((o) => o.disconnect());
-  }, []);
+  }, [navItems]);
 
   // ─── Scroll-linked animations ───
   const { scrollY } = useScroll();

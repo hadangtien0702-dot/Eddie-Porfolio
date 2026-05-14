@@ -1,10 +1,13 @@
 // ─── Page chính ───
 // Mô tả: Trang chủ portfolio — import và sắp xếp các section theo narrative flow
-// Thứ tự: Identity → Numbers → Skills → Video → Proof → CTA → Footer
+// Thứ tự mới: Identity → Work (4 Creative Sections) → Video → Case Study → CTA → Footer
 
 import Navigation from "@/components/00-Navigation/Navigation";
 import Overview from "@/components/02-Overview/Overview";
-import Work from "@/components/04-Work/Work";
+import WorkVideoEditor from "@/components/04-Work/WorkVideoEditor";
+import WorkSocial from "@/components/04-Work/WorkSocial";
+import WorkAI from "@/components/04-Work/WorkAI";
+import WorkSetupWebsite from "@/components/04-Work/WorkSetupWebsite";
 import Showreel from "@/components/05-Showreel/Showreel";
 import CaseStudy from "@/components/03-CaseStudy/CaseStudy";
 import Contact from "@/components/06-Contact/Contact";
@@ -16,12 +19,19 @@ export default function Home() {
       <Navigation />
       {/* Overview: Tôi là ai */}
       <Overview />
+      
+      {/* Work: 4 Creative Sections (Hands-on Interactive) */}
+      <WorkVideoEditor />
+      <WorkSocial />
+      <WorkAI />
+      <WorkSetupWebsite />
+
+      {/* Showreel: Demo reel */}
+      <Showreel />
+
       {/* Case Study: Chứng minh bằng case thực tế */}
       <CaseStudy />
-      {/* Work: Tôi làm được gì */}
-      <Work />
-      {/* Strategy: Xem demo reel */}
-      <Showreel />
+
       {/* Contact: Liên hệ ngay */}
       <Contact />
       {/* Footer */}

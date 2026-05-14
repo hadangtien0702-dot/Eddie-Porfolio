@@ -7,10 +7,10 @@ export const overviewHeading = {
   // Overline label phía trên heading
   overline: "HEY, I'M EDDIE",
   // Heading chính
-  title: "Creative Video Strategist",
+  title: "Creative Production Team Lead",
   // Mô tả ngắn
   description:
-    "I build video systems that turn creative ideas into measurable growth. From strategy and production to testing and optimization, I focus on content that performs across paid and organic channels.",
+    "I lead a production team focused on building high-quality video content — from concept to final delivery — that drives results across paid and organic channels.",
 };
 
 // ─── 4 số liệu business nổi bật ───
