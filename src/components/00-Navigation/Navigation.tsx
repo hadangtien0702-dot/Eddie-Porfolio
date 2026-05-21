@@ -103,9 +103,15 @@ export default function Navigation() {
   });
 
   const scrollTo = (href: string) => {
-    const id = href.replace("#", "");
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    // @ts-ignore
+    if (typeof window !== "undefined" && window.lenis) {
+      // @ts-ignore
+      window.lenis.scrollTo(href, { offset: 0, duration: 1.2 });
+    } else {
+      const id = href.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleNavClick = () => setIsMenuOpen(false);

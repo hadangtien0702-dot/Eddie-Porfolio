@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useScroll } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Cpu } from "lucide-react";
@@ -103,6 +103,26 @@ export default function WorkAI() {
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [mounted, setMounted] = useState(false);
 
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Background values
+  const bgScale = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.85, 1, 1, 0.85]);
+  const bgBlur = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["blur(25px)", "blur(0px)", "blur(0px)", "blur(25px)"]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const bgBorderRadius = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["40px", "0px", "0px", "40px"]);
+
+  // Neural network unique scroll-driven movements
+  const networkScale = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.3, 1, 1, 0.3]);
+  const networkRotate = useTransform(scrollYProgress, [0, 1], [-15, 15]);
+  const coreScale = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.5, 1, 1, 0.5]);
+  const coreRotate = useTransform(scrollYProgress, [0, 1], [-180, 180]);
+
+  // Foreground values
+  const contentOpacity = useTransform(scrollYProgress, [0.15, 0.25, 0.75, 0.85], [0, 1, 1, 0]);
+
   useEffect(() => {
     setMounted(true);
     if (containerRef.current) {
@@ -141,47 +161,74 @@ export default function WorkAI() {
   return (
     <section 
       id="ai"
-      className="relative w-full h-[80vh] min-h-[600px] overflow-hidden bg-[#000] border-t border-white/5" 
+      className="relative w-full h-screen min-h-[700px] overflow-hidden bg-[#000] border-t border-white/5" 
       ref={containerRef}
     >
       
-      {/* ─── Background Cyberpunk Grid ─── */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#000_80%)] pointer-events-none" />
-      
-      {/* ─── Neural Network Canvas ─── */}
-      <div className="absolute inset-0 z-10">
-        {mounted && (
-          <svg className="w-full h-full pointer-events-none">
-            {aiNodes.map(node => (
-              <DraggableNode key={node.id} node={node} centerX={centerX} centerY={centerY} />
-            ))}
-          </svg>
-        )}
-      </div>
-
-      {/* ─── Central Core Hub ─── */}
-      {mounted && (
-        <div 
-          className="absolute z-20"
-          style={{ left: centerX, top: centerY, transform: 'translate(-50%, -50%)' }}
+      {/* ─── Animated Background Wrapper ─── */}
+      <motion.div
+        style={{ 
+          scale: bgScale, 
+          filter: bgBlur, 
+          opacity: bgOpacity,
+          borderRadius: bgBorderRadius 
+        }}
+        className="absolute inset-0 z-0 overflow-hidden origin-center will-change-transform bg-[#000] flex items-center justify-center"
+      >
+        {/* ─── Background Cyberpunk Grid ─── */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#000_80%)] pointer-events-none" />
+        
+        {/* ─── Neural Network Canvas ─── */}
+        <motion.div 
+          style={{ 
+            scale: networkScale, 
+            rotate: networkRotate 
+          }}
+          className="absolute inset-0 z-10 origin-center"
         >
-          <div className="relative w-32 h-32 rounded-full flex items-center justify-center group pointer-events-none">
-            {/* Pulsing rings */}
-            <motion.div animate={{ scale: [1, 1.5], opacity: [0.5, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 rounded-full border border-accent/40 bg-accent/10" />
-            <motion.div animate={{ scale: [1, 2], opacity: [0.3, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }} className="absolute inset-0 rounded-full border border-accent/20" />
-            
-            {/* Core sphere */}
-            <div className="w-20 h-20 rounded-full bg-black border-2 border-accent flex flex-col items-center justify-center shadow-[0_0_50px_#ff4000] backdrop-blur-xl">
-              <Cpu className="w-6 h-6 text-accent mb-1 animate-pulse" />
-              <span className="font-mono text-[8px] text-white font-bold tracking-widest">CORE</span>
+          {mounted && (
+            <svg className="w-full h-full pointer-events-none">
+              {aiNodes.map(node => (
+                <DraggableNode key={node.id} node={node} centerX={centerX} centerY={centerY} />
+              ))}
+            </svg>
+          )}
+        </motion.div>
+
+        {/* ─── Central Core Hub ─── */}
+        {mounted && (
+          <motion.div 
+            className="absolute z-20 origin-center"
+            style={{ 
+              left: centerX, 
+              top: centerY, 
+              translateX: "-50%",
+              translateY: "-50%",
+              scale: coreScale,
+              rotate: coreRotate
+            }}
+          >
+            <div className="relative w-32 h-32 rounded-full flex items-center justify-center group pointer-events-none">
+              {/* Pulsing rings */}
+              <motion.div animate={{ scale: [1, 1.5], opacity: [0.5, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 rounded-full border border-accent/40 bg-accent/10" />
+              <motion.div animate={{ scale: [1, 2], opacity: [0.3, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }} className="absolute inset-0 rounded-full border border-accent/20" />
+              
+              {/* Core sphere */}
+              <div className="w-20 h-20 rounded-full bg-black border-2 border-accent flex flex-col items-center justify-center shadow-[0_0_50px_#ff4000] backdrop-blur-xl">
+                <Cpu className="w-6 h-6 text-accent mb-1 animate-pulse" />
+                <span className="font-mono text-[8px] text-white font-bold tracking-widest">CORE</span>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </motion.div>
 
       {/* ─── Overlay Content ─── */}
-      <div className="absolute inset-0 z-30 p-6 md:p-12 lg:p-16 pointer-events-none flex flex-col justify-end lg:justify-between items-start">
+      <motion.div 
+        style={{ opacity: contentOpacity }}
+        className="absolute inset-0 z-30 p-6 md:p-12 lg:p-16 pointer-events-none flex flex-col justify-end lg:justify-between items-start"
+      >
         <div className="hidden lg:flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 mt-20 lg:mt-0">
           <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
           <span className="font-mono text-[10px] text-white/70 uppercase tracking-[0.3em] font-bold">
@@ -226,7 +273,7 @@ export default function WorkAI() {
             </Link>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
       
     </section>
   );

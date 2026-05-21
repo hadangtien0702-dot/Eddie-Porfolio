@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useAnimation, useMotionValue } from "framer-motion";
+import { motion, useAnimation, useMotionValue, useScroll, useTransform, useSpring } from "framer-motion";
 import Image from "next/image";
 import { uiSounds } from "@/utils/ui-sounds";
 import Link from "next/link";
@@ -9,23 +9,71 @@ import Link from "next/link";
 const socialImages = [
   { src: "/images/work/social-post/0324-e-bi-ka-hoc-dai-hoc-dua-nail-1080x1080.webp", views: "142K", likes: "12K", type: "Carousel" },
   { src: "/images/work/social-post/0324-e-bi-ka-thoi-bay-ganh-nang.webp", views: "89K", likes: "5K", type: "Post" },
+  { src: "/images/work/social-post/0324-e-bl-ka-thoi-bau-ganh-nang-1080x1080-en.webp", views: "105K", likes: "9K", type: "Post" },
   { src: "/images/work/social-post/0324-i-ja-ka-voi-7-day.webp", views: "250K", likes: "28K", type: "Viral" },
   { src: "/images/work/social-post/0424-ph-ka-tai-chinh-vung-vang.webp", views: "1.2M", likes: "85K", type: "Viral" },
   { src: "/images/work/social-post/0524-ro-ka20-ngan-khach-hang-2.webp", views: "45K", likes: "2K", type: "Post" },
   { src: "/images/work/social-post/0624-ph-ka--tang-cha-3.webp", views: "300K", likes: "45K", type: "Campaign" },
   { src: "/images/work/social-post/0624-ph-ka-mung-ngay-cua-cha.webp", views: "120K", likes: "14K", type: "Post" },
   { src: "/images/work/social-post/0724-ph-ka-tich-luy-tien-nho-bao-ve.webp", views: "95K", likes: "8K", type: "Carousel" },
+  { src: "/images/work/social-post/0724-ro-ka-ban-se-nhan.webp", views: "180K", likes: "15K", type: "Post" },
+  { src: "/images/work/social-post/0824-ph-ka-11-nam-nhin-lai.webp", views: "62K", likes: "3K", type: "Post" },
+  { src: "/images/work/social-post/0824-ph-ka-bao-ve-con-ngay-tu-khi-ra-doi.webp", views: "74K", likes: "6K", type: "Post" },
+  { src: "/images/work/social-post/0824-ph-ka-nguoi-dau-tu.webp", views: "50K", likes: "4K", type: "Post" },
+  { src: "/images/work/social-post/1020-ph-ka-tam-ve-giup-ban-nghi-huu.webp", views: "115K", likes: "10K", type: "Post" },
   { src: "/images/work/social-post/1024-ph-ka-phao-cuu-sinh.webp", views: "500K", likes: "52K", type: "Viral" },
+  { src: "/images/work/social-post/1124-resize-thang-may-2.webp", views: "280K", likes: "32K", type: "Banner" },
+  { src: "/images/work/social-post/1124-resize-thang-may.webp", views: "340K", likes: "40K", type: "Banner" },
+  { src: "/images/work/social-post/banner-web.webp", views: "650K", likes: "72K", type: "Web Banner" },
+  { src: "/images/work/social-post/gan-20-ngan-khach-hang-ngang.webp", views: "820K", likes: "95K", type: "Infographic" },
+  { src: "/images/work/social-post/hiring-member.webp", views: "35K", likes: "1.2K", type: "Hiring" },
   { src: "/images/work/social-post/post-buildream.webp", views: "68K", likes: "4K", type: "Post" },
   { src: "/images/work/social-post/post-cancer.webp", views: "210K", likes: "18K", type: "Awareness" },
-  { src: "/images/work/social-post/poster-trip-5-star.webp", views: "850K", likes: "90K", type: "Event" }
+  { src: "/images/work/social-post/poster-trip-5-star.webp", views: "850K", likes: "90K", type: "Event" },
+  { src: "/images/work/social-post/tho-nail-an-tam.webp", views: "140K", likes: "11K", type: "Post" },
+  { src: "/images/work/social-post/thu-hu-chuyen-bao-hiem.webp", views: "190K", likes: "16K", type: "Post" },
+  { src: "/images/work/social-post/importedphoto.750752294.032559.webp", views: "180K", likes: "12K", type: "Campaign" },
+  { src: "/images/work/social-post/importedphoto.750752294.032559-2.webp", views: "92K", likes: "6K", type: "Post" },
+  { src: "/images/work/social-post/sms-send-to-customer.webp", views: "420K", likes: "38K", type: "Viral" }
 ];
-
-// Helper to duplicate array for a larger grid
-const baseGrid = [...socialImages, ...socialImages, ...socialImages];
 
 export default function WorkSocial() {
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Background values
+  const bgScale = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.85, 1, 1, 0.85]);
+  const bgBlur = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["blur(25px)", "blur(0px)", "blur(0px)", "blur(25px)"]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const bgBorderRadius = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["40px", "0px", "0px", "40px"]);
+
+  // Grid unique 3D entry/exit tilt values
+  const gridRotateX = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [15, 0, 0, -15]);
+  const gridRotateY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [-15, 0, 0, 15]);
+  const gridTranslateZ = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [-250, 0, 0, -250]);
+
+  // Individual cards scroll parallax values with custom spring inertia
+  const rawY0 = useTransform(scrollYProgress, [0, 1], [500, -500]);
+  const rawY1 = useTransform(scrollYProgress, [0, 1], [200, -200]);
+  const rawY2 = useTransform(scrollYProgress, [0, 1], [700, -700]);
+  const rawY3 = useTransform(scrollYProgress, [0, 1], [350, -350]);
+  const rawY4 = useTransform(scrollYProgress, [0, 1], [600, -600]);
+
+  const yOffset0 = useSpring(rawY0, { stiffness: 45, damping: 14 });
+  const yOffset1 = useSpring(rawY1, { stiffness: 45, damping: 14 });
+  const yOffset2 = useSpring(rawY2, { stiffness: 45, damping: 14 });
+  const yOffset3 = useSpring(rawY3, { stiffness: 45, damping: 14 });
+  const yOffset4 = useSpring(rawY4, { stiffness: 45, damping: 14 });
+
+  const yOffsets = [yOffset0, yOffset1, yOffset2, yOffset3, yOffset4];
+
+  // Foreground values
+  const contentOpacity = useTransform(scrollYProgress, [0.15, 0.25, 0.75, 0.85], [0, 1, 1, 0]);
+
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [shuffledGrid, setShuffledGrid] = useState<typeof socialImages>([]);
   const [mounted, setMounted] = useState(false);
@@ -33,8 +81,38 @@ export default function WorkSocial() {
 
   useEffect(() => {
     setMounted(true);
-    // Shuffle only on client to avoid hydration mismatch
-    const shuffled = [...baseGrid].sort(() => Math.random() - 0.5);
+
+    // Smart shuffle with distance constraints to prevent identical images from appearing near each other
+    const shuffleWithDistance = (uniques: typeof socialImages, minDistance = 16) => {
+      const rawList = [...uniques, ...uniques];
+      let result: typeof socialImages = [];
+      let pool = [...rawList];
+      
+      let attempts = 0;
+      while (pool.length > 0 && attempts < 2000) {
+        attempts++;
+        const index = Math.floor(Math.random() * pool.length);
+        const candidate = pool[index];
+        
+        // Ensure this image is not in the last 'minDistance' items of the result list
+        const recentItems = result.slice(-minDistance);
+        const isDuplicateRecent = recentItems.some(item => item.src === candidate.src);
+        
+        if (!isDuplicateRecent || pool.length <= minDistance) {
+          result.push(candidate);
+          pool.splice(index, 1);
+          attempts = 0;
+        }
+      }
+      
+      // Fallback
+      if (pool.length > 0) {
+        result = [...result, ...pool];
+      }
+      return result;
+    };
+
+    const shuffled = shuffleWithDistance(socialImages, 16);
     setShuffledGrid(shuffled);
     
     // Initial centering of the grid
@@ -48,87 +126,123 @@ export default function WorkSocial() {
 
   // Prevent rendering random grid on server
   if (!mounted) {
-    return <section id="design" className="relative w-full h-[80vh] min-h-[600px] bg-[#020202]" />;
+    return <section id="design" ref={containerRef} className="relative w-full h-screen min-h-[700px] bg-[#020202]" />;
   }
+
+  // Group shuffled grid into columns to apply column-level parallax scroll and prevent overlaps
+  const columnsCount = 8;
+  const columns: (typeof socialImages)[] = Array.from({ length: columnsCount }, () => []);
+  shuffledGrid.forEach((item, i) => {
+    columns[i % columnsCount].push(item);
+  });
 
   return (
     <section 
       id="design"
-      className="relative w-full h-[80vh] min-h-[600px] overflow-hidden bg-[#020202] border-t border-white/5" 
+      className="relative w-full h-screen min-h-[700px] overflow-hidden bg-[#020202] border-t border-white/5" 
       ref={containerRef}
     >
       
-      {/* ─── The Viral Grid (Draggable Area) ─── */}
+      {/* ─── Animated Background Wrapper ─── */}
       <motion.div
-        drag
-        dragConstraints={containerRef}
-        dragElastic={0.2}
-        dragMomentum={true}
-        animate={controls}
-        className="absolute top-1/2 left-1/2 w-[3000px] h-[2000px] -ml-[1500px] -mt-[1000px] cursor-grab active:cursor-grabbing flex flex-wrap content-start gap-4 p-12"
-        style={{ perspective: 1000 }}
+        style={{ 
+          scale: bgScale, 
+          filter: bgBlur, 
+          opacity: bgOpacity,
+          borderRadius: bgBorderRadius 
+        }}
+        className="absolute inset-0 z-0 overflow-hidden origin-center will-change-transform bg-[#020202] flex items-center justify-center"
       >
-        {shuffledGrid.map((item, i) => {
-          const isActive = activeCard === i;
-          
-          return (
+        {/* ─── The Viral Grid (Draggable Area) ─── */}
+        <motion.div
+          drag
+          dragConstraints={containerRef}
+          dragElastic={0.2}
+          dragMomentum={true}
+          animate={controls}
+          className="absolute top-1/2 left-1/2 w-[3000px] h-[2200px] -ml-[1500px] -mt-[1100px] cursor-grab active:cursor-grabbing flex flex-row gap-6 p-12 overflow-visible"
+          style={{ 
+            perspective: 1000,
+            rotateX: gridRotateX,
+            rotateY: gridRotateY,
+            z: gridTranslateZ
+          }}
+        >
+          {columns.map((columnItems, colIndex) => (
             <motion.div
-              key={i}
-              layout
-              onClick={() => handleCardClick(i)}
-              className={`relative rounded-xl overflow-hidden bg-white/5 border border-white/10 shrink-0
-                ${isActive ? 'w-[400px] h-[500px] z-50 shadow-[0_0_50px_rgba(255,64,0,0.4)]' : 'w-[280px] h-[350px] z-10 hover:border-accent/40'}
-              `}
-              whileHover={!isActive ? { scale: 1.05, rotate: Math.random() * 4 - 2, zIndex: 30 } : {}}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              key={colIndex}
+              className="flex flex-col gap-6 w-[280px] shrink-0 overflow-visible"
+              style={{ y: yOffsets[colIndex % yOffsets.length] }}
             >
-              <Image 
-                src={item.src} 
-                alt="Social Post" 
-                fill 
-                className={`object-cover transition-all duration-700 ${isActive ? 'opacity-100' : 'opacity-60 grayscale-[50%] hover:grayscale-0 hover:opacity-100'}`} 
-              />
-              
-              {/* HUD Overlay when active */}
-              {isActive && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
-                >
-                  <div className="w-16 h-16 rounded-full border border-accent/30 flex items-center justify-center mb-6">
-                    <div className="w-12 h-12 rounded-full border border-accent/60 bg-accent/10 animate-ping absolute" />
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent relative z-10">
-                      <path d="M12 20v-6M6 20V10M18 20V4" />
-                    </svg>
-                  </div>
-                  
-                  <span className="font-mono text-[10px] text-accent uppercase tracking-[0.3em] font-bold mb-2 block border border-accent/20 px-3 py-1 rounded-full">
-                    {item.type}
-                  </span>
-                  
-                  <div className="flex gap-8 mt-6">
-                    <div>
-                      <span className="block font-heading text-4xl font-black text-white">{item.views}</span>
-                      <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest">Impressions</span>
-                    </div>
-                    <div className="w-px bg-white/10" />
-                    <div>
-                      <span className="block font-heading text-4xl font-black text-white">{item.likes}</span>
-                      <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest">Engagements</span>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+              {columnItems.map((item, itemIndex) => {
+                const absoluteIndex = itemIndex * columnsCount + colIndex;
+                const isActive = activeCard === absoluteIndex;
+                
+                return (
+                  <motion.div
+                    key={itemIndex}
+                    layout
+                    onClick={() => handleCardClick(absoluteIndex)}
+                    className={`relative rounded-xl overflow-hidden bg-white/5 border border-white/10 shrink-0 transition-all duration-300
+                      ${isActive ? 'w-[340px] h-[420px] z-50 shadow-[0_0_50px_rgba(255,64,0,0.4)]' : 'w-[280px] h-[350px] z-10 hover:border-accent/40'}
+                    `}
+                    whileHover={!isActive ? { scale: 1.05, rotate: Math.random() * 4 - 2, zIndex: 30 } : {}}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  >
+                    <Image 
+                      src={item.src} 
+                      alt="Social Post" 
+                      fill 
+                      className={`object-cover transition-all duration-700 ${isActive ? 'opacity-100' : 'opacity-60 grayscale-[50%] hover:grayscale-0 hover:opacity-100'}`} 
+                    />
+                    
+                    {/* HUD Overlay when active */}
+                    {isActive && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
+                      >
+                        <div className="w-16 h-16 rounded-full border border-accent/30 flex items-center justify-center mb-6">
+                          <div className="w-12 h-12 rounded-full border border-accent/60 bg-accent/10 animate-ping absolute" />
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent relative z-10">
+                            <path d="M12 20v-6M6 20V10M18 20V4" />
+                          </svg>
+                        </div>
+                        
+                        <span className="font-mono text-[10px] text-accent uppercase tracking-[0.3em] font-bold mb-2 block border border-accent/20 px-3 py-1 rounded-full">
+                          {item.type}
+                        </span>
+                        
+                        <div className="flex gap-8 mt-6">
+                          <div>
+                            <span className="block font-heading text-4xl font-black text-white">{item.views}</span>
+                            <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest">Impressions</span>
+                          </div>
+                          <div className="w-px bg-white/10" />
+                          <div>
+                            <span className="block font-heading text-4xl font-black text-white">{item.likes}</span>
+                            <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest">Engagements</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                );
+              })}
             </motion.div>
-          );
-        })}
-      </motion.div>
+          ))}
+        </motion.div>
 
-      {/* ─── Foreground Overlay & Text ─── */}
-      <div className="absolute inset-0 pointer-events-none z-40 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(2,2,2,0.9)_80%)]" />
+        {/* ─── Vignette Overlay ─── */}
+        <div className="absolute inset-0 pointer-events-none z-40 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(2,2,2,0.9)_80%)]" />
+      </motion.div>
       
-      <div className="absolute inset-0 pointer-events-none z-50 p-6 md:p-12 lg:p-16 flex flex-col justify-between">
+      {/* ─── Foreground Overlay & Text ─── */}
+      <motion.div 
+        style={{ opacity: contentOpacity }}
+        className="absolute inset-0 pointer-events-none z-50 p-6 md:p-12 lg:p-16 flex flex-col justify-between"
+      >
         <div className="flex justify-between items-start">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -178,7 +292,7 @@ export default function WorkSocial() {
             Eye-catching social media graphics, carousels, and high-performing posts driving massive organic reach and conversion.
           </motion.p>
         </div>
-      </div>
+      </motion.div>
       
     </section>
   );

@@ -191,6 +191,45 @@ export default function Overview() {
                    bg-accent/15 blur-[100px]"
       />
 
+      {/* ─── Huge Kinetic Background Marquee ─── */}
+      <div className="absolute top-[28%] left-0 right-0 w-full overflow-hidden pointer-events-none z-[1] select-none opacity-[0.02]">
+        <div className="flex w-[200%] animate-marquee">
+          <div className="w-1/2 flex justify-around font-heading text-[9vw] font-black uppercase tracking-wider text-white whitespace-nowrap">
+            <span>DIRECTOR</span>
+            <span>PRODUCER</span>
+            <span>STRATEGIST</span>
+            <span>CREATOR</span>
+          </div>
+          <div className="w-1/2 flex justify-around font-heading text-[9vw] font-black uppercase tracking-wider text-white whitespace-nowrap">
+            <span>DIRECTOR</span>
+            <span>PRODUCER</span>
+            <span>STRATEGIST</span>
+            <span>CREATOR</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Cinematic Viewfinder Framing ─── */}
+      <div className="absolute inset-8 pointer-events-none z-30 hidden md:block">
+        {/* Top Left */}
+        <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/20" />
+        {/* Top Right */}
+        <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-white/20" />
+        {/* Bottom Left */}
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-white/20" />
+        {/* Bottom Right */}
+        <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/20" />
+        
+        {/* Flashing REC indicator */}
+        <div className="absolute top-4 left-10 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+          <span className="text-[10px] font-heading font-black uppercase tracking-widest text-white/40">REC</span>
+        </div>
+        <div className="absolute top-4 right-10 text-[10px] font-heading font-black uppercase tracking-widest text-white/40">
+          24FPS  ·  4K  ·  RAW
+        </div>
+      </div>
+
       {/* ─── Bottom Dark Bar — nền tối cho stats ─── */}
       <div className="absolute bottom-0 left-0 right-0 h-[180px] z-[1]">
         <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/95 to-transparent" />
@@ -198,6 +237,32 @@ export default function Overview() {
 
       {/* ─── Main Content Container ─── */}
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-32 lg:pt-48 pb-16 lg:pb-24 min-h-screen flex flex-col justify-between">
+
+        {/* ─── Interactive Floating Circular Badge ─── */}
+        <motion.div 
+          style={{ x: glowX, y: glowY }} // Parallax movement
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[18%] left-[2%] z-20 hidden xl:block w-28 h-28 cursor-pointer group"
+        >
+          <svg viewBox="0 0 100 100" className="w-full h-full">
+            <path
+              id="circlePath"
+              d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+              fill="none"
+            />
+            <text className="fill-white/30 group-hover:fill-red-400 transition-colors duration-300 font-heading font-bold text-[8.5px] uppercase tracking-wider">
+              <textPath href="#circlePath" startOffset="0%">
+                • Eddie V3 • Creative Director • Video Strategist •
+              </textPath>
+            </text>
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center text-red-500 group-hover:scale-125 transition-transform duration-300">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </div>
+        </motion.div>
 
         {/* ─── Hero Area: Text + Image overlap ─── */}
         <div className="relative flex-1 flex flex-col lg:flex-row items-center lg:items-center gap-12 lg:gap-0">
@@ -211,9 +276,10 @@ export default function Overview() {
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.03, delayChildren: 0.2 } },
               }}
-              className="font-body text-[12px] font-bold uppercase tracking-[0.2em] text-white/40 mb-4"
+              className="font-body text-[12px] font-black uppercase tracking-[0.25em] text-white/40 mb-5 flex items-center gap-3"
             >
-              {"Hey, I'm a".split("").map((char, i) => (
+              <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              {overviewHeading.overline.split("").map((char, i) => (
                 <motion.span
                   key={i}
                   variants={{
@@ -233,25 +299,20 @@ export default function Overview() {
               animate={isInView ? "visible" : "hidden"}
               variants={{
                 hidden: {},
-                visible: { transition: { staggerChildren: 0.08, delayChildren: 0.5 } },
+                visible: { transition: { staggerChildren: 0.04, delayChildren: 0.5 } },
               }}
-              className="font-heading text-[clamp(42px,8vw,88px)] font-bold leading-[0.9] text-white
+              className="font-heading text-[clamp(42px,7.5vw,84px)] font-black leading-[1.05] 
                          tracking-tight break-words text-left text-balance"
             >
-              {overviewHeading.title.split(" ").map((word, wi) => (
-                <motion.span
-                  key={wi}
-                  className="inline-block mr-[0.25em]"
-                  variants={{
-                    hidden: {},
-                    visible: { transition: { staggerChildren: 0.025 } },
-                  }}
-                >
-                  {word.split("").map((char, ci) => (
+              {/* Line 1: creative */}
+              <span className="block lg:mb-1">
+                {/* Word: creative */}
+                <span className="inline-block mr-[0.25em] font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-amber-300 lowercase drop-shadow-[0_0_15px_rgba(239,68,68,0.25)] select-none">
+                  {"creative".split("").map((char, ci) => (
                     <motion.span
                       key={ci}
                       variants={{
-                        hidden: { opacity: 0.5, y: 40 },
+                        hidden: { opacity: 0, y: 30 },
                         visible: {
                           opacity: 1,
                           y: 0,
@@ -263,8 +324,85 @@ export default function Overview() {
                       {char}
                     </motion.span>
                   ))}
+                </span>
+              </span>
+
+              {/* Line 2: Production */}
+              <span className="block lg:mb-1">
+                {/* Word: Production */}
+                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-b from-white to-white/80">
+                  {"Production".split("").map((char, ci) => (
+                    <motion.span
+                      key={ci}
+                      variants={{
+                        hidden: { opacity: 0.3, y: 30 },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+                        },
+                      }}
+                      className="inline-block"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </span>
+              </span>
+
+              {/* Line 2: Team Lead. */}
+              <span className="block">
+                {/* Word: Team */}
+                <span className="inline-block mr-[0.25em] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70">
+                  {"Team".split("").map((char, ci) => (
+                    <motion.span
+                      key={ci}
+                      variants={{
+                        hidden: { opacity: 0.3, y: 30 },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+                        },
+                      }}
+                      className="inline-block"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </span>
+
+                {/* Word: Lead */}
+                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70">
+                  {"Lead".split("").map((char, ci) => (
+                    <motion.span
+                      key={ci}
+                      variants={{
+                        hidden: { opacity: 0.3, y: 30 },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+                        },
+                      }}
+                      className="inline-block"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </span>
+
+                {/* Dot: . */}
+                <motion.span 
+                  variants={{
+                    hidden: { opacity: 0, scale: 0 },
+                    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: 1.2 } },
+                  }}
+                  className="inline-block text-red-500 ml-1 select-none drop-shadow-[0_0_12px_rgba(239,68,68,0.6)]"
+                >
+                  .
                 </motion.span>
-              ))}
+              </span>
             </motion.h2>
           </div>
 
@@ -317,33 +455,70 @@ export default function Overview() {
           </motion.div>
 
           {/* ─── Cột phải: Description text ─── */}
-          <div className="relative z-20 lg:ml-auto w-full max-w-[400px] lg:max-w-[320px] self-start lg:self-center">
-            <motion.h3
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.8,
-                delay: 0.35,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="font-heading text-xl sm:text-2xl font-semibold leading-snug text-white mb-4"
-            >
-              {overviewHeading.description.split(".")[0]}.
-            </motion.h3>
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            whileHover={{ 
+              y: -8, 
+              rotateX: 2, 
+              rotateY: -2,
+              transition: { duration: 0.3 } 
+            }}
+            transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+            className="relative z-20 lg:ml-auto w-full max-w-[400px] lg:max-w-[350px] self-start lg:self-center
+                       bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8
+                       shadow-[0_20px_50px_rgba(0,0,0,0.4)] group overflow-hidden transition-all duration-300 hover:border-red-500/20"
+          >
+            {/* Grid Pattern Background */}
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
+                 style={{
+                   backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+                   backgroundSize: "16px 16px"
+                 }} 
+            />
+
+            {/* Subtle top glare effect */}
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            
+            {/* Red accent line on hover */}
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-red-500/0 via-red-500 to-red-500/0 
+                            opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            {/* Tag Pills */}
+            <div className="flex flex-wrap gap-1.5 mb-5 relative z-10">
+              {["Video Strategy", "Paid Funnels", "Growth"].map((tag, i) => (
+                <span 
+                  key={i} 
+                  className="text-[9px] font-heading font-black uppercase tracking-widest px-2.5 py-1 
+                             rounded-full bg-white/[0.03] border border-white/5 text-white/50 
+                             group-hover:border-red-500/10 group-hover:text-red-400/80 transition-all duration-300"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+                            
+            {/* Decorative Quote Icon */}
+            <div className="text-red-500/25 mb-4 relative z-10">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.017 21L16.411 14.1818H10.1581V3H21.5V14.1818L19.106 21H14.017ZM3.85897 21L6.25299 14.1818H0V3H11.3419V14.1818L8.94786 21H3.85897Z" />
+              </svg>
+            </div>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{
                 duration: 0.7,
-                delay: 0.45,
+                delay: 0.7,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="font-body text-base sm:text-lg lg:text-[19px] text-white/60 leading-[1.7] lg:leading-[1.8]"
+              className="font-body text-base sm:text-lg text-white/70 leading-[1.7] lg:leading-[1.8] relative z-10"
             >
-              {overviewHeading.description.split(".").slice(1).join(".").trim()}
+              {overviewHeading.description}
             </motion.p>
-          </div>
+          </motion.div>
         </div>
 
         {/* ─── Scroll indicator — bouncing chevron ─── */}

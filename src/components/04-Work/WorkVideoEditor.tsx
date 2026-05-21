@@ -1,358 +1,972 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useTransform, useMotionValue, useSpring, useVelocity, useMotionValueEvent } from "framer-motion";
+import { motion, useTransform, useMotionValue, useSpring, useVelocity, useMotionValueEvent, useScroll } from "framer-motion";
 import VideoCarousel3D from "./VideoCarousel3D";
 import Image from "next/image";
 import { uiSounds } from "@/utils/ui-sounds";
+import { 
+  Folder, Film, Music, Play, Pause, Volume2, Maximize2, 
+  Eye, EyeOff, Lock, Unlock, Search, Settings, ChevronRight, 
+  ChevronDown, Video, AudioLines, Scissors, MousePointer, 
+  Hand, Type, Activity, Sliders, Palette, Info, Check, RefreshCw,
+  FileText
+} from "lucide-react";
 
 export default function WorkVideoEditor() {
   const [isCarouselOpen, setIsCarouselOpen] = useState(false);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const [is3DMode, setIs3DMode] = useState(false);
+  const [activeTool, setActiveTool] = useState("select");
   
-  // Drag logic
-  const dragX = useMotionValue(0);
-  // Optional spring for smoother following if we wanted a trailing element, 
-  // but for the playhead itself we'll use dragX directly.
-  
-  const velocity = useVelocity(dragX);
-  // When dragging fast, increase glitch effect
-  const glitchAmount = useTransform(velocity, [-1000, 0, 1000], [8, 0, 8]);
-  const glitchFilter = useTransform(glitchAmount, val => `blur(${val}px) hue-rotate(${val * 5}deg) grayscale(${val * 0.1})`);
-  const glitchScale = useTransform(glitchAmount, val => 1.05 + (val * 0.01));
+  // Folders tree state in Project Bin
+  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
+    sequences: true,
+    footage: true,
+    audio: false,
+    gfx: false,
+    sfx: false
+  });
 
-  // ─── Video Control Logic ───
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoDuration, setVideoDuration] = useState(1); // default to prevent division by 0
-  const [timecode, setTimecode] = useState("01:00:00:00");
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.volume = 0; // Mute for background
-    }
-  }, []);
-
-  const handleLoadedMetadata = () => {
-    if (videoRef.current) {
-      setVideoDuration(videoRef.current.duration);
-    }
+  const toggleFolder = (folder: string) => {
+    setExpandedFolders(prev => ({ ...prev, [folder]: !prev[folder] }));
   };
 
-  useMotionValueEvent(dragX, "change", (latest) => {
-    if (!trackRef.current || !videoRef.current) return;
-    const trackWidth = trackRef.current.offsetWidth;
-    // Map dragX (which can be negative or positive depending on constraints)
-    // To make it simple, we constrain playhead from 0 to trackWidth.
-    // Let's use getBoundingClientRect for absolute clicking instead of drag constraint limits if we want.
-    // Actually, framer motion drag constraints handle limits.
-    const x = Math.max(0, Math.min(latest, trackWidth));
-    const percent = x / trackWidth;
-    
-    // Set video time
-    videoRef.current.currentTime = percent * videoDuration;
+  // Mock Assets data
+  const assets = [
+    {
+      id: "astronaut",
+      name: "ASTRONAUT_CLOSE.mp4",
+      path: "/images/astronaut_cinematic.png",
+      duration: "00:05:11",
+      resolution: "4K 16:9 | 60 FPS",
+      camera: "CAM_01",
+      iso: "ISO 400 · F/2.8 · 1/50"
+    },
+    {
+      id: "city_drone",
+      name: "CITY_DRONE_01.mp4",
+      path: "/images/city_drone.png",
+      duration: "00:08:04",
+      resolution: "4K 16:9 | 60 FPS",
+      camera: "CAM_02",
+      iso: "ISO 800 · F/4.0 · 1/100"
+    },
+    {
+      id: "space_station",
+      name: "SPACE_STATION_02.mp4",
+      path: "/images/space_station.png",
+      duration: "00:07:19",
+      resolution: "4K 16:9 | 60 FPS",
+      camera: "CAM_03",
+      iso: "ISO 200 · F/1.8 · 1/24"
+    },
+    {
+      id: "planet_surface",
+      name: "PLANET_SURFACE.mp4",
+      path: "/images/planet_surface.png",
+      duration: "00:06:07",
+      resolution: "4K 16:9 | 60 FPS",
+      camera: "CAM_04",
+      iso: "ISO 640 · F/2.8 · 1/50"
+    }
+  ];
 
-    // Timecode calc
-    const currentSeconds = percent * videoDuration;
+  const [activeAsset, setActiveAsset] = useState(assets[0]);
+
+  // Track lock/mute/solo states
+  const [trackStates, setTrackStates] = useState({
+    V3: { locked: false, visible: true },
+    V2: { locked: false, visible: true },
+    V1: { locked: false, visible: true },
+    A1: { locked: false, muted: false, soloed: false },
+    A2: { locked: false, muted: false, soloed: false },
+    A3: { locked: false, muted: false, soloed: false }
+  });
+
+  const toggleTrackProperty = (track: string, prop: string) => {
+    setTrackStates(prev => {
+      const trackState = prev[track as keyof typeof prev];
+      return {
+        ...prev,
+        [track]: {
+          ...trackState,
+          [prop]: !((trackState as any)[prop])
+        }
+      };
+    });
+  };
+
+  // ─── Scroll Animation Logic ───
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  // HUD Elements Assembly & Fade
+  const editorScale = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.93, 1, 1, 0.93]);
+  const editorOpacity = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
+
+  // ─── Drag & Timeline Animation Logic ───
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dragX = useMotionValue(0);
+  const dragProgress = useMotionValue(0);
+  const [trackWidth, setTrackWidth] = useState(0);
+  const trackWidthRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  
+  // DOM element refs for 60fps bypass updates
+  const timecodeRef = useRef<HTMLSpanElement>(null);
+  const monitorTimecodeRef = useRef<HTMLSpanElement>(null);
+  const posXRef = useRef<HTMLSpanElement>(null);
+  const scaleValueRef = useRef<HTMLSpanElement>(null);
+  const rotationValueRef = useRef<HTMLSpanElement>(null);
+  const intensityValueRef = useRef<HTMLSpanElement>(null);
+  const intensitySliderRef = useRef<HTMLInputElement>(null);
+  
+  // Fake video duration for timecode
+  const FAKE_DURATION = 60; 
+
+  useMotionValueEvent(dragX, "change", (latest) => {
+    // Self-healing: if width is not measured yet, try to measure it
+    if (trackWidthRef.current <= 0 && trackRef.current) {
+      const width = trackRef.current.offsetWidth;
+      if (width > 0) {
+        trackWidthRef.current = width;
+        setTrackWidth(width);
+      }
+    }
+    
+    const currentWidth = trackWidthRef.current;
+    if (currentWidth <= 0) return;
+    const x = Math.max(0, Math.min(latest, currentWidth));
+    const percent = x / currentWidth;
+    
+    dragProgress.set(percent);
+
+    const currentSeconds = percent * FAKE_DURATION;
     const frames = Math.floor((currentSeconds % 1) * 24);
     const s = Math.floor(currentSeconds % 60);
     const m = Math.floor(currentSeconds / 60);
     const pad = (n: number) => n.toString().padStart(2, "0");
-    setTimecode(`01:${pad(m)}:${pad(s)}:${pad(frames)}`);
+    
+    const timecodeString = `01:${pad(m)}:${pad(s)}:${pad(frames)}`;
+    if (timecodeRef.current) {
+      timecodeRef.current.textContent = timecodeString;
+    }
+    if (monitorTimecodeRef.current) {
+      monitorTimecodeRef.current.textContent = timecodeString;
+    }
+
+    // Dynamic Effect Controls Updates (real-time feedback without re-renders)
+    const scaleVal = (90 + percent * 18).toFixed(1);
+    const posXVal = (960 + (percent - 0.5) * 160).toFixed(1);
+    const rotVal = ((percent - 0.5) * 15).toFixed(1);
+    const intensityVal = (20 + percent * 60).toFixed(1);
+
+    if (scaleValueRef.current) scaleValueRef.current.textContent = `${scaleVal}%`;
+    if (posXRef.current) posXRef.current.textContent = posXVal;
+    if (rotationValueRef.current) rotationValueRef.current.textContent = `${rotVal}°`;
+    if (intensityValueRef.current) intensityValueRef.current.textContent = intensityVal;
+    if (intensitySliderRef.current) intensitySliderRef.current.value = intensityVal;
   });
+
+  // Sync scrollYProgress with playhead dragX to drive timeline scrub on page scroll
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (isDraggingRef.current) return;
+    
+    // Self-healing: if width is not measured yet, try to measure it
+    if (trackWidthRef.current <= 0 && trackRef.current) {
+      const width = trackRef.current.offsetWidth;
+      if (width > 0) {
+        trackWidthRef.current = width;
+        setTrackWidth(width);
+      }
+    }
+
+    const currentWidth = trackWidthRef.current;
+    if (currentWidth <= 0) return;
+
+    // Scrub is active over the main scroll range (scrollYProgress 0.40 to 0.75)
+    if (latest >= 0.40 && latest <= 0.75) {
+      const scrollPercent = (latest - 0.40) / (0.75 - 0.40);
+      dragX.set(scrollPercent * currentWidth);
+    } else if (latest < 0.40) {
+      dragX.set(0);
+    } else if (latest > 0.75) {
+      dragX.set(currentWidth);
+    }
+  });
+
+  // Handle initialization on mount and track width adjustments on resize
+  useEffect(() => {
+    const updatePlayheadAndWidth = () => {
+      if (!trackRef.current) return;
+      const width = trackRef.current.offsetWidth;
+      trackWidthRef.current = width;
+      setTrackWidth(width);
+      if (width <= 0) return;
+
+      const latest = scrollYProgress.get();
+      if (latest >= 0.40 && latest <= 0.75) {
+        const scrollPercent = (latest - 0.40) / (0.75 - 0.40);
+        dragX.set(scrollPercent * width);
+      } else if (latest < 0.40) {
+        dragX.set(0);
+      } else if (latest > 0.75) {
+        dragX.set(width);
+      }
+    };
+
+    // Run initially after DOM layout stabilizes to prevent layout race conditions
+    const timer = setTimeout(updatePlayheadAndWidth, 200);
+
+    // Also run on resize to recalculate trackWidth
+    window.addEventListener("resize", updatePlayheadAndWidth);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updatePlayheadAndWidth);
+    };
+  }, [scrollYProgress, dragX]);
+
+  // ─── 3D Mode Layout Calculations (Scrub Aligns Layers) ───
+  const layer1Z = useTransform(dragProgress, [0, 1], [-300, 0]);
+  const layer1RotateX = useTransform(dragProgress, [0, 1], [30, 0]);
+  const layer1RotateY = useTransform(dragProgress, [0, 1], [-30, 0]);
+
+  const layer2Z = useTransform(dragProgress, [0, 1], [-100, 0]);
+  const layer2RotateX = useTransform(dragProgress, [0, 1], [-20, 0]);
+  const layer2RotateY = useTransform(dragProgress, [0, 1], [20, 0]);
+
+  const layer3Z = useTransform(dragProgress, [0, 1], [100, 0]);
+  const layer3RotateX = useTransform(dragProgress, [0, 1], [20, 0]);
+  const layer3RotateY = useTransform(dragProgress, [0, 1], [-20, 0]);
+
+  const layer4Z = useTransform(dragProgress, [0, 1], [250, 0]);
+  const layer4RotateX = useTransform(dragProgress, [0, 1], [-30, 0]);
+  const layer4RotateY = useTransform(dragProgress, [0, 1], [30, 0]);
+
+  // Viewport camera rotation for depth
+  const sceneRotateY = useTransform(dragProgress, [0, 1], [25, -5]);
+  const sceneRotateX = useTransform(dragProgress, [0, 1], [15, -2]);
+  const sceneScale = useTransform(dragProgress, [0, 1], [0.65, 0.95]);
+
+  const masterGlowOpacity = useTransform(dragProgress, [0.85, 1], [0, 0.7]);
 
   const handleTrackClick = (e: React.MouseEvent) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const percent = Math.max(0, Math.min(x / rect.width, 1));
-    dragX.set(x);
+    dragX.set(Math.max(0, Math.min(x, rect.width)));
   };
 
-  const handlePlay = () => {
+  const handleRenderShowcase = () => {
     uiSounds.playClick();
     setIsCarouselOpen(true);
   };
 
+  const handleAssetSelect = (asset: typeof activeAsset) => {
+    uiSounds.playClick();
+    setActiveAsset(asset);
+  };
+
   return (
-    <section id="work" className="relative w-full h-[100vh] min-h-[850px] overflow-hidden bg-black flex flex-col justify-center border-t border-white/5">
-      
-      {/* ─── Background Interactive Video ─── */}
-      <div className="absolute inset-0 z-0">
-        <video 
-          ref={videoRef}
-          src="https://pub-9332e0501e844ae48782601867134d26.r2.dev/videos/ads/premium-creative-showcase.mp4"
-          className="w-full h-full object-cover"
-          onLoadedMetadata={handleLoadedMetadata}
-          muted
-          playsInline
-          loop
-        />
-        {/* Dark Cinematic Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-black/40 pointer-events-none" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCIvPgo8bGluZSB4MT0iMCIgeTE9IjIiIHgyPSI0IiB5Mj0iMiIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')] pointer-events-none opacity-50" />
-      </div>
-
-      {/* ─── Main Content Overlay ─── */}
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 pt-10 pb-[360px] pointer-events-none flex items-center">
-        <div className="max-w-2xl pointer-events-auto bg-black/20 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-3 mb-6 bg-black/40 inline-flex px-4 py-2 rounded-full border border-white/5"
-          >
-            <div className="w-2 h-2 bg-accent rounded-full animate-pulse shadow-[0_0_10px_#ef4444]" />
-            <span className="font-mono text-[10px] text-accent uppercase tracking-[0.4em] font-bold">
-              Interactive Editing Engine
-            </span>
-          </motion.div>
-
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="font-heading text-[50px] md:text-[80px] font-black text-white uppercase leading-[1] tracking-tighter mb-6"
-          >
-            VIDEO <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400">EDITOR</span>
-          </motion.h2>
-
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="font-body text-[16px] md:text-[18px] text-white/80 max-w-xl mb-10 leading-relaxed font-medium"
-          >
-            Nắm kéo thanh Timeline bên dưới để tương tác trực tiếp với Video nền. Nơi những khung hình thô được cắt ghép tỉ mỉ thành Masterpiece.
-          </motion.p>
-          
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ delay: 0.3 }}
-            onClick={handlePlay}
-            className="group relative flex items-center gap-4 bg-accent text-white px-8 py-4 rounded-xl font-heading font-black text-lg uppercase tracking-widest overflow-hidden hover:bg-white hover:text-black transition-all duration-300 shadow-[0_10px_40px_rgba(239,68,68,0.4)]"
-          >
-            <span className="relative z-10">RENDER_3D_SHOWCASE</span>
-            <div className="relative z-10 flex items-center justify-center transition-colors">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-            </div>
-          </motion.button>
-        </div>
-      </div>
-
-      {/* ─── Premium NLE Timeline HUD (Height increased to 340px) ─── */}
-      <div className="absolute bottom-0 left-0 right-0 h-[340px] bg-[#121214] border-t border-white/20 z-30 flex flex-col font-sans select-none shadow-[0_-30px_60px_rgba(0,0,0,0.9)]">
+    <section ref={containerRef} id="work" className="relative w-full h-[280vh] bg-[#040406]">
+      {/* Pinned Sticky Workspace */}
+      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center items-center p-3 md:p-6">
         
-        {/* 1. Top Toolbar */}
-        <div className="h-10 bg-[#1e1e21] flex items-center justify-between px-4 border-b border-black/80 shadow-[0_2px_10px_rgba(0,0,0,0.5)] z-20">
-          <div className="flex items-center gap-3">
-            <div className="flex bg-[#121214] rounded border border-white/5 p-1 shadow-inner">
-              <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/40 hover:text-white transition-colors group relative">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 3l-6 6M21 3v6M21 3h-6M3 21l6-6M3 21v-6M3 21h6"/></svg>
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded bg-[#2a2a2e] text-accent border border-white/10 shadow-sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-white/40 hover:text-white transition-colors">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-              </button>
+        {/* Main Editor UI Frame */}
+        <motion.div 
+          style={{ scale: editorScale, opacity: editorOpacity }}
+          className="w-full max-w-[1580px] h-[92vh] max-h-[820px] bg-[#07080c] border border-white/10 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden text-[#e2e8f0] font-sans ring-1 ring-white/5 z-10 select-none"
+        >
+          {/* 1. Header Bar */}
+          <header className="h-11 bg-[#0a0c10] border-b border-white/5 flex items-center justify-between px-4 md:px-5 shrink-0">
+            <div className="flex items-center gap-4">
+              {/* Logo */}
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIs3DMode(!is3DMode)}>
+                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+                <span className="font-heading font-black text-xs tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400">NEXUS EDIT</span>
+              </div>
+              <div className="h-3 w-px bg-white/10 hidden sm:block" />
+              {/* Menu Tabs */}
+              <nav className="flex items-center gap-1 sm:gap-2 h-full text-[10px] sm:text-xs font-mono font-medium text-zinc-400">
+                {["EDIT", "COLOR", "EFFECTS", "AUDIO", "EXPORT"].map(tab => (
+                  <button 
+                    key={tab} 
+                    className={`px-3 py-1 rounded transition-colors ${tab === "EDIT" ? "text-cyan-400 bg-white/5 border border-cyan-400/20 font-bold" : "hover:text-white"}`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </nav>
             </div>
-            <div className="h-5 w-px bg-white/10 mx-1" />
-            <span className="font-mono text-[11px] text-white/60 font-bold uppercase tracking-widest bg-black/30 px-3 py-1 rounded">MAIN_SEQUENCE_01 *</span>
-          </div>
-
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => {dragX.set(0); videoRef.current!.currentTime=0;}}>
-            <span className="font-mono text-[16px] text-[#4ea8de] font-bold tracking-widest bg-[#09090b] px-6 py-1.5 rounded border border-white/10 shadow-inner flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_red]" />
-              {timecode}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 text-white/40">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <div className="w-32 h-2 bg-[#09090b] rounded-full overflow-hidden border border-white/10 shadow-inner">
-              <div className="w-2/3 h-full bg-[#4ea8de] rounded-full" />
+            
+            {/* Render Engine specs */}
+            <div className="flex items-center gap-4 text-[10px] md:text-xs font-mono">
+              <button 
+                onClick={handleRenderShowcase}
+                className="hidden md:flex items-center gap-2 bg-gradient-to-r from-[#ff4000] to-[#e83600] hover:brightness-110 text-white font-heading font-bold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-lg border border-white/15 transition-all shadow-[0_0_15px_rgba(255,64,0,0.2)]"
+              >
+                <span>3D SHOWCASE</span>
+                <Sliders className="w-3 h-3" />
+              </button>
+              <div className="flex items-center gap-2 bg-zinc-900 border border-white/5 px-2.5 py-1 rounded-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
+                <span className="text-zinc-400 uppercase tracking-wider text-[9px]">ENGINE</span>
+                <span className="text-green-400 font-bold text-[9px]">ONLINE</span>
+              </div>
+              <div className="bg-zinc-900 border border-white/5 px-2.5 py-1 rounded-md text-cyan-400 font-bold text-[9px] tracking-wider hidden sm:block">
+                60 FPS
+              </div>
             </div>
-          </div>
-        </div>
+          </header>
 
-        <div className="flex flex-1 relative overflow-hidden">
-          {/* 2. Track Headers - Fixed widths and heights for realism */}
-          <div className="w-[180px] bg-[#18181b] flex flex-col border-r border-black/80 shrink-0 z-20 shadow-[5px_0_20px_rgba(0,0,0,0.5)] pb-4">
-             {/* Ruler placeholder space */}
-             <div className="h-[28px] border-b border-black/80 bg-[#1e1e21]" />
-
-             {/* Video Tracks */}
-             {["V3", "V2", "V1"].map((track, i) => (
-               <div key={track} className={`h-[40px] flex items-center justify-between px-4 border-b border-black/40 group hover:bg-white/5 transition-colors cursor-pointer ${track === "V1" ? 'bg-[#252528]' : ''}`}>
-                 <div className="flex items-center gap-3">
-                   <svg className="hover:stroke-white transition-colors" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={i === 0 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.8)"} strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                   <span className={`text-[12px] font-bold font-mono ${track === "V1" ? 'text-[#4ea8de]' : 'text-white/60'}`}>{track}</span>
-                 </div>
-                 <svg className="hover:stroke-white transition-colors" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-               </div>
-             ))}
-
-             {/* Center Divider */}
-             <div className="h-2 bg-gradient-to-b from-black/80 to-[#18181b] w-full" /> 
-
-             {/* Audio Tracks */}
-             {["A1", "A2", "A3"].map((track, i) => (
-               <div key={track} className={`h-[45px] flex items-center justify-between px-4 border-b border-black/40 group hover:bg-white/5 transition-colors cursor-pointer ${track === "A1" ? 'bg-[#252528]' : ''}`}>
-                 <div className="flex items-center gap-3">
-                   <svg className="hover:stroke-white transition-colors" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={i === 2 ? "rgba(255,255,255,0.2)" : "rgba(78,168,222,0.8)"} strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                   <span className={`text-[12px] font-bold font-mono ${track === "A1" ? 'text-[#06d6a0]' : 'text-white/60'}`}>{track}</span>
-                 </div>
-                 <div className="flex gap-1.5">
-                    <div className="w-5 h-5 rounded flex items-center justify-center border border-white/10 bg-[#09090b] text-[9px] font-bold text-white/40 hover:bg-[#ff0000]/20 hover:text-[#ff0000] hover:border-[#ff0000]/50 shadow-inner">M</div>
-                    <div className="w-5 h-5 rounded flex items-center justify-center border border-white/10 bg-[#09090b] text-[9px] font-bold text-white/40 hover:bg-[#e0a96d]/20 hover:text-[#e0a96d] hover:border-[#e0a96d]/50 shadow-inner">S</div>
-                 </div>
-               </div>
-             ))}
-          </div>
-
-          {/* 3. Timeline Interactive Area */}
-          <div className="flex-1 relative bg-[#121214] overflow-x-hidden overflow-y-auto" ref={trackRef} onClick={handleTrackClick}>
-             
-             {/* Ruler Grid Background */}
-             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_100%] pointer-events-none" />
-
-             {/* Ruler Top Bar */}
-             <div className="sticky top-0 left-0 right-0 h-[28px] bg-[#1e1e21] border-b border-black/80 flex items-end px-4 pointer-events-none z-10 shadow-[0_2px_5px_rgba(0,0,0,0.3)]">
-               {[...Array(30)].map((_, i) => (
-                 <div key={i} className="flex-1 relative h-full flex items-end border-l border-white/10">
-                   <div className="w-full flex justify-between px-1">
-                     <div className="w-[1px] h-1.5 bg-white/20" />
-                     <div className="w-[1px] h-2 bg-white/40" />
-                     <div className="w-[1px] h-1.5 bg-white/20" />
-                   </div>
-                   <span className="absolute top-1 left-1.5 text-[9px] font-mono text-white/50 tracking-tighter">
-                     00:00:{(i * 2).toString().padStart(2, '0')}:00
-                   </span>
-                 </div>
-               ))}
-             </div>
-
-             {/* ─── Solid Track Clips Area ─── */}
-             <div className="relative w-full flex flex-col pb-4">
-               
-               {/* V3 Track */}
-               <div className="h-[40px] border-b border-white/5 relative flex items-center">
-                 <div className="absolute left-[15%] right-[60%] h-[28px] bg-[#9370DB] border border-white/30 rounded-sm hover:brightness-110 hover:border-white transition-all cursor-pointer shadow-md overflow-hidden flex items-center group">
-                   <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
-                   <span className="ml-2 text-[10px] font-mono text-white font-bold drop-shadow-md truncate z-10">COLOR_LUT_CINEMATIC.cube</span>
-                 </div>
-               </div>
-               
-               {/* V2 Track */}
-               <div className="h-[40px] border-b border-white/5 relative flex items-center">
-                 <div className="absolute left-[20%] right-[30%] h-[28px] bg-[#4169E1] border border-white/30 rounded-sm hover:brightness-110 hover:border-white transition-all cursor-pointer shadow-md overflow-hidden flex items-center group">
-                   <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
-                   <div className="ml-1 bg-black/40 text-[#4ea8de] text-[8px] font-bold px-1.5 py-0.5 rounded-sm z-10">fx</div>
-                   <span className="ml-2 text-[10px] font-mono text-white font-bold drop-shadow-md truncate z-10">OVERLAY_TEXT_01.png</span>
-                 </div>
-               </div>
-               
-               {/* V1 Track (Main Video) */}
-               <div className="h-[40px] border-b border-black/80 relative flex items-center bg-white/[0.02]">
-                 <div className="absolute left-[5%] right-[5%] h-[28px] bg-[#6B8E23] border border-white/40 rounded-sm hover:brightness-110 hover:border-white transition-all cursor-pointer shadow-[0_2px_10px_rgba(107,142,35,0.4)] overflow-hidden flex items-center group">
-                   <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
-                   <div className="absolute left-0 top-0 bottom-0 flex gap-0.5 opacity-30 pointer-events-none">
-                      {/* Fake Thumbnails pattern */}
-                      {[...Array(15)].map((_, i) => (
-                        <div key={i} className="h-full w-[40px] border-r border-black/40 bg-black/20" />
-                      ))}
-                   </div>
-                   <div className="ml-1 bg-black/40 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-sm z-10 border border-white/10">fx</div>
-                   <span className="ml-2 text-[11px] font-mono text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] truncate z-10">PREMIUM_CREATIVE_SHOWCASE_FINAL.mp4 [V]</span>
-                 </div>
-               </div>
-               
-               <div className="h-2 w-full" />
-
-               {/* A1 Track (Main Audio) */}
-               <div className="h-[45px] border-b border-white/5 relative flex items-center bg-white/[0.02]">
-                 <div className="absolute left-[5%] right-[5%] h-[32px] bg-[#008080] border border-white/30 rounded-sm hover:brightness-110 hover:border-white transition-all cursor-pointer shadow-md overflow-hidden flex flex-col justify-center group">
-                   <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
-                   <span className="ml-2 mt-0.5 text-[9px] font-mono text-white/90 font-bold drop-shadow-md truncate z-10">PREMIUM_CREATIVE_SHOWCASE_FINAL.mp4 [A]</span>
-                   {/* Audio Waveform */}
-                   <div className="absolute bottom-0 w-full h-[18px] opacity-80 flex items-end overflow-hidden">
-                     <svg width="100%" height="100%" preserveAspectRatio="none">
-                       <pattern id="waveformA1" x="0" y="0" width="6" height="100%" patternUnits="userSpaceOnUse">
-                         <rect x="1" y="20%" width="1.5" height="60%" fill="#06d6a0" rx="0.5"/>
-                         <rect x="3.5" y="10%" width="1.5" height="80%" fill="#06d6a0" rx="0.5"/>
-                       </pattern>
-                       <rect x="0" y="0" width="100%" height="100%" fill="url(#waveformA1)" />
-                       <path d="M0,9 L2000,9" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-                     </svg>
-                   </div>
-                 </div>
-               </div>
-               
-               {/* A2 Track (SFX) */}
-               <div className="h-[45px] border-b border-white/5 relative flex items-center">
-                 <div className="absolute left-[20%] right-[60%] h-[32px] bg-[#008080] border border-white/20 rounded-sm hover:brightness-110 hover:border-white/50 transition-all cursor-pointer overflow-hidden flex flex-col justify-center opacity-90 group">
-                   <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
-                   <span className="ml-2 mt-0.5 text-[8px] font-mono text-white/70 font-bold z-10 truncate">IMPACT_WHOOSH_01.wav</span>
-                   <div className="absolute bottom-0 w-full h-[14px] opacity-60 flex items-end overflow-hidden">
-                     <svg width="100%" height="100%" preserveAspectRatio="none">
-                       <pattern id="waveformA2" x="0" y="0" width="8" height="100%" patternUnits="userSpaceOnUse">
-                         <rect x="1" y="40%" width="2" height="40%" fill="#06d6a0" rx="1"/>
-                         <rect x="5" y="60%" width="2" height="20%" fill="#06d6a0" rx="1"/>
-                       </pattern>
-                       <rect x="0" y="0" width="100%" height="100%" fill="url(#waveformA2)" />
-                     </svg>
-                   </div>
-                 </div>
-               </div>
-               
-               {/* A3 Track (Music) */}
-               <div className="h-[45px] relative flex items-center">
-                 <div className="absolute left-[5%] right-[10%] h-[32px] bg-[#008080] border border-white/20 rounded-sm hover:brightness-110 hover:border-white/50 transition-all cursor-pointer overflow-hidden flex flex-col justify-center opacity-80 group">
-                   <div className="w-full h-full absolute top-0 left-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
-                   <span className="ml-2 mt-0.5 text-[8px] font-mono text-white/70 font-bold z-10 truncate">BACKGROUND_EPIC_BEAT.mp3</span>
-                   <div className="absolute bottom-0 w-full h-[16px] opacity-40 flex items-end overflow-hidden">
-                     <svg width="100%" height="100%" preserveAspectRatio="none">
-                       <pattern id="waveformA3" x="0" y="0" width="10" height="100%" patternUnits="userSpaceOnUse">
-                         <rect x="1" y="30%" width="3" height="50%" fill="#06d6a0" rx="1"/>
-                         <rect x="6" y="50%" width="3" height="30%" fill="#06d6a0" rx="1"/>
-                       </pattern>
-                       <rect x="0" y="0" width="100%" height="100%" fill="url(#waveformA3)" />
-                     </svg>
-                   </div>
-                 </div>
-               </div>
-             </div>
-
-             {/* ─── Massive Draggable Playhead ─── */}
-             <motion.div
-               drag="x"
-               dragConstraints={{ left: 0, right: trackRef.current ? trackRef.current.offsetWidth : 2000 }}
-               dragElastic={0}
-               dragMomentum={false}
-               style={{ x: dragX }}
-               className="absolute top-0 bottom-0 w-6 -ml-[12px] z-40 cursor-ew-resize flex flex-col items-center pointer-events-auto group"
-               onClick={(e) => e.stopPropagation()}
-             >
-                {/* Playhead Head (Premiere Pro style - Blue or Red) */}
-                <div className="w-5 h-6 bg-[#4ea8de] shadow-[0_0_15px_rgba(78,168,222,0.8)] relative flex flex-col items-center group-hover:bg-white group-hover:scale-110 transition-transform origin-top z-20 rounded-b-sm">
-                  <div className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-[#4ea8de] group-hover:border-t-white transition-colors" />
-                  <div className="w-1 h-3 bg-black/40 mt-1 rounded-sm" />
+          {/* 2. Main Work Area (Three Column Grid) */}
+          <div className="flex-1 flex min-h-0 relative overflow-hidden bg-[#050608]">
+            
+            {/* Left Column: Project/Media Bin */}
+            <aside className="w-[280px] border-r border-white/5 bg-[#090b0f] flex flex-col min-h-0 shrink-0 hidden lg:flex">
+              {/* Folder list toolbar */}
+              <div className="p-3 border-b border-white/5 flex items-center justify-between shrink-0">
+                <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-400 uppercase">PROJECT BIN</span>
+                <div className="flex gap-2">
+                  <div className="p-1 text-zinc-500 hover:text-white rounded cursor-pointer transition-colors"><Search className="w-3.5 h-3.5" /></div>
+                  <div className="p-1 text-zinc-500 hover:text-white rounded cursor-pointer transition-colors"><Settings className="w-3.5 h-3.5" /></div>
                 </div>
-                {/* Playhead Line */}
-                <div className="flex-1 w-[2px] bg-[#4ea8de] shadow-[0_0_10px_#4ea8de] opacity-100 group-hover:w-[3px] group-hover:bg-white transition-all z-10" />
-             </motion.div>
+              </div>
+              
+              {/* Assets Tree & Grid Container */}
+              <div className="flex-1 overflow-y-auto p-2 scrollbar-hide flex flex-col gap-2">
+                {/* Folder 1: Sequences */}
+                <div className="flex flex-col">
+                  <div 
+                    onClick={() => toggleFolder("sequences")} 
+                    className="flex items-center gap-1.5 px-1 py-1 text-xs text-zinc-300 hover:bg-white/5 rounded cursor-pointer transition-colors"
+                  >
+                    {expandedFolders.sequences ? <ChevronDown className="w-3.5 h-3.5 text-zinc-500" /> : <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />}
+                    <Folder className="w-3.5 h-3.5 text-cyan-400" />
+                    <span className="font-mono text-[11px] truncate flex-1">01_SEQUENCES</span>
+                    <span className="font-mono text-[9px] text-zinc-500 bg-white/5 px-1.5 py-0.5 rounded">1</span>
+                  </div>
+                  {expandedFolders.sequences && (
+                    <div className="pl-6 flex flex-col py-0.5">
+                      <div className="flex items-center gap-2 px-1.5 py-1 text-xs text-cyan-400 bg-cyan-500/5 border border-cyan-500/10 rounded cursor-pointer font-medium font-mono text-[11px]">
+                        <Film className="w-3.5 h-3.5" />
+                        <span className="truncate">SEQ_MASTER_V3</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Folder 2: Footage */}
+                <div className="flex flex-col">
+                  <div 
+                    onClick={() => toggleFolder("footage")} 
+                    className="flex items-center gap-1.5 px-1 py-1 text-xs text-zinc-300 hover:bg-white/5 rounded cursor-pointer transition-colors"
+                  >
+                    {expandedFolders.footage ? <ChevronDown className="w-3.5 h-3.5 text-zinc-500" /> : <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />}
+                    <Folder className="w-3.5 h-3.5 text-purple-400" />
+                    <span className="font-mono text-[11px] truncate flex-1">02_FOOTAGE</span>
+                    <span className="font-mono text-[9px] text-zinc-500 bg-white/5 px-1.5 py-0.5 rounded">{assets.length}</span>
+                  </div>
+                  {expandedFolders.footage && (
+                    <div className="pl-2 flex flex-col gap-1 py-1">
+                      {assets.map(asset => (
+                        <div 
+                          key={asset.id}
+                          onClick={() => handleAssetSelect(asset)}
+                          className={`flex items-center gap-2 p-1.5 rounded cursor-pointer border transition-all ${activeAsset.id === asset.id ? "bg-white/5 border-cyan-500/20 shadow-sm" : "border-transparent hover:bg-white/5"}`}
+                        >
+                          <div className="relative w-12 h-8 rounded overflow-hidden border border-white/10 bg-black shrink-0">
+                            <Image src={asset.path} alt={asset.name} fill className="object-cover" />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                              <Play className="w-2.5 h-2.5 text-white fill-white" />
+                            </div>
+                          </div>
+                          <div className="flex-grow min-w-0">
+                            <div className="font-mono text-[10px] text-zinc-300 truncate font-semibold">{asset.name}</div>
+                            <div className="font-mono text-[8px] text-zinc-500">{asset.duration} · {asset.resolution.split(" ")[0]}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Folder 3: Audio */}
+                <div className="flex flex-col">
+                  <div 
+                    onClick={() => toggleFolder("audio")} 
+                    className="flex items-center gap-1.5 px-1 py-1 text-xs text-zinc-300 hover:bg-white/5 rounded cursor-pointer transition-colors"
+                  >
+                    {expandedFolders.audio ? <ChevronDown className="w-3.5 h-3.5 text-zinc-500" /> : <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />}
+                    <Folder className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="font-mono text-[11px] truncate flex-1">03_AUDIO</span>
+                    <span className="font-mono text-[9px] text-zinc-500 bg-white/5 px-1.5 py-0.5 rounded">3</span>
+                  </div>
+                  {expandedFolders.audio && (
+                    <div className="pl-6 flex flex-col py-0.5 gap-1 font-mono text-[10px] text-zinc-400">
+                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><Music className="w-3 h-3 text-emerald-400" /> <span>IMPACT_WHOOSH.wav</span></div>
+                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><Music className="w-3 h-3 text-emerald-400" /> <span>EPIC_BEAT_BG.mp3</span></div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Folder 4: GFX */}
+                <div className="flex flex-col">
+                  <div 
+                    onClick={() => toggleFolder("gfx")} 
+                    className="flex items-center gap-1.5 px-1 py-1 text-xs text-zinc-300 hover:bg-white/5 rounded cursor-pointer transition-colors"
+                  >
+                    {expandedFolders.gfx ? <ChevronDown className="w-3.5 h-3.5 text-zinc-500" /> : <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />}
+                    <Folder className="w-3.5 h-3.5 text-pink-400" />
+                    <span className="font-mono text-[11px] truncate flex-1">04_GFX</span>
+                    <span className="font-mono text-[9px] text-zinc-500 bg-white/5 px-1.5 py-0.5 rounded">6</span>
+                  </div>
+                  {expandedFolders.gfx && (
+                    <div className="pl-6 flex flex-col py-0.5 gap-1 font-mono text-[10px] text-zinc-400">
+                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><FileText className="w-3 h-3 text-pink-400" /> <span>OVERLAY_TEXT.png</span></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </aside>
+
+            {/* Middle Column: Program Monitor */}
+            <main className="flex-1 flex flex-col min-h-0 bg-[#050608] relative">
+              {/* Monitor Title */}
+              <div className="h-8 bg-[#090b10] border-b border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[10px] text-zinc-400">
+                <span className="font-bold text-zinc-200">SEQUENCE 01: MASTERPIECE</span>
+                <span className="text-zinc-500">{activeAsset.resolution}</span>
+              </div>
+
+              {/* Viewport Box */}
+              <div className="flex-1 relative flex items-center justify-center p-4 bg-black overflow-hidden perspective-[1200px]">
+                {/* 3D Mode Canvas Wrapper */}
+                <div 
+                  className="relative w-full aspect-video max-w-[800px] border border-white/10 bg-[#040405] rounded-xl overflow-hidden shadow-2xl transition-all duration-700 ease-smooth"
+                  style={{
+                    transform: is3DMode ? "rotateY(16deg) rotateX(10deg) translateZ(10px)" : "none",
+                    boxShadow: is3DMode ? "0 30px 60px rgba(0,255,255,0.06), 0 0 100px rgba(0,0,0,0.8)" : "0 10px 40px rgba(0,0,0,0.8)"
+                  }}
+                >
+                  {!is3DMode ? (
+                    // ─── 2D Flat Program Monitor Preview ───
+                    <div className="relative w-full h-full bg-[#050507] flex items-center justify-center overflow-hidden">
+                      <Image
+                        src={activeAsset.path}
+                        alt={activeAsset.name}
+                        fill
+                        priority
+                        className="object-cover opacity-90 transition-transform duration-100"
+                        style={{
+                          // Subtle scale animation driven by dragProgress
+                          scale: 1 + (dragProgress.get() * 0.10)
+                        }}
+                      />
+                      
+                      {/* Viewfinder Rule of Thirds */}
+                      <div className="absolute inset-0 opacity-15 pointer-events-none">
+                        <div className="w-full h-px bg-white/40 absolute top-1/3" />
+                        <div className="w-full h-px bg-white/40 absolute top-2/3" />
+                        <div className="w-px h-full bg-white/40 absolute left-1/3" />
+                        <div className="w-px h-full bg-white/40 absolute left-2/3" />
+                      </div>
+                      
+                      {/* Viewfinder brackets */}
+                      <div className="absolute inset-4 pointer-events-none opacity-40">
+                        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white" />
+                        <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-white" />
+                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-white" />
+                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white" />
+                      </div>
+                      
+                      {/* MASTERPIECE Text Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                        <h1 className="font-heading text-[clamp(22px,4.5vw,52px)] text-white font-black opacity-95 tracking-widest text-center select-none uppercase drop-shadow-[0_0_20px_rgba(255,255,255,0.45)]">
+                          MASTERPIECE
+                        </h1>
+                      </div>
+
+                      {/* Cyber VFX Optical Glow effect */}
+                      <div 
+                        className="absolute inset-0 bg-cyan-500/[0.03] mix-blend-screen pointer-events-none"
+                        style={{
+                          opacity: 0.1 + dragProgress.get() * 0.9
+                        }}
+                      />
+
+                      {/* Camera Info HUD */}
+                      <div className="absolute top-3 left-4 flex gap-2 z-10 select-none">
+                        <span className="font-mono text-white/50 text-[8px] tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.camera}</span>
+                      </div>
+                      <div className="absolute bottom-3 left-4 flex gap-2 z-10 select-none">
+                        <span className="font-mono text-white/40 text-[8px] tracking-wider bg-black/60 px-2 py-0.5 rounded border border-white/5">REC.709 / CINEMATIC</span>
+                      </div>
+                    </div>
+                  ) : (
+                    // ─── 3D Diagnostic Mode (Deconstructed Layers) ───
+                    <motion.div 
+                      style={{ rotateX: sceneRotateX, rotateY: sceneRotateY, scale: sceneScale, transformStyle: "preserve-3d" }}
+                      className="relative w-full h-full flex items-center justify-center"
+                    >
+                      {/* Layer 1: Raw Footage */}
+                      <motion.div 
+                        style={{ z: layer1Z, rotateX: layer1RotateX, rotateY: layer1RotateY, transformStyle: "preserve-3d" }}
+                        className="absolute inset-0 pointer-events-none"
+                      >
+                        <div className="absolute inset-0 rounded-xl border border-white/10 bg-[#070709] flex flex-col justify-between p-4 overflow-hidden shadow-2xl">
+                          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.01)_50%,transparent_75%)] bg-[size:12px_12px]" />
+                          <Image src={activeAsset.path} alt={activeAsset.name} fill className="object-cover opacity-50" />
+                          <div className="flex justify-between items-center z-10">
+                            <span className="font-mono text-white/60 text-[8px] tracking-widest uppercase bg-white/5 px-2 py-0.5 rounded">{activeAsset.name}</span>
+                            <span className="font-mono text-white/50 text-[8px] tracking-widest">{activeAsset.iso}</span>
+                          </div>
+                          <span className="font-mono text-white/50 text-[8px] z-10">RAW_FOOTAGE [V1]</span>
+                        </div>
+                      </motion.div>
+
+                      {/* Layer 2: Color LUT */}
+                      <motion.div 
+                        style={{ z: layer2Z, rotateX: layer2RotateX, rotateY: layer2RotateY, transformStyle: "preserve-3d" }}
+                        className="absolute inset-0 pointer-events-none"
+                      >
+                        <div className="absolute inset-0 rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-transparent mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.12)]">
+                          <div className="flex justify-between items-center opacity-50">
+                            <span className="font-mono text-purple-400 text-[8px] tracking-widest bg-purple-500/10 px-2 py-0.5 rounded">COLOR_LUT_CINEMATIC [V3]</span>
+                            <span className="font-mono text-purple-300 text-[8px]">REC.709 → DCI-P3</span>
+                          </div>
+                          <div className="flex justify-between items-end opacity-50">
+                            <span className="font-mono text-purple-400 text-[8px]">SAT: 110%</span>
+                            <span className="font-mono text-purple-400 text-[8px]">5600K</span>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Layer 3: VFX & Glow */}
+                      <motion.div 
+                        style={{ z: layer3Z, rotateX: layer3RotateX, rotateY: layer3RotateY, transformStyle: "preserve-3d" }}
+                        className="absolute inset-0 pointer-events-none"
+                      >
+                        <div className="absolute inset-0 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.01] mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.12)]">
+                          <div className="flex justify-between items-center opacity-50">
+                            <span className="font-mono text-cyan-400 text-[8px] tracking-widest bg-cyan-500/10 px-2 py-0.5 rounded">VFX_OPTICAL_GLOW [V2]</span>
+                            <span className="font-mono text-cyan-300 text-[8px]">THR: 0.25</span>
+                          </div>
+                          <div className="absolute top-[30%] left-[25%] flex flex-col items-center gap-0.5 opacity-40">
+                            <div className="w-5 h-5 border border-cyan-400 rounded-sm relative flex items-center justify-center">
+                              <div className="w-0.5 h-0.5 bg-cyan-400 rounded-full" />
+                            </div>
+                            <span className="font-mono text-[6px] text-cyan-400">TRACKPOINT_01</span>
+                          </div>
+                          <div className="flex justify-between items-end opacity-50">
+                            <span className="font-mono text-cyan-400 text-[8px]">VFX COMPOSITE</span>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Layer 4: Typography Overlay */}
+                      <motion.div 
+                        style={{ z: layer4Z, rotateX: layer4RotateX, rotateY: layer4RotateY, transformStyle: "preserve-3d" }}
+                        className="absolute inset-0 pointer-events-none"
+                      >
+                        <div className="absolute inset-0 rounded-xl border border-white/15 bg-white/[0.005] flex flex-col justify-between p-4 overflow-hidden">
+                          <span className="font-mono text-white text-[8px] tracking-widest uppercase bg-white/10 px-2 py-0.5 rounded opacity-65">TEXT_OVERLAY [V4]</span>
+                          <h1 className="font-heading text-[clamp(16px,2.5vw,38px)] text-white font-black opacity-95 tracking-widest text-center select-none uppercase drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                            MASTERPIECE
+                          </h1>
+                          <span className="font-mono text-white/50 text-[8px] opacity-65">OPACITY: 95%</span>
+                        </div>
+                      </motion.div>
+
+                      {/* Alignment Flash */}
+                      <motion.div 
+                        style={{ opacity: masterGlowOpacity }}
+                        className="absolute inset-0 bg-white/10 shadow-[0_0_100px_rgba(255,255,255,0.3)] rounded-xl pointer-events-none mix-blend-overlay"
+                      />
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+
+              {/* Viewport Control Strip */}
+              <div className="h-10 bg-[#090b10] border-t border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[10px] select-none text-zinc-400">
+                <div className="flex items-center gap-3">
+                  {/* Current Program Timecode */}
+                  <span ref={monitorTimecodeRef} className="font-bold text-cyan-400 bg-black/40 px-2 py-1 border border-white/5 rounded">01:00:00:00</span>
+                  <div className="w-px h-3 bg-white/10" />
+                  <select className="bg-transparent border-0 outline-none text-[9px] hover:text-white cursor-pointer font-bold">
+                    <option>Fit</option>
+                    <option>100%</option>
+                    <option>50%</option>
+                  </select>
+                </div>
+
+                {/* Video controls */}
+                <div className="flex items-center gap-4 text-zinc-400">
+                  <button className="hover:text-white transition-colors" onClick={() => dragX.set(0)}><Play className="w-3.5 h-3.5 rotate-180" /></button>
+                  <button className="hover:text-white transition-colors" onClick={() => dragX.set(Math.max(0, dragX.get() - 40))}><Pause className="w-3.5 h-3.5" /></button>
+                  <button className="w-7 h-7 bg-white/5 border border-white/10 text-cyan-400 rounded-full flex items-center justify-center hover:bg-white/10 hover:border-cyan-500/25 transition-all"><Play className="w-3 h-3 fill-cyan-400 text-cyan-400" /></button>
+                  <button className="hover:text-white transition-colors" onClick={() => dragX.set(Math.min(trackWidthRef.current, dragX.get() + 40))}><Play className="w-3.5 h-3.5" /></button>
+                </div>
+
+                {/* Right controls */}
+                <div className="flex items-center gap-3">
+                  {/* 3D mode Toggle */}
+                  <button 
+                    onClick={() => {
+                      uiSounds.playClick();
+                      setIs3DMode(!is3DMode);
+                    }}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[9px] font-bold transition-all ${is3DMode ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400 font-bold" : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"}`}
+                  >
+                    <Activity className={`w-3 h-3 ${is3DMode ? "animate-pulse" : ""}`} />
+                    <span>3D MODE</span>
+                  </button>
+                  <div className="w-px h-3 bg-white/10" />
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="w-3.5 h-3.5 hover:text-white cursor-pointer" />
+                    <div className="w-12 h-1 bg-zinc-800 rounded-full relative cursor-pointer"><div className="absolute top-0 bottom-0 left-0 w-3/4 bg-cyan-400 rounded-full" /></div>
+                  </div>
+                  <Maximize2 className="w-3.5 h-3.5 hover:text-white cursor-pointer ml-1" />
+                </div>
+              </div>
+            </main>
+
+            {/* Right Column: Effect Controls */}
+            <aside className="w-[320px] border-l border-white/5 bg-[#090b0f] flex flex-col min-h-0 shrink-0 hidden lg:flex font-mono text-[10px]">
+              <div className="p-3 border-b border-white/5 flex items-center justify-between shrink-0">
+                <span className="font-bold tracking-widest text-zinc-400 uppercase">EFFECT CONTROLS</span>
+                <Sliders className="w-3.5 h-3.5 text-zinc-500" />
+              </div>
+
+              {/* Scrollable controls panel */}
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-hide flex flex-col gap-4 text-zinc-300">
+                {/* Header item */}
+                <div className="bg-white/[0.02] border border-white/5 p-2.5 rounded-lg">
+                  <div className="text-zinc-500 text-[8px] uppercase tracking-wider mb-0.5">Active Target</div>
+                  <div className="text-white font-bold truncate text-[11px]">{activeAsset.name}</div>
+                </div>
+
+                {/* Category 1: Motion */}
+                <div className="flex flex-col gap-2.5 border-b border-white/5 pb-4">
+                  <div className="flex items-center justify-between font-bold text-zinc-400 border-b border-white/5 pb-1">
+                    <span>fx Motion</span>
+                    <Settings className="w-3 h-3 text-zinc-500" />
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Position</span>
+                    <span className="text-cyan-400 font-bold"><span ref={posXRef}>960.0</span> · 540.0</span>
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Scale</span>
+                    <span ref={scaleValueRef} className="text-cyan-400 font-bold">100.0%</span>
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Rotation</span>
+                    <span ref={rotationValueRef} className="text-cyan-400 font-bold">0.0°</span>
+                  </div>
+                </div>
+
+                {/* Category 2: Opacity */}
+                <div className="flex flex-col gap-2.5 border-b border-white/5 pb-4">
+                  <div className="flex items-center justify-between font-bold text-zinc-400 border-b border-white/5 pb-1">
+                    <span>fx Opacity</span>
+                    <Settings className="w-3 h-3 text-zinc-500" />
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Opacity</span>
+                    <span className="text-white font-bold">100.0%</span>
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Blend Mode</span>
+                    <span className="text-zinc-400 hover:text-white cursor-pointer font-bold">Normal</span>
+                  </div>
+                </div>
+
+                {/* Category 3: Lumetri Color */}
+                <div className="flex flex-col gap-2.5">
+                  <div className="flex items-center justify-between font-bold text-zinc-400 border-b border-white/5 pb-1">
+                    <span>fx Lumetri Color</span>
+                    <Palette className="w-3 h-3 text-zinc-500" />
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Basic Correction</span>
+                    <span className="text-cyan-400 font-bold">Active</span>
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Input LUT</span>
+                    <span className="text-zinc-400 font-bold">Cinematic</span>
+                  </div>
+                  {/* Slider Control */}
+                  <div className="flex flex-col gap-1.5 px-1 mt-1">
+                    <div className="flex justify-between text-[9px]">
+                      <span className="text-zinc-500">LUT Intensity</span>
+                      <span className="text-cyan-400 font-bold"><span ref={intensityValueRef}>50.0</span></span>
+                    </div>
+                    <input 
+                      ref={intensitySliderRef}
+                      type="range" 
+                      min="20" 
+                      max="80" 
+                      defaultValue="50"
+                      className="w-full accent-cyan-400 bg-zinc-800 h-1 rounded-lg cursor-pointer"
+                      disabled
+                    />
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
-        </div>
+
+          {/* 3. Timeline Area (Bottom Panel) */}
+          <footer className="h-[260px] bg-[#090b0f] border-t border-white/5 flex flex-col shrink-0">
+            {/* Timeline Toolbar & Ruler Header */}
+            <div className="h-10 bg-[#090b10] border-b border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[10px] text-zinc-500">
+              <div className="flex items-center gap-4">
+                <span className="font-bold text-zinc-200">TIMELINE: SEQUENCE 01</span>
+                <div className="h-3 w-px bg-white/10" />
+                <span ref={timecodeRef} className="font-bold text-cyan-400">01:00:00:00</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 bg-[#ff4000]/10 border border-[#ff4000]/20 px-2 py-0.5 rounded text-[#ff4000] text-[9px] font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ff4000] animate-pulse" />
+                  <span>REC MODE</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Tracks Area */}
+            <div className="flex-1 flex min-h-0 relative overflow-hidden">
+              
+              {/* Vertical Tools Sidebar */}
+              <div className="w-11 border-r border-white/5 bg-[#08090d] flex flex-col items-center py-2 gap-2.5 shrink-0 select-none">
+                {[
+                  { id: "select", icon: MousePointer, label: "Selection" },
+                  { id: "razor", icon: Scissors, label: "Razor Tool" },
+                  { id: "hand", icon: Hand, label: "Hand Tool" },
+                  { id: "text", icon: Type, label: "Text Tool" }
+                ].map(tool => (
+                  <div 
+                    key={tool.id}
+                    title={tool.label}
+                    onClick={() => setActiveTool(tool.id)}
+                    className={`p-1.5 rounded-md cursor-pointer transition-all ${activeTool === tool.id ? "bg-cyan-500/10 text-cyan-400 border border-cyan-400/20" : "text-zinc-500 hover:text-white"}`}
+                  >
+                    <tool.icon className="w-4 h-4" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Track Headers (V3, V2, V1, A1, A2, A3) */}
+              <div className="w-[140px] bg-black/40 flex flex-col border-r border-white/5 shrink-0 z-20 backdrop-blur-md font-mono select-none">
+                <div className="h-[20px] border-b border-white/5" /> {/* Spacer for ruler */}
+                
+                {/* Video Track Headers */}
+                {([
+                  { name: "V3", color: "text-purple-400", bg: "bg-purple-500/5" },
+                  { name: "V2", color: "text-blue-400", bg: "bg-blue-500/5" },
+                  { name: "V1", color: "text-cyan-400", bg: "bg-cyan-500/5" }
+                ] as const).map(track => {
+                  const state = trackStates[track.name];
+                  return (
+                    <div key={track.name} className={`h-[32px] flex items-center justify-between px-3 border-b border-white/5 ${track.bg}`}>
+                      <span className={`text-[10px] font-bold ${track.color}`}>{track.name}</span>
+                      <div className="flex gap-1.5 text-zinc-500">
+                        <button 
+                          onClick={() => toggleTrackProperty(track.name, "locked")}
+                          className={`hover:text-white transition-colors ${state.locked ? "text-red-400" : ""}`}
+                        >
+                          {state.locked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3 opacity-60" />}
+                        </button>
+                        <button 
+                          onClick={() => toggleTrackProperty(track.name, "visible")}
+                          className="hover:text-white transition-colors"
+                        >
+                          {state.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3 text-red-400" />}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+                
+                <div className="h-1 bg-white/5 w-full shrink-0" /> 
+                
+                {/* Audio Track Headers */}
+                {([
+                  { name: "A1", color: "text-green-400", bg: "bg-green-500/5" },
+                  { name: "A2", color: "text-emerald-500", bg: "bg-emerald-500/5" },
+                  { name: "A3", color: "text-teal-600", bg: "bg-teal-600/5" }
+                ] as const).map(track => {
+                  const state = trackStates[track.name];
+                  return (
+                    <div key={track.name} className={`h-[36px] flex items-center justify-between px-3 border-b border-white/5 ${track.bg}`}>
+                      <span className={`text-[10px] font-bold ${track.color}`}>{track.name}</span>
+                      <div className="flex gap-1 text-[9px] font-bold">
+                        <button 
+                          onClick={() => toggleTrackProperty(track.name, "muted")}
+                          className={`w-4 h-4 rounded-sm flex items-center justify-center border transition-all ${state.muted ? "bg-red-500/10 border-red-500/20 text-red-500" : "border-white/5 text-zinc-500 hover:text-white"}`}
+                        >
+                          M
+                        </button>
+                        <button 
+                          onClick={() => toggleTrackProperty(track.name, "soloed")}
+                          className={`w-4 h-4 rounded-sm flex items-center justify-center border transition-all ${state.soloed ? "bg-green-500/10 border-green-500/20 text-green-500" : "border-white/5 text-zinc-500 hover:text-white"}`}
+                        >
+                          S
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Interactive Timeline Tracks Panel */}
+              <div className="flex-1 relative bg-[#06070a] overflow-hidden" ref={trackRef} onClick={handleTrackClick}>
+                {/* Timeline Grid ticks */}
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:40px_100%] pointer-events-none" />
+                
+                {/* Ruler timeline indicators */}
+                <div className="sticky top-0 left-0 right-0 h-[20px] border-b border-white/5 flex items-end px-4 pointer-events-none z-10 bg-[#090b0f]/80 backdrop-blur-sm select-none">
+                  {Array.from({ length: 13 }).map((_, i) => {
+                    const seconds = i * 5;
+                    const timeString = seconds === 60 ? "01:00" : `00:${seconds.toString().padStart(2, '0')}`;
+                    return (
+                      <div key={i} className="flex-1 relative h-full flex items-end border-l border-white/5 last:border-r">
+                        <span className="absolute top-0.5 left-1 text-[7.5px] font-mono text-zinc-600 tracking-tighter">
+                          {timeString}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Clips Container */}
+                <div className="relative w-full flex flex-col pb-4">
+                  {/* V3 Track Clip */}
+                  <div className="h-[32px] border-b border-white/5 relative flex items-center">
+                    <div 
+                      className="absolute left-[15%] right-[60%] h-[22px] bg-purple-500/20 border border-purple-400/30 hover:bg-purple-500/30 rounded cursor-pointer shadow-[0_0_10px_rgba(168,85,247,0.15)] flex items-center px-2 transition-all"
+                      style={{ opacity: trackStates.V3.visible ? 1 : 0.2 }}
+                    >
+                      <span className="text-[9px] font-mono text-purple-200 font-bold truncate">COLOR_GRADE.cube</span>
+                    </div>
+                  </div>
+                  
+                  {/* V2 Track Clip */}
+                  <div className="h-[32px] border-b border-white/5 relative flex items-center">
+                    <div 
+                      className="absolute left-[20%] right-[30%] h-[22px] bg-blue-500/20 border border-blue-400/30 hover:bg-blue-500/30 rounded cursor-pointer shadow-[0_0_10px_rgba(59,130,246,0.15)] flex items-center px-2 transition-all"
+                      style={{ opacity: trackStates.V2.visible ? 1 : 0.2 }}
+                    >
+                      <span className="text-[9px] font-mono text-blue-200 font-bold truncate">OVERLAY_TEXT.png</span>
+                    </div>
+                  </div>
+                  
+                  {/* V1 Video Track Clip */}
+                  <div className="h-[32px] border-b border-white/5 relative flex items-center bg-white/[0.01]">
+                    <div 
+                      className="absolute left-[5%] right-[5%] h-[22px] bg-cyan-600/30 border border-cyan-400/40 hover:bg-cyan-600/45 rounded cursor-pointer shadow-[0_0_12px_rgba(34,211,238,0.2)] flex items-center overflow-hidden transition-all"
+                      style={{ opacity: trackStates.V1.visible ? 1 : 0.2 }}
+                    >
+                      <div className="relative h-full aspect-video opacity-45 border-r border-white/10 shrink-0"><Image src={activeAsset.path} alt={activeAsset.name} fill className="object-cover" /></div>
+                      <span className="ml-2.5 text-[9px] font-mono text-cyan-200 font-bold truncate">{activeAsset.name} [V]</span>
+                    </div>
+                  </div>
+                  
+                  <div className="h-1 w-full shrink-0" />
+
+                  {/* A1 Audio Track Clip */}
+                  <div className="h-[36px] border-b border-white/5 relative flex items-center bg-white/[0.01]">
+                    <div 
+                      className="absolute left-[5%] right-[5%] h-[26px] bg-green-600/25 border border-green-400/30 hover:bg-green-600/35 rounded cursor-pointer shadow-[0_0_10px_rgba(34,197,94,0.1)] flex flex-col justify-center px-2 relative overflow-hidden transition-all"
+                      style={{ opacity: trackStates.A1.muted ? 0.25 : 1 }}
+                    >
+                      <span className="text-[8.5px] font-mono text-green-200 font-bold truncate z-10">{activeAsset.name.replace(".mp4", "")}.wav [A]</span>
+                      {/* Audio wave vectors */}
+                      <div className="absolute inset-x-2 bottom-1 h-3 opacity-30 flex items-end gap-[1px]">
+                        {[2,6,12,8,16,14,4,6,18,22,12,6,10,14,8,4,12,18,14,8,12,16,10,4,8,14,18,6,2,6,12,8,16,14,4,6,18,22,12,6].map((h, i) => (
+                          <div key={i} className="flex-1 bg-green-400 rounded-t" style={{ height: `${h * 0.4}px` }} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* A2 Audio Track Clip */}
+                  <div className="h-[36px] border-b border-white/5 relative flex items-center">
+                    <div 
+                      className="absolute left-[20%] right-[60%] h-[26px] bg-emerald-600/20 border border-emerald-400/20 hover:bg-emerald-600/30 rounded cursor-pointer flex flex-col justify-center px-2 relative overflow-hidden transition-all"
+                      style={{ opacity: trackStates.A2.muted ? 0.25 : 1 }}
+                    >
+                      <span className="text-[8px] font-mono text-emerald-300 font-bold truncate z-10">IMPACT_WHOOSH_01.wav</span>
+                      <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px]">
+                        {[2,8,4,12,8,2,6,10,14,4,2,8,12,6,2,6,10,4].map((h, i) => (
+                          <div key={i} className="flex-1 bg-emerald-400 rounded-t" style={{ height: `${h * 0.5}px` }} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* A3 Audio Track Clip */}
+                  <div className="h-[36px] relative flex items-center">
+                    <div 
+                      className="absolute left-[5%] right-[10%] h-[26px] bg-teal-700/20 border border-teal-500/20 hover:bg-teal-700/30 rounded cursor-pointer flex flex-col justify-center px-2 relative overflow-hidden transition-all"
+                      style={{ opacity: trackStates.A3.muted ? 0.25 : 1 }}
+                    >
+                      <span className="text-[8px] font-mono text-teal-300 font-bold truncate z-10">BACKGROUND_EPIC_BEAT.mp3</span>
+                      <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px]">
+                        {[4,6,8,6,4,6,8,10,8,6,4,8,10,12,10,8,6,8,10,8,6,8,6,4,6,8,6,4,6,8,10,8,6,4,8,10,12].map((h, i) => (
+                          <div key={i} className="flex-1 bg-teal-400 rounded-t" style={{ height: `${h * 0.5}px` }} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ─── 3D Laser Playhead ─── */}
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: 0, right: trackWidth || 2000 }}
+                  dragElastic={0}
+                  dragMomentum={false}
+                  onDragStart={() => { isDraggingRef.current = true; }}
+                  onDragEnd={() => { isDraggingRef.current = false; }}
+                  style={{ x: dragX }}
+                  className="absolute -top-10 bottom-0 w-8 -ml-[16px] z-40 cursor-ew-resize flex flex-col items-center pointer-events-auto group"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Laser Emitter Head */}
+                  <div className="w-8 h-9 bg-black/90 border border-cyan-400/50 rounded shadow-[0_0_15px_rgba(34,211,238,0.7)] relative flex flex-col items-center justify-end pb-1.5 group-hover:bg-cyan-950 transition-colors z-20 backdrop-blur-md">
+                     <div className="w-2.5 h-1 bg-white rounded-full animate-pulse shadow-[0_0_8px_#fff]" />
+                     <div className="absolute -bottom-2 w-0 h-0 border-l-[7px] border-r-[7px] border-t-[8px] border-l-transparent border-r-transparent border-t-cyan-400" />
+                  </div>
+                  {/* Laser Beam Slicing Through tracks */}
+                  <div className="flex-1 w-[2px] bg-cyan-400 shadow-[0_0_12px_#22d3ee,0_0_25px_#22d3ee] group-hover:w-[3px] group-hover:bg-white transition-all z-10 relative">
+                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-24 bg-cyan-400/25 blur-lg rounded-full pointer-events-none" />
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Timeline Bottom Status bar */}
+            <div className="h-6 bg-[#08090c] border-t border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[9px] text-zinc-500">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                  <span className="text-zinc-400">Auto Save: ON</span>
+                </div>
+                <span>|</span>
+                <span>Project: 23 Items</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span>Zoom</span>
+                <div className="w-16 h-0.5 bg-zinc-800 rounded-full relative"><div className="absolute top-0 bottom-0 left-0 w-1/3 bg-cyan-400 rounded-full" /></div>
+              </div>
+            </div>
+          </footer>
+        </motion.div>
       </div>
 
       <VideoCarousel3D isOpen={isCarouselOpen} onClose={() => setIsCarouselOpen(false)} />
