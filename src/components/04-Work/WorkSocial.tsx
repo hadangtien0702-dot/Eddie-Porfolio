@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useAnimation, useMotionValue, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useAnimation, useMotionValue, useScroll, useTransform, useSpring, useMotionTemplate } from "framer-motion";
 import Image from "next/image";
 import { uiSounds } from "@/utils/ui-sounds";
 import Link from "next/link";
@@ -79,6 +79,16 @@ export default function WorkSocial() {
   const [mounted, setMounted] = useState(false);
   const controls = useAnimation();
 
+  // Mouse Tracking Spotlight
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
   useEffect(() => {
     setMounted(true);
 
@@ -124,6 +134,8 @@ export default function WorkSocial() {
     setActiveCard(activeCard === index ? null : index);
   };
 
+  const spotlightBackground = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(255,255,255,0.06), transparent 40%)`;
+
   // Prevent rendering random grid on server
   if (!mounted) {
     return <section id="design" ref={containerRef} className="relative w-full h-screen min-h-[700px] bg-[#020202]" />;
@@ -139,6 +151,7 @@ export default function WorkSocial() {
   return (
     <section 
       id="design"
+      onMouseMove={handleMouseMove}
       className="relative w-full h-screen min-h-[700px] overflow-hidden bg-[#020202] border-t border-white/5" 
       ref={containerRef}
     >
@@ -153,6 +166,10 @@ export default function WorkSocial() {
         }}
         className="absolute inset-0 z-0 overflow-hidden origin-center will-change-transform bg-[#020202] flex items-center justify-center"
       >
+        {/* ─── Ambient Glow Orbs ─── */}
+        <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] max-w-[600px] max-h-[600px] bg-accent/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none animate-[pulse_4s_ease-in-out_infinite]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-cyan-500/15 rounded-full blur-[150px] mix-blend-screen pointer-events-none animate-[pulse_6s_ease-in-out_infinite]" />
+        
         {/* ─── The Viral Grid (Draggable Area) ─── */}
         <motion.div
           drag
@@ -168,32 +185,38 @@ export default function WorkSocial() {
             z: gridTranslateZ
           }}
         >
-          {columns.map((columnItems, colIndex) => (
-            <motion.div
-              key={colIndex}
-              className="flex flex-col gap-6 w-[280px] shrink-0 overflow-visible"
-              style={{ y: yOffsets[colIndex % yOffsets.length] }}
-            >
-              {columnItems.map((item, itemIndex) => {
-                const absoluteIndex = itemIndex * columnsCount + colIndex;
-                const isActive = activeCard === absoluteIndex;
-                
-                return (
-                  <motion.div
-                    key={itemIndex}
-                    layout
-                    onClick={() => handleCardClick(absoluteIndex)}
-                    className={`relative rounded-xl overflow-hidden bg-white/5 border border-white/10 shrink-0 transition-all duration-300
-                      ${isActive ? 'w-[340px] h-[420px] z-50 shadow-[0_0_50px_rgba(255,64,0,0.4)]' : 'w-[280px] h-[350px] z-10 hover:border-accent/40'}
-                    `}
-                    whileHover={!isActive ? { scale: 1.05, rotate: Math.random() * 4 - 2, zIndex: 30 } : {}}
+          {columns.map((columnItems, colIndex) => {
+            const hasActiveCard = columnItems.some((_, itemIndex) => (itemIndex * columnsCount + colIndex) === activeCard);
+            return (
+              <motion.div
+                key={colIndex}
+                className={`flex flex-col gap-6 w-[280px] shrink-0 overflow-visible relative ${hasActiveCard ? 'z-50' : 'z-10'}`}
+                style={{ y: yOffsets[colIndex % yOffsets.length] }}
+              >
+                {columnItems.map((item, itemIndex) => {
+                  const absoluteIndex = itemIndex * columnsCount + colIndex;
+                  const isActive = activeCard === absoluteIndex;
+                  
+                  // Masonry Rhythm Heights
+                  const heights = ["h-[350px]", "h-[420px]", "h-[300px]", "h-[480px]", "h-[380px]"];
+                  const defaultHeight = heights[(itemIndex + colIndex * 2) % 5];
+                  
+                  return (
+                    <motion.div
+                      key={itemIndex}
+                      layout
+                      onClick={() => handleCardClick(absoluteIndex)}
+                      className={`relative rounded-xl overflow-hidden bg-white/5 border shrink-0 transition-all duration-500
+                        ${isActive ? 'w-[340px] h-[480px] z-50 border-accent shadow-[0_0_60px_rgba(255,64,0,0.5)]' : `w-[280px] ${defaultHeight} z-10 border-white/10 shadow-[0_15px_30px_rgba(0,0,0,0.6)] hover:border-accent/50 hover:shadow-[0_0_40px_rgba(255,64,0,0.25)]`}
+                      `}
+                    whileHover={!isActive ? { scale: 1.05, rotate: Math.random() * 3 - 1.5, zIndex: 30 } : {}}
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                   >
                     <Image 
                       src={item.src} 
                       alt="Social Post" 
                       fill 
-                      className={`object-cover transition-all duration-700 ${isActive ? 'opacity-100' : 'opacity-60 grayscale-[50%] hover:grayscale-0 hover:opacity-100'}`} 
+                      className={`object-cover transition-all duration-700 ${isActive ? 'opacity-100 brightness-110' : 'opacity-[0.85] brightness-[0.75] hover:brightness-110 hover:opacity-100'}`} 
                     />
                     
                     {/* HUD Overlay when active */}
@@ -231,11 +254,20 @@ export default function WorkSocial() {
                 );
               })}
             </motion.div>
-          ))}
+          );
+        })}
         </motion.div>
 
         {/* ─── Vignette Overlay ─── */}
-        <div className="absolute inset-0 pointer-events-none z-40 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(2,2,2,0.9)_80%)]" />
+        <div className="absolute inset-0 pointer-events-none z-40 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(2,2,2,0.5)_100%)]" />
+        
+        {/* ─── Mouse Spotlight Overlay ─── */}
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-50 transition-opacity duration-300"
+          style={{
+            background: spotlightBackground
+          }}
+        />
       </motion.div>
       
       {/* ─── Foreground Overlay & Text ─── */}

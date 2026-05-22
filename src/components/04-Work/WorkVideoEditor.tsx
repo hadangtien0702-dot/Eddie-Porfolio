@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useTransform, useMotionValue, useSpring, useVelocity, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion, useTransform, useMotionValue, useSpring, useVelocity, useMotionValueEvent, useScroll, animate } from "framer-motion";
 import VideoCarousel3D from "./VideoCarousel3D";
 import Image from "next/image";
 import { uiSounds } from "@/utils/ui-sounds";
@@ -15,8 +15,9 @@ import {
 
 export default function WorkVideoEditor() {
   const [isCarouselOpen, setIsCarouselOpen] = useState(false);
-  const [is3DMode, setIs3DMode] = useState(false);
+  const [is3DMode, setIs3DMode] = useState(true);
   const [activeTool, setActiveTool] = useState("select");
+  const [isPlaying, setIsPlaying] = useState(false);
   
   // Folders tree state in Project Bin
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
@@ -31,12 +32,13 @@ export default function WorkVideoEditor() {
     setExpandedFolders(prev => ({ ...prev, [folder]: !prev[folder] }));
   };
 
-  // Mock Assets data
+  // Mock Assets data with interactive video source mapping
   const assets = [
     {
       id: "astronaut",
       name: "ASTRONAUT_CLOSE.mp4",
       path: "/images/astronaut_cinematic.png",
+      videoUrl: "https://pub-9332e0501e844ae48782601867134d26.r2.dev/videos/ads/premium-creative-showcase.mp4",
       duration: "00:05:11",
       resolution: "4K 16:9 | 60 FPS",
       camera: "CAM_01",
@@ -46,6 +48,7 @@ export default function WorkVideoEditor() {
       id: "city_drone",
       name: "CITY_DRONE_01.mp4",
       path: "/images/city_drone.png",
+      videoUrl: "/videos/reels/1193408759530975.mp4",
       duration: "00:08:04",
       resolution: "4K 16:9 | 60 FPS",
       camera: "CAM_02",
@@ -55,6 +58,7 @@ export default function WorkVideoEditor() {
       id: "space_station",
       name: "SPACE_STATION_02.mp4",
       path: "/images/space_station.png",
+      videoUrl: "/videos/reels/1416295406374728.mp4",
       duration: "00:07:19",
       resolution: "4K 16:9 | 60 FPS",
       camera: "CAM_03",
@@ -64,6 +68,7 @@ export default function WorkVideoEditor() {
       id: "planet_surface",
       name: "PLANET_SURFACE.mp4",
       path: "/images/planet_surface.png",
+      videoUrl: "/videos/reels/1481637113705236.mp4",
       duration: "00:06:07",
       resolution: "4K 16:9 | 60 FPS",
       camera: "CAM_04",
@@ -96,6 +101,79 @@ export default function WorkVideoEditor() {
     });
   };
 
+  // ─── Draggable Clip Positions & Interaction ───
+  const [clipPositions, setClipPositions] = useState<Record<string, { left: number; width: number }>>({
+    V3: { left: 15, width: 25 },
+    V2: { left: 20, width: 50 },
+    V1: { left: 5, width: 90 },
+    A1: { left: 5, width: 90 },
+    A2: { left: 20, width: 20 },
+    A3: { left: 5, width: 85 },
+  });
+  const [draggingClip, setDraggingClip] = useState<string | null>(null);
+
+  const handleClipDrag = (clipId: string, e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    const container = trackRef.current;
+    if (!container) return;
+    const containerWidth = container.offsetWidth;
+    const startLeft = clipPositions[clipId].left;
+    const clipWidth = clipPositions[clipId].width;
+    setDraggingClip(clipId);
+
+    const handleMove = (moveEvent: PointerEvent) => {
+      const delta = moveEvent.clientX - startX;
+      const deltaPercent = (delta / containerWidth) * 100;
+      const newLeft = Math.max(0, Math.min(100 - clipWidth, startLeft + deltaPercent));
+      setClipPositions(prev => ({ ...prev, [clipId]: { ...prev[clipId], left: newLeft } }));
+    };
+
+    const handleUp = () => {
+      document.removeEventListener('pointermove', handleMove);
+      document.removeEventListener('pointerup', handleUp);
+      setDraggingClip(null);
+    };
+
+    document.addEventListener('pointermove', handleMove);
+    document.addEventListener('pointerup', handleUp);
+  };
+
+  const handleTrimDrag = (clipId: string, edge: 'left' | 'right', e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    const container = trackRef.current;
+    if (!container) return;
+    const containerWidth = container.offsetWidth;
+    const startPos = { ...clipPositions[clipId] };
+    setDraggingClip(clipId);
+
+    const handleMove = (moveEvent: PointerEvent) => {
+      const delta = moveEvent.clientX - startX;
+      const deltaPercent = (delta / containerWidth) * 100;
+      if (edge === 'left') {
+        const newLeft = Math.max(0, Math.min(startPos.left + startPos.width - 5, startPos.left + deltaPercent));
+        const newWidth = startPos.width - (newLeft - startPos.left);
+        setClipPositions(prev => ({ ...prev, [clipId]: { left: newLeft, width: Math.max(5, newWidth) } }));
+      } else {
+        const newWidth = Math.max(5, startPos.width + deltaPercent);
+        const maxWidth = 100 - startPos.left;
+        setClipPositions(prev => ({ ...prev, [clipId]: { ...prev[clipId], width: Math.min(maxWidth, newWidth) } }));
+      }
+    };
+
+    const handleUp = () => {
+      document.removeEventListener('pointermove', handleMove);
+      document.removeEventListener('pointerup', handleUp);
+      setDraggingClip(null);
+    };
+
+    document.addEventListener('pointermove', handleMove);
+    document.addEventListener('pointerup', handleUp);
+  };
+
   // ─── Scroll Animation Logic ───
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -107,8 +185,25 @@ export default function WorkVideoEditor() {
   const editorScale = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.93, 1, 1, 0.93]);
   const editorOpacity = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
 
+  // Panel Fly-in Transforms
+  const panelYTop = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [-100, 0, 0, -100]);
+  const panelXLeft = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [-300, 0, 0, -300]);
+  const panelXRight = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [300, 0, 0, 300]);
+  const panelYBottom = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [300, 0, 0, 300]);
+
+  // Opacity & Background Fades (Hides empty boxes before assembly)
+  const panelOpTop = useTransform(scrollYProgress, [0.05, 0.25, 0.75, 0.95], [0, 1, 1, 0]);
+  const panelOpSide = useTransform(scrollYProgress, [0.1, 0.3, 0.7, 0.9], [0, 1, 1, 0]);
+  const panelOpBottom = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], [0, 1, 1, 0]);
+
+  const containerBg = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["rgba(7,8,12,0)", "rgba(7,8,12,1)", "rgba(7,8,12,1)", "rgba(7,8,12,0)"]);
+  const containerBorder = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["rgba(255,255,255,0)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0)"]);
+  const containerShadow = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["0px 0px 0px rgba(0,0,0,0)", "0px 25px 80px rgba(0,0,0,0.85)", "0px 25px 80px rgba(0,0,0,0.85)", "0px 0px 0px rgba(0,0,0,0)"]);
+  const centerBg = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["rgba(5,6,8,0)", "rgba(5,6,8,1)", "rgba(5,6,8,1)", "rgba(5,6,8,0)"]);
+
   // ─── Drag & Timeline Animation Logic ───
   const trackRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const dragX = useMotionValue(0);
   const dragProgress = useMotionValue(0);
   const [trackWidth, setTrackWidth] = useState(0);
@@ -124,8 +219,17 @@ export default function WorkVideoEditor() {
   const intensityValueRef = useRef<HTMLSpanElement>(null);
   const intensitySliderRef = useRef<HTMLInputElement>(null);
   
-  // Fake video duration for timecode
+  // Fake video duration for fallback
   const FAKE_DURATION = 60; 
+
+  // Sync page scroll to timeline scrubber!
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Map scroll progress (e.g. 0.15 to 0.85) to timeline progress (0 to 1)
+    const p = Math.min(Math.max((latest - 0.15) / 0.7, 0), 1);
+    if (!isPlaying && !isDraggingRef.current && trackWidthRef.current > 0) {
+      dragX.set(p * trackWidthRef.current);
+    }
+  });
 
   useMotionValueEvent(dragX, "change", (latest) => {
     // Self-healing: if width is not measured yet, try to measure it
@@ -143,6 +247,12 @@ export default function WorkVideoEditor() {
     const percent = x / currentWidth;
     
     dragProgress.set(percent);
+
+    // Dynamic Video Scrubber Update
+    if (videoRef.current) {
+      const duration = videoRef.current.duration || FAKE_DURATION;
+      videoRef.current.currentTime = percent * duration;
+    }
 
     const currentSeconds = percent * FAKE_DURATION;
     const frames = Math.floor((currentSeconds % 1) * 24);
@@ -174,6 +284,12 @@ export default function WorkVideoEditor() {
   // Sync scrollYProgress with playhead dragX to drive timeline scrub on page scroll
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (isDraggingRef.current) return;
+    
+    // Pause video playback on scroll scrub to prevent conflicts
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
     
     // Self-healing: if width is not measured yet, try to measure it
     if (trackWidthRef.current <= 0 && trackRef.current) {
@@ -229,29 +345,144 @@ export default function WorkVideoEditor() {
     };
   }, [scrollYProgress, dragX]);
 
-  // ─── 3D Mode Layout Calculations (Scrub Aligns Layers) ───
-  const layer1Z = useTransform(dragProgress, [0, 1], [-300, 0]);
-  const layer1RotateX = useTransform(dragProgress, [0, 1], [30, 0]);
-  const layer1RotateY = useTransform(dragProgress, [0, 1], [-30, 0]);
+  // Synchronize new video loaded with the current scrub progress
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.load();
+      const handleMetadata = () => {
+        if (!videoRef.current) return;
+        const duration = videoRef.current.duration || FAKE_DURATION;
+        videoRef.current.currentTime = dragProgress.get() * duration;
+      };
+      videoRef.current.addEventListener("loadedmetadata", handleMetadata);
+      return () => {
+        videoRef.current?.removeEventListener("loadedmetadata", handleMetadata);
+      };
+    }
+  }, [activeAsset]);
 
-  const layer2Z = useTransform(dragProgress, [0, 1], [-100, 0]);
-  const layer2RotateX = useTransform(dragProgress, [0, 1], [-20, 0]);
-  const layer2RotateY = useTransform(dragProgress, [0, 1], [20, 0]);
+  // Handle video playback loop to update playhead position
+  useEffect(() => {
+    let frameId: number;
+    const updatePlayheadFromVideo = () => {
+      if (videoRef.current && isPlaying && !isDraggingRef.current && trackWidthRef.current > 0) {
+        const duration = videoRef.current.duration || FAKE_DURATION;
+        const percent = videoRef.current.currentTime / duration;
+        dragX.set(percent * trackWidthRef.current);
+      }
+      if (isPlaying) {
+        frameId = requestAnimationFrame(updatePlayheadFromVideo);
+      }
+    };
+    if (isPlaying) {
+      frameId = requestAnimationFrame(updatePlayheadFromVideo);
+    }
+    return () => cancelAnimationFrame(frameId);
+  }, [isPlaying, dragX]);
 
-  const layer3Z = useTransform(dragProgress, [0, 1], [100, 0]);
-  const layer3RotateX = useTransform(dragProgress, [0, 1], [20, 0]);
-  const layer3RotateY = useTransform(dragProgress, [0, 1], [-20, 0]);
+  // Handle video ended event to reset play status
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    
+    const handleEnded = () => {
+      setIsPlaying(false);
+      dragX.set(0);
+    };
+    
+    video.addEventListener("ended", handleEnded);
+    return () => {
+      video.removeEventListener("ended", handleEnded);
+    };
+  }, [dragX]);
 
-  const layer4Z = useTransform(dragProgress, [0, 1], [250, 0]);
-  const layer4RotateX = useTransform(dragProgress, [0, 1], [-30, 0]);
-  const layer4RotateY = useTransform(dragProgress, [0, 1], [30, 0]);
+  // ─── 3D Mode Layout Calculations (Smoothly Morphs between 2D & 3D) ───
+  const modeAnim = useMotionValue(0);
+  const autoRotateYVal = useMotionValue(0);
+  const autoRotateXVal = useMotionValue(0);
+  
+  useEffect(() => {
+    const controls = animate(modeAnim, is3DMode ? 1 : 0, {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1]
+    });
+    return () => controls.stop();
+  }, [is3DMode, modeAnim]);
 
-  // Viewport camera rotation for depth
-  const sceneRotateY = useTransform(dragProgress, [0, 1], [25, -5]);
-  const sceneRotateX = useTransform(dragProgress, [0, 1], [15, -2]);
-  const sceneScale = useTransform(dragProgress, [0, 1], [0.65, 0.95]);
+  // Auto-orbit animation for 3D mode — gentle sine-wave camera drift
+  useEffect(() => {
+    if (!is3DMode) {
+      autoRotateYVal.set(0);
+      autoRotateXVal.set(0);
+      return;
+    }
+    let frameId: number;
+    const startTime = performance.now();
+    const tick = () => {
+      const elapsed = (performance.now() - startTime) / 1000;
+      autoRotateYVal.set(Math.sin(elapsed * 0.25) * 8);
+      autoRotateXVal.set(Math.sin(elapsed * 0.18) * 3);
+      frameId = requestAnimationFrame(tick);
+    };
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [is3DMode, autoRotateYVal, autoRotateXVal]);
 
-  const masterGlowOpacity = useTransform(dragProgress, [0.85, 1], [0, 0.7]);
+  // Multiplied by modeAnim for smooth 2D/3D morphing transition!
+  const layer1Z = useTransform([dragProgress, modeAnim], ([p, m]) => {
+    const parallaxP = Math.pow(p as number, 1.3);
+    const target3D = -300 + parallaxP * 300;
+    return target3D * (m as number);
+  });
+  
+  const layer2Z = useTransform([dragProgress, modeAnim], ([p, m]) => {
+    const parallaxP = Math.pow(p as number, 1.1);
+    const target3D = -100 + parallaxP * 100;
+    return target3D * (m as number);
+  });
+  
+  const layer3Z = useTransform([dragProgress, modeAnim], ([p, m]) => {
+    const parallaxP = Math.pow(p as number, 0.9);
+    const target3D = 100 - parallaxP * 100;
+    return target3D * (m as number);
+  });
+  
+  const layer4Z = useTransform([dragProgress, modeAnim], ([p, m]) => {
+    const parallaxP = Math.pow(p as number, 0.7);
+    const target3D = 250 - parallaxP * 250;
+    return target3D * (m as number);
+  });
+
+  // Rotations (with matching parallax timing)
+  const layer1RotateX = useTransform([dragProgress, modeAnim], ([p, m]) => (30 * (1 - Math.pow(p as number, 1.3))) * (m as number));
+  const layer1RotateY = useTransform([dragProgress, modeAnim], ([p, m]) => (-30 * (1 - Math.pow(p as number, 1.3))) * (m as number));
+
+  const layer2RotateX = useTransform([dragProgress, modeAnim], ([p, m]) => (-20 * (1 - Math.pow(p as number, 1.1))) * (m as number));
+  const layer2RotateY = useTransform([dragProgress, modeAnim], ([p, m]) => (20 * (1 - Math.pow(p as number, 1.1))) * (m as number));
+
+  const layer3RotateX = useTransform([dragProgress, modeAnim], ([p, m]) => (20 * (1 - Math.pow(p as number, 0.9))) * (m as number));
+  const layer3RotateY = useTransform([dragProgress, modeAnim], ([p, m]) => (-20 * (1 - Math.pow(p as number, 0.9))) * (m as number));
+
+  const layer4RotateX = useTransform([dragProgress, modeAnim], ([p, m]) => (-30 * (1 - Math.pow(p as number, 0.7))) * (m as number));
+  const layer4RotateY = useTransform([dragProgress, modeAnim], ([p, m]) => (30 * (1 - Math.pow(p as number, 0.7))) * (m as number));
+
+  // Scene cameras
+  const sceneRotateY = useTransform([dragProgress, modeAnim, autoRotateYVal], ([p, m, auto]) => ((25 - (p as number) * 30) + (auto as number)) * (m as number));
+  const sceneRotateX = useTransform([dragProgress, modeAnim, autoRotateXVal], ([p, m, auto]) => ((15 - (p as number) * 17) + (auto as number)) * (m as number));
+  const sceneScale = useTransform([dragProgress, modeAnim], ([p, m]) => {
+    const flatScale = 1.0;
+    const target3D = 0.65 + (p as number) * 0.30;
+    return flatScale + (target3D - flatScale) * (m as number);
+  });
+
+  // Viewport helper opacity bindings
+  const layer2Opacity = useTransform(modeAnim, [0, 1], [0, 1]);
+  const layer3Opacity = useTransform(modeAnim, [0, 1], [0, 1]);
+  const layer1Opacity = useTransform(modeAnim, [0, 1], [1, 0.7]);
+  const masterGlowOpacity = useTransform([dragProgress, modeAnim], ([p, m]) => {
+    const val = (p as number) > 0.85 ? ((p as number) - 0.85) / 0.15 : 0;
+    return val * 0.7 * (m as number);
+  });
 
   const handleTrackClick = (e: React.MouseEvent) => {
     if (!trackRef.current) return;
@@ -270,6 +501,19 @@ export default function WorkVideoEditor() {
     setActiveAsset(asset);
   };
 
+  const handlePlayPause = () => {
+    if (!videoRef.current) return;
+    uiSounds.playClick();
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(err => console.log("Video Playback failed:", err));
+    }
+  };
+
   return (
     <section ref={containerRef} id="work" className="relative w-full h-[280vh] bg-[#040406]">
       {/* Pinned Sticky Workspace */}
@@ -277,18 +521,18 @@ export default function WorkVideoEditor() {
         
         {/* Main Editor UI Frame */}
         <motion.div 
-          style={{ scale: editorScale, opacity: editorOpacity }}
-          className="w-full max-w-[1580px] h-[92vh] max-h-[820px] bg-[#07080c] border border-white/10 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden text-[#e2e8f0] font-sans ring-1 ring-white/5 z-10 select-none"
+          style={{ 
+            scale: editorScale, 
+            opacity: editorOpacity,
+            backgroundColor: containerBg,
+            borderColor: containerBorder,
+            boxShadow: containerShadow 
+          }}
+          className="w-full max-w-[1580px] h-[92vh] max-h-[820px] rounded-2xl flex flex-col overflow-hidden text-[#e2e8f0] font-sans z-10 select-none border"
         >
           {/* 1. Header Bar */}
-          <header className="h-11 bg-[#0a0c10] border-b border-white/5 flex items-center justify-between px-4 md:px-5 shrink-0">
+          <motion.header style={{ y: panelYTop, opacity: panelOpTop }} className="h-11 bg-[#0a0c10] border-b border-white/5 flex items-center justify-between px-4 md:px-5 shrink-0 z-20">
             <div className="flex items-center gap-4">
-              {/* Logo */}
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIs3DMode(!is3DMode)}>
-                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
-                <span className="font-heading font-black text-xs tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400">NEXUS EDIT</span>
-              </div>
-              <div className="h-3 w-px bg-white/10 hidden sm:block" />
               {/* Menu Tabs */}
               <nav className="flex items-center gap-1 sm:gap-2 h-full text-[10px] sm:text-xs font-mono font-medium text-zinc-400">
                 {["EDIT", "COLOR", "EFFECTS", "AUDIO", "EXPORT"].map(tab => (
@@ -320,13 +564,13 @@ export default function WorkVideoEditor() {
                 60 FPS
               </div>
             </div>
-          </header>
+          </motion.header>
 
           {/* 2. Main Work Area (Three Column Grid) */}
           <div className="flex-1 flex min-h-0 relative overflow-hidden bg-[#050608]">
             
             {/* Left Column: Project/Media Bin */}
-            <aside className="w-[280px] border-r border-white/5 bg-[#090b0f] flex flex-col min-h-0 shrink-0 hidden lg:flex">
+            <motion.aside style={{ x: panelXLeft, opacity: panelOpSide }} className="w-[280px] border-r border-white/5 bg-[#090b0f] flex flex-col min-h-0 shrink-0 hidden lg:flex z-20">
               {/* Folder list toolbar */}
               <div className="p-3 border-b border-white/5 flex items-center justify-between shrink-0">
                 <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-400 uppercase">PROJECT BIN</span>
@@ -431,10 +675,10 @@ export default function WorkVideoEditor() {
                   )}
                 </div>
               </div>
-            </aside>
+            </motion.aside>
 
             {/* Middle Column: Program Monitor */}
-            <main className="flex-1 flex flex-col min-h-0 bg-[#050608] relative">
+            <motion.main style={{ backgroundColor: centerBg }} className="flex-1 flex flex-col min-h-0 relative z-10">
               {/* Monitor Title */}
               <div className="h-8 bg-[#090b10] border-b border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[10px] text-zinc-400">
                 <span className="font-bold text-zinc-200">SEQUENCE 01: MASTERPIECE</span>
@@ -443,150 +687,109 @@ export default function WorkVideoEditor() {
 
               {/* Viewport Box */}
               <div className="flex-1 relative flex items-center justify-center p-4 bg-black overflow-hidden perspective-[1200px]">
-                {/* 3D Mode Canvas Wrapper */}
+                {/* 3D Morphing Viewport Canvas */}
                 <div 
-                  className="relative w-full aspect-video max-w-[800px] border border-white/10 bg-[#040405] rounded-xl overflow-hidden shadow-2xl transition-all duration-700 ease-smooth"
+                  className="relative w-full aspect-video max-w-[800px] border border-white/10 bg-[#040405] rounded-xl overflow-hidden shadow-2xl"
                   style={{
-                    transform: is3DMode ? "rotateY(16deg) rotateX(10deg) translateZ(10px)" : "none",
                     boxShadow: is3DMode ? "0 30px 60px rgba(0,255,255,0.06), 0 0 100px rgba(0,0,0,0.8)" : "0 10px 40px rgba(0,0,0,0.8)"
                   }}
                 >
-                  {!is3DMode ? (
-                    // ─── 2D Flat Program Monitor Preview ───
-                    <div className="relative w-full h-full bg-[#050507] flex items-center justify-center overflow-hidden">
-                      <Image
-                        src={activeAsset.path}
-                        alt={activeAsset.name}
-                        fill
-                        priority
-                        className="object-cover opacity-90 transition-transform duration-100"
-                        style={{
-                          // Subtle scale animation driven by dragProgress
-                          scale: 1 + (dragProgress.get() * 0.10)
-                        }}
-                      />
-                      
-                      {/* Viewfinder Rule of Thirds */}
-                      <div className="absolute inset-0 opacity-15 pointer-events-none">
-                        <div className="w-full h-px bg-white/40 absolute top-1/3" />
-                        <div className="w-full h-px bg-white/40 absolute top-2/3" />
-                        <div className="w-px h-full bg-white/40 absolute left-1/3" />
-                        <div className="w-px h-full bg-white/40 absolute left-2/3" />
+                  <motion.div 
+                    style={{ 
+                      rotateX: sceneRotateX, 
+                      rotateY: sceneRotateY, 
+                      scale: sceneScale, 
+                      transformStyle: "preserve-3d" 
+                    }}
+                    className="relative w-full h-full flex items-center justify-center"
+                  >
+                    {/* Layer 1: Raw Footage Video Panel (Mounted always to preserve playback scrub) */}
+                    <motion.div 
+                      style={{ z: layer1Z, rotateX: layer1RotateX, rotateY: layer1RotateY, opacity: layer1Opacity, transformStyle: "preserve-3d" }}
+                      className="absolute inset-0 z-10"
+                    >
+                      <div className="absolute inset-0 rounded-xl border border-white/10 bg-[#070709] overflow-hidden">
+                        <video 
+                          ref={videoRef} 
+                          src={activeAsset.videoUrl} 
+                          className="w-full h-full object-cover" 
+                          muted 
+                          playsInline 
+                          preload="auto"
+                          loop
+                        />
                       </div>
-                      
-                      {/* Viewfinder brackets */}
-                      <div className="absolute inset-4 pointer-events-none opacity-40">
-                        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white" />
-                        <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-white" />
-                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-white" />
-                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white" />
+                    </motion.div>
+
+                    {/* Layer 2: Color LUT Diagnostic Panel (Fades in 3D mode) */}
+                    <motion.div 
+                      style={{ z: layer2Z, rotateX: layer2RotateX, rotateY: layer2RotateY, opacity: layer2Opacity, transformStyle: "preserve-3d" }}
+                      className="absolute inset-0 z-20 pointer-events-none"
+                    >
+                      <div className="absolute inset-0 rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-transparent mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.12)]">
+                        <div className="flex justify-between items-center opacity-50">
+                          <span className="font-mono text-purple-400 text-[8px] tracking-widest bg-purple-500/10 px-2 py-0.5 rounded">COLOR_LUT_CINEMATIC [V3]</span>
+                          <span className="font-mono text-purple-300 text-[8px]">REC.709 → DCI-P3</span>
+                        </div>
+                        <div className="flex justify-between items-end opacity-50">
+                          <span className="font-mono text-purple-400 text-[8px]">SAT: 110%</span>
+                          <span className="font-mono text-purple-400 text-[8px]">5600K</span>
+                        </div>
                       </div>
-                      
-                      {/* MASTERPIECE Text Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <h1 className="font-heading text-[clamp(22px,4.5vw,52px)] text-white font-black opacity-95 tracking-widest text-center select-none uppercase drop-shadow-[0_0_20px_rgba(255,255,255,0.45)]">
+                    </motion.div>
+
+                    {/* Layer 3: VFX & Glow Diagnostic Panel (Fades in 3D mode) */}
+                    <motion.div 
+                      style={{ z: layer3Z, rotateX: layer3RotateX, rotateY: layer3RotateY, opacity: layer3Opacity, transformStyle: "preserve-3d" }}
+                      className="absolute inset-0 z-30 pointer-events-none"
+                    >
+                      <div className="absolute inset-0 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.01] mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.12)]">
+                        <div className="flex justify-between items-center opacity-50">
+                          <span className="font-mono text-cyan-400 text-[8px] tracking-widest bg-cyan-500/10 px-2 py-0.5 rounded">VFX_OPTICAL_GLOW [V2]</span>
+                          <span className="font-mono text-cyan-300 text-[8px]">THR: 0.25</span>
+                        </div>
+                        <div className="absolute top-[30%] left-[25%] flex flex-col items-center gap-0.5 opacity-40">
+                          <div className="w-5 h-5 border border-cyan-400 rounded-sm relative flex items-center justify-center">
+                            <div className="w-0.5 h-0.5 bg-cyan-400 rounded-full" />
+                          </div>
+                          <span className="font-mono text-[6px] text-cyan-400">TRACKPOINT_01</span>
+                        </div>
+                        <div className="flex justify-between items-end opacity-50">
+                          <span className="font-mono text-cyan-400 text-[8px]">VFX COMPOSITE</span>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Layer 4: Typography & Guides Overlay Panel (Visible in both modes) */}
+                    <motion.div 
+                      style={{ z: layer4Z, rotateX: layer4RotateX, rotateY: layer4RotateY, transformStyle: "preserve-3d" }}
+                      className="absolute inset-0 z-40 pointer-events-none"
+                    >
+                      <div className="absolute inset-0 rounded-xl border border-white/15 bg-white/[0.005] flex flex-col justify-between p-4 overflow-hidden">
+                        {/* Camera metadata tags */}
+                        <div className="flex justify-between items-center opacity-70">
+                          <span className="font-mono text-white text-[8px] tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.camera}</span>
+                          <span className="font-mono text-white/50 text-[8px] tracking-widest bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.iso}</span>
+                        </div>
+
+                        {/* Title text */}
+                        <h1 className="font-heading text-[clamp(18px,2.8vw,36px)] text-white font-black opacity-95 tracking-widest text-center select-none uppercase drop-shadow-[0_0_20px_rgba(255,255,255,0.45)]">
                           MASTERPIECE
                         </h1>
+                        
+                        <div className="flex justify-between items-end opacity-60">
+                          <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">REC.709 / CINEMATIC</span>
+                          <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">V4_OVERLAY</span>
+                        </div>
                       </div>
-
-                      {/* Cyber VFX Optical Glow effect */}
-                      <div 
-                        className="absolute inset-0 bg-cyan-500/[0.03] mix-blend-screen pointer-events-none"
-                        style={{
-                          opacity: 0.1 + dragProgress.get() * 0.9
-                        }}
-                      />
-
-                      {/* Camera Info HUD */}
-                      <div className="absolute top-3 left-4 flex gap-2 z-10 select-none">
-                        <span className="font-mono text-white/50 text-[8px] tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.camera}</span>
-                      </div>
-                      <div className="absolute bottom-3 left-4 flex gap-2 z-10 select-none">
-                        <span className="font-mono text-white/40 text-[8px] tracking-wider bg-black/60 px-2 py-0.5 rounded border border-white/5">REC.709 / CINEMATIC</span>
-                      </div>
-                    </div>
-                  ) : (
-                    // ─── 3D Diagnostic Mode (Deconstructed Layers) ───
-                    <motion.div 
-                      style={{ rotateX: sceneRotateX, rotateY: sceneRotateY, scale: sceneScale, transformStyle: "preserve-3d" }}
-                      className="relative w-full h-full flex items-center justify-center"
-                    >
-                      {/* Layer 1: Raw Footage */}
-                      <motion.div 
-                        style={{ z: layer1Z, rotateX: layer1RotateX, rotateY: layer1RotateY, transformStyle: "preserve-3d" }}
-                        className="absolute inset-0 pointer-events-none"
-                      >
-                        <div className="absolute inset-0 rounded-xl border border-white/10 bg-[#070709] flex flex-col justify-between p-4 overflow-hidden shadow-2xl">
-                          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.01)_50%,transparent_75%)] bg-[size:12px_12px]" />
-                          <Image src={activeAsset.path} alt={activeAsset.name} fill className="object-cover opacity-50" />
-                          <div className="flex justify-between items-center z-10">
-                            <span className="font-mono text-white/60 text-[8px] tracking-widest uppercase bg-white/5 px-2 py-0.5 rounded">{activeAsset.name}</span>
-                            <span className="font-mono text-white/50 text-[8px] tracking-widest">{activeAsset.iso}</span>
-                          </div>
-                          <span className="font-mono text-white/50 text-[8px] z-10">RAW_FOOTAGE [V1]</span>
-                        </div>
-                      </motion.div>
-
-                      {/* Layer 2: Color LUT */}
-                      <motion.div 
-                        style={{ z: layer2Z, rotateX: layer2RotateX, rotateY: layer2RotateY, transformStyle: "preserve-3d" }}
-                        className="absolute inset-0 pointer-events-none"
-                      >
-                        <div className="absolute inset-0 rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-transparent mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.12)]">
-                          <div className="flex justify-between items-center opacity-50">
-                            <span className="font-mono text-purple-400 text-[8px] tracking-widest bg-purple-500/10 px-2 py-0.5 rounded">COLOR_LUT_CINEMATIC [V3]</span>
-                            <span className="font-mono text-purple-300 text-[8px]">REC.709 → DCI-P3</span>
-                          </div>
-                          <div className="flex justify-between items-end opacity-50">
-                            <span className="font-mono text-purple-400 text-[8px]">SAT: 110%</span>
-                            <span className="font-mono text-purple-400 text-[8px]">5600K</span>
-                          </div>
-                        </div>
-                      </motion.div>
-
-                      {/* Layer 3: VFX & Glow */}
-                      <motion.div 
-                        style={{ z: layer3Z, rotateX: layer3RotateX, rotateY: layer3RotateY, transformStyle: "preserve-3d" }}
-                        className="absolute inset-0 pointer-events-none"
-                      >
-                        <div className="absolute inset-0 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.01] mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.12)]">
-                          <div className="flex justify-between items-center opacity-50">
-                            <span className="font-mono text-cyan-400 text-[8px] tracking-widest bg-cyan-500/10 px-2 py-0.5 rounded">VFX_OPTICAL_GLOW [V2]</span>
-                            <span className="font-mono text-cyan-300 text-[8px]">THR: 0.25</span>
-                          </div>
-                          <div className="absolute top-[30%] left-[25%] flex flex-col items-center gap-0.5 opacity-40">
-                            <div className="w-5 h-5 border border-cyan-400 rounded-sm relative flex items-center justify-center">
-                              <div className="w-0.5 h-0.5 bg-cyan-400 rounded-full" />
-                            </div>
-                            <span className="font-mono text-[6px] text-cyan-400">TRACKPOINT_01</span>
-                          </div>
-                          <div className="flex justify-between items-end opacity-50">
-                            <span className="font-mono text-cyan-400 text-[8px]">VFX COMPOSITE</span>
-                          </div>
-                        </div>
-                      </motion.div>
-
-                      {/* Layer 4: Typography Overlay */}
-                      <motion.div 
-                        style={{ z: layer4Z, rotateX: layer4RotateX, rotateY: layer4RotateY, transformStyle: "preserve-3d" }}
-                        className="absolute inset-0 pointer-events-none"
-                      >
-                        <div className="absolute inset-0 rounded-xl border border-white/15 bg-white/[0.005] flex flex-col justify-between p-4 overflow-hidden">
-                          <span className="font-mono text-white text-[8px] tracking-widest uppercase bg-white/10 px-2 py-0.5 rounded opacity-65">TEXT_OVERLAY [V4]</span>
-                          <h1 className="font-heading text-[clamp(16px,2.5vw,38px)] text-white font-black opacity-95 tracking-widest text-center select-none uppercase drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-                            MASTERPIECE
-                          </h1>
-                          <span className="font-mono text-white/50 text-[8px] opacity-65">OPACITY: 95%</span>
-                        </div>
-                      </motion.div>
-
-                      {/* Alignment Flash */}
-                      <motion.div 
-                        style={{ opacity: masterGlowOpacity }}
-                        className="absolute inset-0 bg-white/10 shadow-[0_0_100px_rgba(255,255,255,0.3)] rounded-xl pointer-events-none mix-blend-overlay"
-                      />
                     </motion.div>
-                  )}
+
+                    {/* Alignment Flash */}
+                    <motion.div 
+                      style={{ opacity: masterGlowOpacity }}
+                      className="absolute inset-0 bg-white/10 shadow-[0_0_100px_rgba(255,255,255,0.3)] rounded-xl pointer-events-none mix-blend-overlay z-50"
+                    />
+                  </motion.div>
                 </div>
               </div>
 
@@ -606,9 +809,14 @@ export default function WorkVideoEditor() {
                 {/* Video controls */}
                 <div className="flex items-center gap-4 text-zinc-400">
                   <button className="hover:text-white transition-colors" onClick={() => dragX.set(0)}><Play className="w-3.5 h-3.5 rotate-180" /></button>
-                  <button className="hover:text-white transition-colors" onClick={() => dragX.set(Math.max(0, dragX.get() - 40))}><Pause className="w-3.5 h-3.5" /></button>
-                  <button className="w-7 h-7 bg-white/5 border border-white/10 text-cyan-400 rounded-full flex items-center justify-center hover:bg-white/10 hover:border-cyan-500/25 transition-all"><Play className="w-3 h-3 fill-cyan-400 text-cyan-400" /></button>
-                  <button className="hover:text-white transition-colors" onClick={() => dragX.set(Math.min(trackWidthRef.current, dragX.get() + 40))}><Play className="w-3.5 h-3.5" /></button>
+                  <button className="hover:text-white transition-colors" onClick={() => {if(videoRef.current){videoRef.current.currentTime=Math.max(0, videoRef.current.currentTime-2);}}}><Pause className="w-3.5 h-3.5" /></button>
+                  <button 
+                    onClick={handlePlayPause}
+                    className={`w-7 h-7 border rounded-full flex items-center justify-center hover:bg-white/10 hover:border-cyan-500/25 transition-all ${isPlaying ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400" : "bg-white/5 border-white/10 text-cyan-400"}`}
+                  >
+                    {isPlaying ? <Pause className="w-3 h-3 fill-cyan-400 text-cyan-400" /> : <Play className="w-3 h-3 fill-cyan-400 text-cyan-400 ml-0.5" />}
+                  </button>
+                  <button className="hover:text-white transition-colors" onClick={() => {if(videoRef.current){videoRef.current.currentTime=Math.min(videoRef.current.duration, videoRef.current.currentTime+2);}}}><Play className="w-3.5 h-3.5" /></button>
                 </div>
 
                 {/* Right controls */}
@@ -619,9 +827,9 @@ export default function WorkVideoEditor() {
                       uiSounds.playClick();
                       setIs3DMode(!is3DMode);
                     }}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[9px] font-bold transition-all ${is3DMode ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400 font-bold" : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"}`}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[9px] font-bold transition-all ${is3DMode ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400 font-bold animate-pulse" : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"}`}
                   >
-                    <Activity className={`w-3 h-3 ${is3DMode ? "animate-pulse" : ""}`} />
+                    <Activity className="w-3 h-3" />
                     <span>3D MODE</span>
                   </button>
                   <div className="w-px h-3 bg-white/10" />
@@ -632,10 +840,10 @@ export default function WorkVideoEditor() {
                   <Maximize2 className="w-3.5 h-3.5 hover:text-white cursor-pointer ml-1" />
                 </div>
               </div>
-            </main>
+            </motion.main>
 
             {/* Right Column: Effect Controls */}
-            <aside className="w-[320px] border-l border-white/5 bg-[#090b0f] flex flex-col min-h-0 shrink-0 hidden lg:flex font-mono text-[10px]">
+            <motion.aside style={{ x: panelXRight, opacity: panelOpSide }} className="w-[320px] border-l border-white/5 bg-[#090b0f] flex flex-col min-h-0 shrink-0 hidden lg:flex font-mono text-[10px] z-20">
               <div className="p-3 border-b border-white/5 flex items-center justify-between shrink-0">
                 <span className="font-bold tracking-widest text-zinc-400 uppercase">EFFECT CONTROLS</span>
                 <Sliders className="w-3.5 h-3.5 text-zinc-500" />
@@ -717,11 +925,11 @@ export default function WorkVideoEditor() {
                   </div>
                 </div>
               </div>
-            </aside>
+            </motion.aside>
           </div>
 
           {/* 3. Timeline Area (Bottom Panel) */}
-          <footer className="h-[260px] bg-[#090b0f] border-t border-white/5 flex flex-col shrink-0">
+          <motion.footer style={{ y: panelYBottom, opacity: panelOpBottom }} className="h-[260px] bg-[#090b0f] border-t border-white/5 flex flex-col shrink-0 z-20">
             {/* Timeline Toolbar & Ruler Header */}
             <div className="h-10 bg-[#090b10] border-b border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[10px] text-zinc-500">
               <div className="flex items-center gap-4">
@@ -848,31 +1056,85 @@ export default function WorkVideoEditor() {
                   {/* V3 Track Clip */}
                   <div className="h-[32px] border-b border-white/5 relative flex items-center">
                     <div 
-                      className="absolute left-[15%] right-[60%] h-[22px] bg-purple-500/20 border border-purple-400/30 hover:bg-purple-500/30 rounded cursor-pointer shadow-[0_0_10px_rgba(168,85,247,0.15)] flex items-center px-2 transition-all"
-                      style={{ opacity: trackStates.V3.visible ? 1 : 0.2 }}
+                      className={`absolute h-[22px] rounded flex items-center transition-shadow duration-150 select-none group/clip ${
+                        draggingClip === 'V3' 
+                          ? 'z-30 shadow-[0_0_25px_rgba(168,85,247,0.5)] bg-purple-500/35 border border-purple-300/60 cursor-grabbing' 
+                          : 'shadow-[0_0_10px_rgba(168,85,247,0.15)] bg-purple-500/20 border border-purple-400/30 hover:bg-purple-500/30 cursor-grab'
+                      }`}
+                      style={{ 
+                        left: `${clipPositions.V3.left}%`, 
+                        width: `${clipPositions.V3.width}%`,
+                        opacity: trackStates.V3.visible ? 1 : 0.2 
+                      }}
+                      onPointerDown={(e) => handleClipDrag('V3', e)}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="text-[9px] font-mono text-purple-200 font-bold truncate">COLOR_GRADE.cube</span>
+                      <div 
+                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-purple-400/50 group-hover/clip:bg-purple-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('V3', 'left', e)}
+                      />
+                      <span className="text-[9px] font-mono text-purple-200 font-bold truncate px-3 pointer-events-none">COLOR_GRADE.cube</span>
+                      <div 
+                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-10 hover:bg-purple-400/50 group-hover/clip:bg-purple-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('V3', 'right', e)}
+                      />
                     </div>
                   </div>
                   
                   {/* V2 Track Clip */}
                   <div className="h-[32px] border-b border-white/5 relative flex items-center">
                     <div 
-                      className="absolute left-[20%] right-[30%] h-[22px] bg-blue-500/20 border border-blue-400/30 hover:bg-blue-500/30 rounded cursor-pointer shadow-[0_0_10px_rgba(59,130,246,0.15)] flex items-center px-2 transition-all"
-                      style={{ opacity: trackStates.V2.visible ? 1 : 0.2 }}
+                      className={`absolute h-[22px] rounded flex items-center transition-shadow duration-150 select-none group/clip ${
+                        draggingClip === 'V2' 
+                          ? 'z-30 shadow-[0_0_25px_rgba(59,130,246,0.5)] bg-blue-500/35 border border-blue-300/60 cursor-grabbing' 
+                          : 'shadow-[0_0_10px_rgba(59,130,246,0.15)] bg-blue-500/20 border border-blue-400/30 hover:bg-blue-500/30 cursor-grab'
+                      }`}
+                      style={{ 
+                        left: `${clipPositions.V2.left}%`, 
+                        width: `${clipPositions.V2.width}%`,
+                        opacity: trackStates.V2.visible ? 1 : 0.2 
+                      }}
+                      onPointerDown={(e) => handleClipDrag('V2', e)}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="text-[9px] font-mono text-blue-200 font-bold truncate">OVERLAY_TEXT.png</span>
+                      <div 
+                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-blue-400/50 group-hover/clip:bg-blue-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('V2', 'left', e)}
+                      />
+                      <span className="text-[9px] font-mono text-blue-200 font-bold truncate px-3 pointer-events-none">OVERLAY_TEXT.png</span>
+                      <div 
+                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-10 hover:bg-blue-400/50 group-hover/clip:bg-blue-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('V2', 'right', e)}
+                      />
                     </div>
                   </div>
                   
                   {/* V1 Video Track Clip */}
                   <div className="h-[32px] border-b border-white/5 relative flex items-center bg-white/[0.01]">
                     <div 
-                      className="absolute left-[5%] right-[5%] h-[22px] bg-cyan-600/30 border border-cyan-400/40 hover:bg-cyan-600/45 rounded cursor-pointer shadow-[0_0_12px_rgba(34,211,238,0.2)] flex items-center overflow-hidden transition-all"
-                      style={{ opacity: trackStates.V1.visible ? 1 : 0.2 }}
+                      className={`absolute h-[22px] rounded flex items-center overflow-hidden transition-shadow duration-150 select-none group/clip ${
+                        draggingClip === 'V1' 
+                          ? 'z-30 shadow-[0_0_25px_rgba(34,211,238,0.5)] bg-cyan-600/45 border border-cyan-300/60 cursor-grabbing' 
+                          : 'shadow-[0_0_12px_rgba(34,211,238,0.2)] bg-cyan-600/30 border border-cyan-400/40 hover:bg-cyan-600/45 cursor-grab'
+                      }`}
+                      style={{ 
+                        left: `${clipPositions.V1.left}%`, 
+                        width: `${clipPositions.V1.width}%`,
+                        opacity: trackStates.V1.visible ? 1 : 0.2 
+                      }}
+                      onPointerDown={(e) => handleClipDrag('V1', e)}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="relative h-full aspect-video opacity-45 border-r border-white/10 shrink-0"><Image src={activeAsset.path} alt={activeAsset.name} fill className="object-cover" /></div>
-                      <span className="ml-2.5 text-[9px] font-mono text-cyan-200 font-bold truncate">{activeAsset.name} [V]</span>
+                      <div 
+                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-20 hover:bg-cyan-400/50 group-hover/clip:bg-cyan-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('V1', 'left', e)}
+                      />
+                      <div className="relative h-full aspect-video opacity-45 border-r border-white/10 shrink-0 pointer-events-none"><Image src={activeAsset.path} alt={activeAsset.name} fill className="object-cover" /></div>
+                      <span className="ml-2.5 text-[9px] font-mono text-cyan-200 font-bold truncate pointer-events-none">{activeAsset.name} [V]</span>
+                      <div 
+                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-20 hover:bg-cyan-400/50 group-hover/clip:bg-cyan-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('V1', 'right', e)}
+                      />
                     </div>
                   </div>
                   
@@ -881,46 +1143,100 @@ export default function WorkVideoEditor() {
                   {/* A1 Audio Track Clip */}
                   <div className="h-[36px] border-b border-white/5 relative flex items-center bg-white/[0.01]">
                     <div 
-                      className="absolute left-[5%] right-[5%] h-[26px] bg-green-600/25 border border-green-400/30 hover:bg-green-600/35 rounded cursor-pointer shadow-[0_0_10px_rgba(34,197,94,0.1)] flex flex-col justify-center px-2 relative overflow-hidden transition-all"
-                      style={{ opacity: trackStates.A1.muted ? 0.25 : 1 }}
+                      className={`absolute h-[26px] rounded flex flex-col justify-center overflow-hidden transition-shadow duration-150 select-none group/clip ${
+                        draggingClip === 'A1' 
+                          ? 'z-30 shadow-[0_0_25px_rgba(34,197,94,0.4)] bg-green-600/40 border border-green-300/50 cursor-grabbing' 
+                          : 'shadow-[0_0_10px_rgba(34,197,94,0.1)] bg-green-600/25 border border-green-400/30 hover:bg-green-600/35 cursor-grab'
+                      }`}
+                      style={{ 
+                        left: `${clipPositions.A1.left}%`, 
+                        width: `${clipPositions.A1.width}%`,
+                        opacity: trackStates.A1.muted ? 0.25 : 1 
+                      }}
+                      onPointerDown={(e) => handleClipDrag('A1', e)}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="text-[8.5px] font-mono text-green-200 font-bold truncate z-10">{activeAsset.name.replace(".mp4", "")}.wav [A]</span>
+                      <div 
+                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-green-400/50 group-hover/clip:bg-green-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('A1', 'left', e)}
+                      />
+                      <span className="text-[8.5px] font-mono text-green-200 font-bold truncate z-10 px-3 pointer-events-none">{activeAsset.name.replace(".mp4", "")}.wav [A]</span>
                       {/* Audio wave vectors */}
-                      <div className="absolute inset-x-2 bottom-1 h-3 opacity-30 flex items-end gap-[1px]">
+                      <div className="absolute inset-x-2 bottom-1 h-3 opacity-30 flex items-end gap-[1px] pointer-events-none">
                         {[2,6,12,8,16,14,4,6,18,22,12,6,10,14,8,4,12,18,14,8,12,16,10,4,8,14,18,6,2,6,12,8,16,14,4,6,18,22,12,6].map((h, i) => (
                           <div key={i} className="flex-1 bg-green-400 rounded-t" style={{ height: `${h * 0.4}px` }} />
                         ))}
                       </div>
+                      <div 
+                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-10 hover:bg-green-400/50 group-hover/clip:bg-green-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('A1', 'right', e)}
+                      />
                     </div>
                   </div>
 
                   {/* A2 Audio Track Clip */}
                   <div className="h-[36px] border-b border-white/5 relative flex items-center">
                     <div 
-                      className="absolute left-[20%] right-[60%] h-[26px] bg-emerald-600/20 border border-emerald-400/20 hover:bg-emerald-600/30 rounded cursor-pointer flex flex-col justify-center px-2 relative overflow-hidden transition-all"
-                      style={{ opacity: trackStates.A2.muted ? 0.25 : 1 }}
+                      className={`absolute h-[26px] rounded flex flex-col justify-center overflow-hidden transition-shadow duration-150 select-none group/clip ${
+                        draggingClip === 'A2' 
+                          ? 'z-30 shadow-[0_0_25px_rgba(52,211,153,0.4)] bg-emerald-600/35 border border-emerald-300/50 cursor-grabbing' 
+                          : 'bg-emerald-600/20 border border-emerald-400/20 hover:bg-emerald-600/30 cursor-grab'
+                      }`}
+                      style={{ 
+                        left: `${clipPositions.A2.left}%`, 
+                        width: `${clipPositions.A2.width}%`,
+                        opacity: trackStates.A2.muted ? 0.25 : 1 
+                      }}
+                      onPointerDown={(e) => handleClipDrag('A2', e)}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="text-[8px] font-mono text-emerald-300 font-bold truncate z-10">IMPACT_WHOOSH_01.wav</span>
-                      <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px]">
+                      <div 
+                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-emerald-400/50 group-hover/clip:bg-emerald-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('A2', 'left', e)}
+                      />
+                      <span className="text-[8px] font-mono text-emerald-300 font-bold truncate z-10 px-3 pointer-events-none">IMPACT_WHOOSH_01.wav</span>
+                      <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px] pointer-events-none">
                         {[2,8,4,12,8,2,6,10,14,4,2,8,12,6,2,6,10,4].map((h, i) => (
                           <div key={i} className="flex-1 bg-emerald-400 rounded-t" style={{ height: `${h * 0.5}px` }} />
                         ))}
                       </div>
+                      <div 
+                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-10 hover:bg-emerald-400/50 group-hover/clip:bg-emerald-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('A2', 'right', e)}
+                      />
                     </div>
                   </div>
 
                   {/* A3 Audio Track Clip */}
                   <div className="h-[36px] relative flex items-center">
                     <div 
-                      className="absolute left-[5%] right-[10%] h-[26px] bg-teal-700/20 border border-teal-500/20 hover:bg-teal-700/30 rounded cursor-pointer flex flex-col justify-center px-2 relative overflow-hidden transition-all"
-                      style={{ opacity: trackStates.A3.muted ? 0.25 : 1 }}
+                      className={`absolute h-[26px] rounded flex flex-col justify-center overflow-hidden transition-shadow duration-150 select-none group/clip ${
+                        draggingClip === 'A3' 
+                          ? 'z-30 shadow-[0_0_25px_rgba(20,184,166,0.4)] bg-teal-700/35 border border-teal-300/50 cursor-grabbing' 
+                          : 'bg-teal-700/20 border border-teal-500/20 hover:bg-teal-700/30 cursor-grab'
+                      }`}
+                      style={{ 
+                        left: `${clipPositions.A3.left}%`, 
+                        width: `${clipPositions.A3.width}%`,
+                        opacity: trackStates.A3.muted ? 0.25 : 1 
+                      }}
+                      onPointerDown={(e) => handleClipDrag('A3', e)}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="text-[8px] font-mono text-teal-300 font-bold truncate z-10">BACKGROUND_EPIC_BEAT.mp3</span>
-                      <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px]">
+                      <div 
+                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-teal-400/50 group-hover/clip:bg-teal-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('A3', 'left', e)}
+                      />
+                      <span className="text-[8px] font-mono text-teal-300 font-bold truncate z-10 px-3 pointer-events-none">BACKGROUND_EPIC_BEAT.mp3</span>
+                      <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px] pointer-events-none">
                         {[4,6,8,6,4,6,8,10,8,6,4,8,10,12,10,8,6,8,10,8,6,8,6,4,6,8,6,4,6,8,10,8,6,4,8,10,12].map((h, i) => (
                           <div key={i} className="flex-1 bg-teal-400 rounded-t" style={{ height: `${h * 0.5}px` }} />
                         ))}
                       </div>
+                      <div 
+                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-10 hover:bg-teal-400/50 group-hover/clip:bg-teal-400/20 transition-colors"
+                        onPointerDown={(e) => handleTrimDrag('A3', 'right', e)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -931,7 +1247,13 @@ export default function WorkVideoEditor() {
                   dragConstraints={{ left: 0, right: trackWidth || 2000 }}
                   dragElastic={0}
                   dragMomentum={false}
-                  onDragStart={() => { isDraggingRef.current = true; }}
+                  onDragStart={() => {
+                    isDraggingRef.current = true;
+                    if (videoRef.current && !videoRef.current.paused) {
+                      videoRef.current.pause();
+                      setIsPlaying(false);
+                    }
+                  }}
                   onDragEnd={() => { isDraggingRef.current = false; }}
                   style={{ x: dragX }}
                   className="absolute -top-10 bottom-0 w-8 -ml-[16px] z-40 cursor-ew-resize flex flex-col items-center pointer-events-auto group"
@@ -965,7 +1287,7 @@ export default function WorkVideoEditor() {
                 <div className="w-16 h-0.5 bg-zinc-800 rounded-full relative"><div className="absolute top-0 bottom-0 left-0 w-1/3 bg-cyan-400 rounded-full" /></div>
               </div>
             </div>
-          </footer>
+          </motion.footer>
         </motion.div>
       </div>
 

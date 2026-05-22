@@ -35,20 +35,9 @@ export default function WorkSetupWebsite() {
   // Add a spring to smooth out the mouse movement
   const springSplitX = useSpring(splitX, { stiffness: 100, damping: 20 });
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percentage = (x / rect.width) * 100;
-    
-    // Clamp between 10 and 90 to always show a bit of both sides
-    const clamped = Math.max(10, Math.min(90, percentage));
-    splitX.set(clamped);
-  };
-
   const handlePointerLeave = () => {
     setIsHovered(false);
-    // Return to center when mouse leaves
+    // Return to center when mouse leaves the whole section
     splitX.set(50);
   };
 
@@ -60,8 +49,7 @@ export default function WorkSetupWebsite() {
     <section 
       id="setup"
       ref={containerRef}
-      className="relative w-full h-screen min-h-[700px] overflow-hidden border-t border-white/5 cursor-crosshair bg-black"
-      onPointerMove={handlePointerMove}
+      className="relative w-full h-screen min-h-[700px] overflow-hidden border-t border-white/5 bg-black"
       onPointerLeave={handlePointerLeave}
       onPointerEnter={handlePointerEnter}
     >
@@ -78,8 +66,9 @@ export default function WorkSetupWebsite() {
       >
         {/* ─── LEFT PANEL (Setup & Build) ─── */}
         <motion.div 
-          className="absolute top-0 left-0 bottom-0 overflow-hidden bg-black z-10"
+          className="absolute top-0 left-0 bottom-0 overflow-hidden bg-black z-10 border-r border-white/10"
           style={{ width: useTransform(springSplitX, x => `${x}%`) }}
+          onMouseEnter={() => splitX.set(70)}
         >
           {/* Background Image */}
           <div className="absolute inset-0 w-[100vw] h-full pointer-events-none">
@@ -123,6 +112,7 @@ export default function WorkSetupWebsite() {
         <motion.div 
           className="absolute top-0 right-0 bottom-0 overflow-hidden bg-[#050505] z-0"
           style={{ width: useTransform(springSplitX, x => `${100 - x}%`) }}
+          onMouseEnter={() => splitX.set(30)}
         >
           {/* Background Image. Need to anchor it to the right so it doesn't move weirdly */}
           <div className="absolute inset-0 w-[100vw] h-full pointer-events-none" style={{ right: 0, left: 'auto' }}>
@@ -163,19 +153,13 @@ export default function WorkSetupWebsite() {
 
         {/* ─── Center Divider Line ─── */}
         <motion.div 
-          className="absolute top-0 w-1 bg-accent z-20 shadow-[0_0_20px_#ff4000] pointer-events-none flex items-center justify-center origin-top"
+          className="absolute top-0 w-px bg-white/20 z-20 pointer-events-none flex items-center justify-center origin-top"
           style={{ 
             left: useTransform(springSplitX, x => `${x}%`), 
             x: "-50%",
             height: dividerHeight
           }}
-        >
-          {/* Drag handle visual */}
-          <div className="w-8 h-16 bg-black border-2 border-accent rounded-full flex items-center justify-center gap-1 shadow-[0_0_15px_#ff4000]">
-            <div className="w-0.5 h-6 bg-accent" />
-            <div className="w-0.5 h-6 bg-accent" />
-          </div>
-        </motion.div>
+        />
       </motion.div>
 
       {/* Helper text overlay */}
