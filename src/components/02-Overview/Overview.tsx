@@ -9,7 +9,7 @@
 // Data: import từ data/overview.ts
 
 import { useRef, useEffect, useCallback } from "react";
-import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { overviewHeading } from "@/data/overview";
 
@@ -65,6 +65,90 @@ export default function Overview() {
     section.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => section.removeEventListener("mousemove", handleMouseMove);
   }, [handleMouseMove]);
+
+  // ─── Scroll-driven animations (section là 200vh, sticky viewport) ───
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Create smooth scroll spring values (smooth scroll progress)
+  const smoothScroll = useSpring(scrollYProgress, { damping: 25, stiffness: 50, mass: 0.8 });
+  const smoothScrollHero = useSpring(scrollYProgress, { damping: 22, stiffness: 65 });
+
+  // Hero zoom: scale 1 → 1.45, pivot tại vùng ngực/mặt
+  const heroImageScale = useTransform(smoothScrollHero, [0, 0.65], [1, 1.45]);
+  // Position the hero image dynamically: from original left-[32%] to center (left: 50%, translateX: -50%)
+  const heroLeft = useTransform(smoothScrollHero, [0, 0.65], ["32%", "50%"]);
+  const heroXOffset = useTransform(smoothScrollHero, [0, 0.65], ["0%", "-50%"]);
+  // Shift the hero image down slightly as it scales to prevent clipping the head
+  const heroYOffset = useTransform(smoothScrollHero, [0, 0.65], ["-42%", "-36%"]);
+
+  // Custom animations for 10-Video Curved 3D Carousel
+  // Sequential Y-axis slide up
+  const y1 = useTransform(smoothScroll, [0.00, 0.40], ["120vh", "0vh"]); // Center-most
+  const y2 = useTransform(smoothScroll, [0.05, 0.45], ["120vh", "0vh"]);
+  const y3 = useTransform(smoothScroll, [0.10, 0.50], ["120vh", "0vh"]);
+  const y4 = useTransform(smoothScroll, [0.15, 0.55], ["120vh", "0vh"]);
+  const y5 = useTransform(smoothScroll, [0.20, 0.60], ["120vh", "0vh"]); // Edge-most
+
+  // Depth (Z) - from -20 to -500
+  const z1 = useTransform(smoothScroll, [0, 0.65], [-150, -20]);
+  const z2 = useTransform(smoothScroll, [0, 0.65], [-200, -120]);
+  const z3 = useTransform(smoothScroll, [0, 0.65], [-300, -240]);
+  const z4 = useTransform(smoothScroll, [0, 0.65], [-400, -360]);
+  const z5 = useTransform(smoothScroll, [0, 0.65], [-500, -500]);
+
+  // RotY (L = positive, R = negative)
+  const lRot1 = useTransform(smoothScroll, [0.1, 0.65], [0, 10]);
+  const lRot2 = useTransform(smoothScroll, [0.1, 0.65], [0, 20]);
+  const lRot3 = useTransform(smoothScroll, [0.1, 0.65], [0, 32]);
+  const lRot4 = useTransform(smoothScroll, [0.1, 0.65], [0, 44]);
+  const lRot5 = useTransform(smoothScroll, [0.1, 0.65], [0, 56]);
+
+  const rRot1 = useTransform(smoothScroll, [0.1, 0.65], [0, -10]);
+  const rRot2 = useTransform(smoothScroll, [0.1, 0.65], [0, -20]);
+  const rRot3 = useTransform(smoothScroll, [0.1, 0.65], [0, -32]);
+  const rRot4 = useTransform(smoothScroll, [0.1, 0.65], [0, -44]);
+  const rRot5 = useTransform(smoothScroll, [0.1, 0.65], [0, -56]);
+
+  // Scale (Center is smaller, edges are larger)
+  const scale1 = useTransform(smoothScroll, [0, 0.65], [1, 0.85]);
+  const scale2 = useTransform(smoothScroll, [0, 0.65], [1, 0.98]);
+  const scale3 = useTransform(smoothScroll, [0, 0.65], [1, 1.12]);
+  const scale4 = useTransform(smoothScroll, [0, 0.65], [1, 1.28]);
+  const scale5 = useTransform(smoothScroll, [0, 0.65], [1, 1.45]);
+
+  // Carousel panels opacity
+  const carouselOpacity = useTransform(smoothScroll, [0, 0.45], [0, 0.85]);
+
+  // Heading & description slide-out & fade-out khi scroll sâu
+  const leftTextX = useTransform(smoothScroll, [0, 0.45], ["0vw", "-25vw"]);
+  const rightTextX = useTransform(smoothScroll, [0, 0.45], ["0vw", "25vw"]);
+  const textOpacity = useTransform(smoothScroll, [0, 0.45], [1, 0]);
+
+  // Light shimmer line fade out: starts at opacity 1 at scroll=0, and fades to 0 by scroll=0.25
+  const shimmerOpacity = useTransform(smoothScroll, [0, 0.25], [1, 0]);
+
+  // Background darkness overlay opacity on scroll
+  const bgDarkness = useTransform(smoothScroll, [0, 0.65], [0, 0.65]);
+
+  // Hero image brightness filter on scroll
+  const heroBrightness = useTransform(smoothScrollHero, [0, 0.65], ["brightness(100%)", "brightness(45%)"]);
+
+  // Video list for 3D video carousel (10 different reels videos)
+  const carouselVideos = [
+    "/videos/reels/1193408759530975.mp4",
+    "/videos/reels/1416295406374728.mp4",
+    "/videos/reels/1481637113705236.mp4",
+    "/videos/reels/1558486685278221.mp4",
+    "/videos/reels/1679868159699068.mp4",
+    "/videos/reels/1859098374750947.mp4",
+    "/videos/reels/1917627699169217.mp4",
+    "/videos/reels/25256283237337349.mp4",
+    "/videos/reels/885137540830386.mp4",
+    "/videos/reels/898367973231546.mp4",
+  ];
 
   // ─── Lắng nghe sự kiện Cuộn (Wheel / Touch) để nhảy xuống #work một cách mạnh mẽ ───
   useEffect(() => {
@@ -149,12 +233,29 @@ export default function Overview() {
     }
   };
 
+  const allPanels = [
+    // Left
+    { id: 'l1', videoIdx: 0, className: "left-[calc(50%-28vw)] md:left-[calc(50%-9vw)] block z-[5]", y: y1, z: z1, rotY: lRot1, scale: scale1 },
+    { id: 'l2', videoIdx: 1, className: "left-[calc(50%-20vw)] hidden md:block z-[4]", y: y2, z: z2, rotY: lRot2, scale: scale2 },
+    { id: 'l3', videoIdx: 2, className: "left-[calc(50%-31vw)] hidden lg:block z-[3]", y: y3, z: z3, rotY: lRot3, scale: scale3 },
+    { id: 'l4', videoIdx: 3, className: "left-[calc(50%-42vw)] hidden lg:block z-[2]", y: y4, z: z4, rotY: lRot4, scale: scale4 },
+    { id: 'l5', videoIdx: 4, className: "left-[calc(50%-53vw)] hidden xl:block z-[1]", y: y5, z: z5, rotY: lRot5, scale: scale5 },
+    // Right
+    { id: 'r1', videoIdx: 5, className: "left-[calc(50%+28vw)] md:left-[calc(50%+9vw)] block z-[5]", y: y1, z: z1, rotY: rRot1, scale: scale1 },
+    { id: 'r2', videoIdx: 6, className: "left-[calc(50%+20vw)] hidden md:block z-[4]", y: y2, z: z2, rotY: rRot2, scale: scale2 },
+    { id: 'r3', videoIdx: 7, className: "left-[calc(50%+31vw)] hidden lg:block z-[3]", y: y3, z: z3, rotY: rRot3, scale: scale3 },
+    { id: 'r4', videoIdx: 8, className: "left-[calc(50%+42vw)] hidden lg:block z-[2]", y: y4, z: z4, rotY: rRot4, scale: scale4 },
+    { id: 'r5', videoIdx: 9, className: "left-[calc(50%+53vw)] hidden xl:block z-[1]", y: y5, z: z5, rotY: rRot5, scale: scale5 },
+  ];
+
   return (
     <section
       ref={sectionRef}
-      className="relative w-full min-h-screen overflow-hidden"
+      className="relative w-full h-[200vh]"
       id="overview"
     >
+      {/* ─── Sticky Viewport (chiếm 1 màn hình, pinned khi scroll) ─── */}
+      <div className="sticky top-0 h-screen overflow-hidden">
       {/* ─── Background — bg2.jpg + Mouse Parallax + Cinematic Reveal ─── */}
       <motion.div
         style={{ x: bgX, y: bgY }}
@@ -179,6 +280,11 @@ export default function Overview() {
           }}
           className="absolute inset-0 bg-primary"
         />
+        {/* Scroll-driven background darkening overlay */}
+        <motion.div
+          style={{ opacity: bgDarkness }}
+          className="absolute inset-0 bg-black z-[2] pointer-events-none"
+        />
         {/* Fade top — blend với section trên */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary to-transparent" />
       </motion.div>
@@ -187,9 +293,54 @@ export default function Overview() {
       <motion.div
         style={{ x: glowX, y: glowY }}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2]
-                   w-[500px] h-[500px] rounded-full pointer-events-none
-                   bg-accent/15 blur-[100px]"
+                   w-[600px] h-[600px] rounded-full pointer-events-none
+                   bg-[radial-gradient(circle,rgba(239,68,68,0.22)_0%,transparent_70%)] blur-[80px]"
       />
+
+      {/* ─── 3D Video Carousel Panels (z-[1], behind hero z-[2]) ─── */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        style={{ perspective: "900px", perspectiveOrigin: "50% 50%" }}
+      >
+        {allPanels.map((panel) => (
+          <div
+            key={panel.id}
+            className={`absolute top-1/2 -translate-y-1/2 pointer-events-none ${panel.className}`}
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            <motion.div
+              style={{
+                y: panel.y,
+                z: panel.z,
+                rotateY: panel.rotY,
+                scale: panel.scale,
+                opacity: carouselOpacity,
+                transformStyle: "preserve-3d",
+              }}
+              className="w-[75px] md:w-[clamp(110px,12vw,140px)] lg:w-[clamp(150px,14vw,220px)] aspect-[9/16] rounded-xl md:rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-black pointer-events-auto"
+            >
+              <video
+                src={carouselVideos[panel.videoIdx]}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
+            </motion.div>
+          </div>
+        ))}
+
+        {/* Ground reflection glow */}
+        <div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[60px]"
+          style={{
+            background: "radial-gradient(ellipse, rgba(239,68,68,0.12) 0%, transparent 70%)",
+            filter: "blur(20px)",
+          }}
+        />
+      </div>
 
       {/* ─── Huge Kinetic Background Marquee ─── */}
       <div className="absolute top-[28%] left-0 right-0 w-full overflow-hidden pointer-events-none z-[1] select-none opacity-[0.02]">
@@ -267,7 +418,10 @@ export default function Overview() {
         {/* ─── Hero Area: Text + Image overlap ─── */}
         <div className="relative flex-1 flex flex-col lg:flex-row items-center lg:items-center gap-12 lg:gap-0">
           {/* ─── Cột trái: Overline + Heading cực lớn ─── */}
-          <div className="relative z-20 flex-shrink-0 w-full lg:max-w-[70%]">
+          <motion.div
+            style={{ opacity: textOpacity, x: leftTextX }}
+            className="relative z-20 flex-shrink-0 w-full lg:max-w-[70%]"
+          >
             {/* Overline — letter reveal, bắt đầu 50% opacity */}
             <motion.p
               initial="hidden"
@@ -404,72 +558,98 @@ export default function Overview() {
                 </motion.span>
               </span>
             </motion.h2>
-          </div>
+          </motion.div>
 
-          {/* ─── Hero Image — giữa, overlap với heading + parallax layer 2 ─── */}
-          {/* ─── Hero Image — Hide as requested ─── */}
+          {/* ─── Hero Image — Scroll Zoom & Center (z-[2], in front of videos z-[1]) ─── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{
-              duration: 1.2,
-              delay: 0.2,
-              ease: [0.22, 1, 0.36, 1],
+            style={{
+              left: heroLeft,
+              x: heroXOffset,
+              y: heroYOffset,
             }}
-            style={{ x: heroX, y: heroY }}
-            className="absolute top-1/2 left-[32%] -translate-y-[42%] z-10
-                       w-[400px] h-[530px] sm:w-[440px] sm:h-[580px] md:w-[500px] md:h-[660px] lg:w-[580px] lg:h-[770px]"
+            className="absolute top-1/2 z-[2]
+                       w-[400px] h-[530px] sm:w-[440px] sm:h-[580px] md:w-[500px] md:h-[660px] lg:w-[580px] lg:h-[770px]
+                       pointer-events-none"
           >
-            <Image
-              src="/images/01-Overview/hero.png"
-              alt="Eddie — Creative Video Strategist"
-              fill
-              sizes="(max-width: 768px) 350px, (max-width: 1024px) 420px, 480px"
-              className="object-contain object-bottom"
-              priority
-            />
-
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[130%] h-[2px] overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              <motion.div
-                className="absolute inset-y-0 w-[45%]"
-                style={{
-                  background: "linear-gradient(90deg, transparent, rgba(239,68,68,0.9), rgba(255,255,255,0.6), rgba(239,68,68,0.9), transparent)",
-                  filter: "blur(0.5px)",
-                }}
-                animate={{ x: ["-100%", "280%"] }}
-                transition={{
-                  duration: 2.2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  repeatDelay: 0.8,
-                }}
-              />
-            </div>
             <motion.div
-              className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-[28px] rounded-full"
-              style={{ background: "radial-gradient(ellipse, rgba(239,68,68,0.25) 0%, transparent 70%)" }}
-              animate={{ opacity: [0.4, 0.9, 0.4], scaleX: [0.9, 1.05, 0.9] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8 }}
-            />
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              style={{ x: heroX, y: heroY }}
+              className="w-full h-full pointer-events-auto relative"
+            >
+              {/* Scroll-driven scale: zoom in từ body → mặt/ngực */}
+              <motion.div
+                style={{
+                  scale: heroImageScale,
+                  filter: heroBrightness,
+                  transformOrigin: "50% 15%", // anchor tại vùng ngực/mặt để tránh che đầu
+                }}
+                className="w-full h-full relative"
+              >
+                <Image
+                  src="/images/01-Overview/hero.png"
+                  alt="Eddie — Creative Video Strategist"
+                  fill
+                  sizes="(max-width: 768px) 350px, (max-width: 1024px) 420px, 480px"
+                  className="object-contain object-bottom"
+                  priority
+                />
+              </motion.div>
+
+              {/* Shimmer & Shadow Foot Container - fades out on scroll */}
+              <motion.div
+                style={{ opacity: shimmerOpacity }}
+                className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none"
+              >
+                {/* Light shimmer at feet */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[130%] h-[2px] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <motion.div
+                    className="absolute inset-y-0 w-[45%]"
+                    style={{
+                      background: "linear-gradient(90deg, transparent, rgba(239,68,68,0.9), rgba(255,255,255,0.6), rgba(239,68,68,0.9), transparent)",
+                      filter: "blur(0.5px)",
+                    }}
+                    animate={{ x: ["-100%", "280%"] }}
+                    transition={{
+                      duration: 2.2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      repeatDelay: 0.8,
+                    }}
+                  />
+                </div>
+                {/* Pulse Shadow */}
+                <motion.div
+                  className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-[28px] rounded-full"
+                  style={{ background: "radial-gradient(ellipse, rgba(239,68,68,0.25) 0%, transparent 70%)" }}
+                  animate={{ opacity: [0.4, 0.9, 0.4], scaleX: [0.9, 1.05, 0.9] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8 }}
+                />
+              </motion.div>
+            </motion.div>
           </motion.div>
 
           {/* ─── Cột phải: Description text ─── */}
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            whileHover={{ 
-              y: -8, 
-              rotateX: 2, 
-              rotateY: -2,
-              transition: { duration: 0.3 } 
-            }}
-            transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-            className="relative z-20 lg:ml-auto w-full max-w-[400px] lg:max-w-[350px] self-start lg:self-center
-                       bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8
-                       shadow-[0_20px_50px_rgba(0,0,0,0.4)] group overflow-hidden transition-all duration-300 hover:border-red-500/20"
+          <motion.div
+            style={{ opacity: textOpacity, x: rightTextX }}
+            className="relative z-20 lg:ml-auto w-full max-w-[400px] lg:max-w-[350px] self-start lg:self-center"
           >
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              whileHover={{ 
+                y: -8, 
+                rotateX: 2, 
+                rotateY: -2,
+                transition: { duration: 0.3 } 
+              }}
+              transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+              className="relative w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8
+                         shadow-[0_20px_50px_rgba(0,0,0,0.4)] group overflow-hidden transition-all duration-300 hover:border-red-500/20"
+            >
             {/* Grid Pattern Background */}
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
                  style={{
@@ -506,18 +686,19 @@ export default function Overview() {
               </svg>
             </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.7,
-                delay: 0.7,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="font-body text-base sm:text-lg text-white/70 leading-[1.7] lg:leading-[1.8] relative z-10"
-            >
-              {overviewHeading.description}
-            </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  duration: 0.7,
+                  delay: 0.7,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="font-body text-base sm:text-lg text-white/70 leading-[1.7] lg:leading-[1.8] relative z-10"
+              >
+                {overviewHeading.description}
+              </motion.p>
+            </motion.div>
           </motion.div>
         </div>
 
@@ -544,6 +725,7 @@ export default function Overview() {
             </svg>
           </motion.div>
         </motion.div>
+      </div>
       </div>
     </section>
   );
