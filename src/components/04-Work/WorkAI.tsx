@@ -19,21 +19,21 @@ const PipelineConnection = ({
   const tgtX = useSpring(targetNode.x, { stiffness: 400, damping: 40 });
   const tgtY = useSpring(targetNode.y, { stiffness: 400, damping: 40 });
 
-  const outX = useTransform(srcX, x => (x as number) + sourceNode.width / 2);
-  const outY = useTransform(srcY, y => (y as number) + (sourceNode.outPortY || 0));
+  const outX = useTransform(srcX, x => (x as any as number) + sourceNode.width / 2);
+  const outY = useTransform(srcY, y => (y as any as number) + (sourceNode.outPortY || 0));
   
-  const inX = useTransform(tgtX, x => (x as number) - targetNode.width / 2);
-  const inY = useTransform(tgtY, y => (y as number) + (targetNode.inPortY || 0));
+  const inX = useTransform(tgtX, x => (x as any as number) - targetNode.width / 2);
+  const inY = useTransform(tgtY, y => (y as any as number) + (targetNode.inPortY || 0));
 
   const pathD = useTransform(
     [outX, outY, inX, inY],
     ([ox, oy, ix, iy]) => {
-      const distance = Math.abs((ix as number) - (ox as number));
+      const distance = Math.abs((ix as any as number) - (ox as any as number));
       const cpDistance = Math.max(distance * 0.5, 50); 
-      const cpX1 = (ox as number) + cpDistance;
-      const cpY1 = oy as number;
-      const cpX2 = (ix as number) - cpDistance;
-      const cpY2 = iy as number;
+      const cpX1 = (ox as any as number) + cpDistance;
+      const cpY1 = oy as any as number;
+      const cpX2 = (ix as any as number) - cpDistance;
+      const cpY2 = iy as any as number;
       return `M ${ox} ${oy} C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${ix} ${iy}`;
     }
   );
@@ -52,13 +52,13 @@ const PipelineConnection = ({
   const signalPoint = useTransform(
     [outX, outY, inX, inY, signalProgress],
     ([ox, oy, ix, iy, t]) => {
-      const distance = Math.abs((ix as number) - (ox as number));
+      const distance = Math.abs((ix as any as number) - (ox as any as number));
       const cpDistance = Math.max(distance * 0.5, 50);
-      const p0 = { x: ox as number, y: oy as number };
-      const p1 = { x: (ox as number) + cpDistance, y: oy as number };
-      const p2 = { x: (ix as number) - cpDistance, y: iy as number };
-      const p3 = { x: ix as number, y: iy as number };
-      const progress = t as number;
+      const p0 = { x: ox as any as number, y: oy as any as number };
+      const p1 = { x: (ox as any as number) + cpDistance, y: oy as any as number };
+      const p2 = { x: (ix as any as number) - cpDistance, y: iy as any as number };
+      const p3 = { x: ix as any as number, y: iy as any as number };
+      const progress = t as any as number;
       
       const invT = 1 - progress;
       const px = invT*invT*invT*p0.x + 3*invT*invT*progress*p1.x + 3*invT*progress*progress*p2.x + progress*progress*progress*p3.x;
