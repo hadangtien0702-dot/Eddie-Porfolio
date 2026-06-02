@@ -76,13 +76,13 @@ export default function Overview() {
   const smoothScroll = useSpring(scrollYProgress, { damping: 25, stiffness: 50, mass: 0.8 });
   const smoothScrollHero = useSpring(scrollYProgress, { damping: 22, stiffness: 65 });
 
-  // Hero zoom: scale 1 → 1.45, pivot tại vùng ngực/mặt
-  const heroImageScale = useTransform(smoothScrollHero, [0, 0.65], [1, 1.45]);
+  // Hero zoom: scale 1 → 1.25, pivot tại vùng ngực/mặt
+  const heroImageScale = useTransform(smoothScrollHero, [0, 0.65], [1, 1.25]);
   // Position the hero image dynamically: from original left-[32%] to center (left: 50%, translateX: -50%)
   const heroLeft = useTransform(smoothScrollHero, [0, 0.65], ["32%", "50%"]);
   const heroXOffset = useTransform(smoothScrollHero, [0, 0.65], ["0%", "-50%"]);
-  // Shift the hero image down slightly as it scales to prevent clipping the head
-  const heroYOffset = useTransform(smoothScrollHero, [0, 0.65], ["-42%", "-36%"]);
+  // Shift the hero image down drastically to crop from chest up
+  const heroYOffset = useTransform(smoothScrollHero, [0, 0.65], ["-42%", "-12%"]);
 
   // Custom animations for 10-Video Curved 3D Carousel
   // Sequential Y-axis slide up
@@ -134,7 +134,7 @@ export default function Overview() {
   const bgDarkness = useTransform(smoothScroll, [0, 0.65], [0, 0.65]);
 
   // Hero image brightness filter on scroll
-  const heroBrightness = useTransform(smoothScrollHero, [0, 0.65], ["brightness(100%)", "brightness(45%)"]);
+  const heroBrightness = useTransform(smoothScrollHero, [0, 0.65], ["brightness(100%)", "brightness(15%)"]);
 
   // Video list for 3D video carousel (10 different reels videos)
   const carouselVideos = [
@@ -327,7 +327,8 @@ export default function Overview() {
                 playsInline
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
+              {/* Subtle lighting overlay for videos */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-white/10 pointer-events-none mix-blend-overlay z-20" />
             </motion.div>
           </div>
         ))}

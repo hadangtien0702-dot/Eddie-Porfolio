@@ -772,10 +772,7 @@ export default function WorkVideoEditor() {
                           <span className="font-mono text-white/50 text-[8px] tracking-widest bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.iso}</span>
                         </div>
 
-                        {/* Title text */}
-                        <h1 className="font-heading text-[clamp(18px,2.8vw,36px)] text-white font-black opacity-95 tracking-widest text-center select-none uppercase drop-shadow-[0_0_20px_rgba(255,255,255,0.45)]">
-                          MASTERPIECE
-                        </h1>
+                        {/* Title text removed per user request */}
                         
                         <div className="flex justify-between items-end opacity-60">
                           <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">REC.709 / CINEMATIC</span>

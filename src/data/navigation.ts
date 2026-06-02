@@ -6,8 +6,9 @@ export const navItems = [
   { label: "Overview", href: "#overview" },
   { label: "Video Editor", href: "#work" },
   { label: "Design", href: "#design" },
-  { label: "A.I", href: "#ai" },
-  { label: "Setup & Web Design", href: "#setup" },
+  { label: "A.I Flow", href: "#ai" },
+  { label: "Studio", href: "#studio" },
+  { label: "UI/UX Design", href: "#uiux" },
   { label: "Case Study & Contact", href: "#case-study" },
 ];
 

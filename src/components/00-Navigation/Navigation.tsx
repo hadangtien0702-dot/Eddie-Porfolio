@@ -49,26 +49,37 @@ export default function Navigation() {
     rafRef.current = requestAnimationFrame(tick);
   }, [dashOffsetMV]);
 
-  // ─── Track active section via IntersectionObserver ───
+  // ─── Track active section via scroll position ───
   useEffect(() => {
-    const sectionIds = navItems.map((item) => item.href.replace("#", ""));
-    const observers: IntersectionObserver[] = [];
+    const handleScroll = () => {
+      const sectionIds = navItems.map((item) => item.href.replace("#", ""));
+      let currentActive = "";
+      
+      // Find the section that crosses the center line of the viewport
+      const centerLine = window.innerHeight * 0.4; // 40% from top for better UX
+      
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // If the element crosses the 40% line, it is active
+          if (rect.top <= centerLine && rect.bottom >= centerLine) {
+            currentActive = id;
+            break;
+          }
+        }
+      }
+      
+      if (currentActive) {
+        setActiveSection(currentActive);
+      }
+    };
 
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(id);
-        },
-        { rootMargin: "-40% 0px -50% 0px", threshold: 0 }
-      );
-      observer.observe(el);
-      observers.push(observer);
-    });
-
-    return () => observers.forEach((o) => o.disconnect());
-  }, [navItems]);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial check
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // ─── Scroll-linked animations ───
   const { scrollY } = useScroll();
