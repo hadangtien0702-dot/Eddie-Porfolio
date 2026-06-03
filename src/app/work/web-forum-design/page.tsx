@@ -449,18 +449,21 @@ export default function WebForumDesignPage() {
                             {/* ThinkSmart Buttons */}
                             <div className="flex flex-wrap gap-4">
                               <button className="px-8 py-3 rounded-full text-[11px] font-bold text-white uppercase tracking-wider bg-[#c40000] hover:bg-[#a00000] shadow-[0_4px_15px_rgba(196,0,0,0.3)] transition-all">Get a Quote</button>
-                              <button className="px-8 py-3 rounded-full text-[11px] font-bold text-black uppercase tracking-wider bg-[#f4f4f4] hover:bg-white transition-colors">Learn More</button>
+                              <button className="px-8 py-3 rounded-full text-[11px] font-bold text-white uppercase tracking-wider bg-[#32373c] hover:bg-[#202326] transition-colors">Learn More</button>
                             </div>
                             {/* ThinkSmart Form Card */}
-                            <div className="w-full bg-white border border-white/10 rounded-2xl p-6 flex flex-col gap-4 shadow-xl">
-                              <h5 className="text-black font-bold text-sm">Request Consultation</h5>
-                              <div className="w-full h-10 border border-black/10 rounded-md bg-[#f9f9f9] px-3 flex items-center">
-                                <span className="text-[10px] text-black/60">John Doe</span>
+                            <div className="w-full bg-gradient-to-br from-[#F8BBD0] via-[#FF9595] to-[#F37878] rounded-2xl p-6 flex flex-col gap-4 shadow-xl relative overflow-hidden">
+                              <div className="absolute right-[-20px] bottom-[-20px] opacity-20">
+                                <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                               </div>
-                              <div className="w-full h-10 border border-black/10 rounded-md bg-[#f9f9f9] px-3 flex items-center">
-                                <span className="text-[10px] text-black/60">+1 234 567 8900</span>
+                              <h5 className="text-white font-bold text-sm relative z-10">Kiểm tra sức khoẻ tài chính</h5>
+                              <div className="w-full h-10 border border-white/20 rounded-md bg-white/10 backdrop-blur-sm px-3 flex items-center relative z-10">
+                                <span className="text-[10px] text-white/90">Họ và tên</span>
                               </div>
-                              <button className="w-full h-10 rounded-full bg-[#c40000] text-white text-[10px] font-bold uppercase tracking-wider mt-2">Submit Request</button>
+                              <div className="w-full h-10 border border-white/20 rounded-md bg-white/10 backdrop-blur-sm px-3 flex items-center relative z-10">
+                                <span className="text-[10px] text-white/90">Số điện thoại</span>
+                              </div>
+                              <button className="w-full h-10 rounded-full bg-[#c40000] text-white text-[10px] font-bold uppercase tracking-wider mt-2 relative z-10 hover:bg-[#a00000] transition-colors">Gửi ngay</button>
                             </div>
                           </>
                         ) : (
@@ -504,33 +507,42 @@ export default function WebForumDesignPage() {
                      <div className="relative z-10 flex-1 flex items-center justify-center">
                        {/* Wireframe Mockup based on project type */}
                        {isThinkSmart ? (
-                         <div className="w-[90%] max-w-[340px] aspect-[4/3] border-2 border-white/10 rounded-xl p-4 flex flex-col gap-3 bg-black/50 backdrop-blur-sm shadow-2xl">
-                            {/* Navbar */}
-                            <div className="flex justify-between items-center mb-2 pb-2 border-b border-white/5">
-                              <div className="w-12 h-4 bg-white/10 rounded-sm" />
+                         <div className="w-[90%] max-w-[340px] aspect-[4/3] border-2 border-white/10 rounded-xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative">
+                            {/* Sticky Header */}
+                            <div className="w-full h-10 bg-white border-b border-black/10 flex justify-between items-center px-4 sticky top-0 z-20 shadow-sm">
+                              <div className="w-16 h-4 bg-[#c40000] rounded-sm" />
                               <div className="flex gap-2">
-                                <div className="w-6 h-2 bg-white/10 rounded-sm" />
-                                <div className="w-6 h-2 bg-white/10 rounded-sm" />
-                                <div className="w-6 h-2 bg-white/10 rounded-sm" />
+                                <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
+                                <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
+                                <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
                               </div>
                             </div>
-                            {/* Hero Section */}
-                            <div className="flex gap-4 flex-1">
-                              <div className="flex-[3] flex flex-col justify-center gap-2">
-                                <div className="w-full h-4 bg-white/20 rounded-sm" />
-                                <div className="w-3/4 h-4 bg-white/20 rounded-sm mb-2" />
-                                <div className="w-full h-2 bg-white/5 rounded-sm" />
-                                <div className="w-5/6 h-2 bg-white/5 rounded-sm mb-2" />
-                                <div className="flex gap-2 mt-2">
-                                  <div className="w-16 h-6 bg-[#c40000]/50 rounded-full" />
-                                  <div className="w-16 h-6 bg-white/10 rounded-full" />
-                                  <button className="px-3 py-1 bg-[#c40000] text-white text-[8px] rounded-full font-bold">Get Quote</button>
-                                  <button className="px-3 py-1 border border-white/20 text-white text-[8px] rounded-full font-bold">Learn More</button>
-                                </div>
+                            {/* Hero Banner */}
+                            <div className="w-full h-28 bg-[#f4f4f4] relative flex items-center px-4">
+                              <div className="w-1/2 flex flex-col gap-2 relative z-10">
+                                <div className="w-3/4 h-3 bg-black/80 rounded-sm" />
+                                <div className="w-full h-2 bg-black/40 rounded-sm" />
+                                <div className="w-5/6 h-2 bg-black/40 rounded-sm" />
+                                <div className="w-16 h-5 mt-1 bg-[#c40000] rounded-full" />
                               </div>
-                              <div className="flex-[2] rounded-lg border border-white/10 overflow-hidden">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80" alt="Corporate" className="w-full h-full object-cover" />
+                              <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-50 bg-[url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80')] bg-cover bg-center [mask-image:linear-gradient(to_left,black,transparent)]" />
+                            </div>
+                            {/* Content Section */}
+                            <div className="flex-1 p-4 bg-white flex flex-col gap-3">
+                              <div className="w-1/3 h-2.5 bg-black/80 rounded-sm mx-auto mb-2" />
+                              <div className="grid grid-cols-3 gap-2">
+                                <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
+                                  <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
+                                  <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                                </div>
+                                <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
+                                  <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
+                                  <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                                </div>
+                                <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
+                                  <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
+                                  <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                                </div>
                               </div>
                             </div>
                          </div>
