@@ -11,46 +11,250 @@ import {
 export default function WebForumDesignPage() {
   return (
     <main className="min-h-screen bg-[#050505] text-text-primary selection:bg-accent/30">
-      {/* ─── Hero ─── */}
-      <section className="relative w-full min-h-[60vh] flex flex-col justify-end overflow-hidden border-b border-white/5">
-        {/* Abstract Background Elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/10 blur-[120px] rounded-full opacity-50" />
-          <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-white/5 blur-[150px] rounded-full opacity-50" />
-          {/* Grid pattern */}
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-5" />
-        </div>
-
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pb-20 pt-40">
+      {/* ─── Premium Immersive Hero ─── */}
+      <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden border-b border-white/5 pt-20 pb-16">
+        
+        {/* Navigation / Back Button - Absolute Top */}
+        <div className="absolute top-8 left-6 md:left-12 lg:left-16 z-50">
           <Link
             href="/#work"
-            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-text-muted hover:text-accent transition-colors mb-16 group"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors group bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
               <line x1="19" y1="12" x2="5" y2="12" />
               <polyline points="12 19 5 12 12 5" />
             </svg>
             Back to Index
           </Link>
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+        {/* Deep dark space background with glowing particles */}
+        <div className="absolute inset-0 pointer-events-none bg-[#020202]">
+          {/* Subtle grid */}
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10 [mask-image:radial-gradient(ellipse_at_center,black,transparent)]" />
+          
+          {/* Glows */}
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-accent/20 blur-[150px] rounded-full opacity-30 mix-blend-screen" />
+          <div className="absolute bottom-1/4 right-1/4 w-[800px] h-[800px] bg-[#c40000]/10 blur-[180px] rounded-full opacity-40 mix-blend-screen" />
+          
+          {/* Floating constellation lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20%" cy="30%" r="1.5" fill="#fff" />
+            <circle cx="80%" cy="20%" r="2" fill="#c40000" />
+            <circle cx="70%" cy="80%" r="1.5" fill="#fff" />
+            <circle cx="30%" cy="70%" r="2" fill="#fff" />
+            <path d="M 20% 30% L 30% 70%" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+            <path d="M 80% 20% L 70% 80%" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+          </svg>
+        </div>
+
+        <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center h-full mt-12">
+          
+          {/* Left Text Block */}
+          <motion.div 
+            className="lg:col-span-3 flex flex-col justify-center h-full relative z-30"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-6 hidden md:flex">
               <span className="w-8 h-[1px] bg-accent" />
               <p className="font-mono text-accent tracking-[0.2em] text-[10px] uppercase">
                 {meta.overline}
               </p>
             </div>
-            <h1 className="font-heading font-bold leading-[1.05] tracking-tighter mb-8 max-w-4xl text-5xl md:text-7xl lg:text-8xl text-white">
-              {meta.title}
+            
+            <h1 className="font-heading font-black text-6xl md:text-8xl lg:text-[6.5rem] leading-[0.9] tracking-tighter text-white mb-2 relative">
+              <span className="absolute inset-0 text-white/5 blur-[2px] pointer-events-none">Web & <br/> Forum <br/> Design.</span>
+              <span className="relative drop-shadow-2xl">Web & <br/> Forum <br/> Design.</span>
             </h1>
-            <p className="font-body text-lg md:text-xl text-text-secondary font-light max-w-2xl leading-relaxed">
-              {meta.description}
+            
+            <p className="font-body text-base text-white/50 mt-8 mb-10 leading-relaxed max-w-sm">
+              Designing modern, responsive websites and forums that deliver seamless experiences and drive engagement.
             </p>
+
+            <button 
+              onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+              className="group/scroll flex items-center justify-between w-fit gap-6 bg-[#111] hover:bg-white border border-white/10 hover:border-white rounded-full px-6 py-3 transition-all duration-500"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-widest text-white/80 font-bold group-hover/scroll:text-black transition-colors duration-500">View Projects</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/50 group-hover/scroll:text-accent group-hover/scroll:translate-x-1 transition-all duration-300">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
           </motion.div>
+
+          {/* Center Floating Composition */}
+          <div className="lg:col-span-6 h-[600px] lg:h-[700px] relative w-full perspective-1000 z-20 flex items-center justify-center">
+            
+            {/* Dark Mobile Frame (Center Base) */}
+            <motion.div
+              className="absolute w-[240px] md:w-[280px] h-[480px] md:h-[560px] bg-[#0a0a0a] rounded-[2.5rem] md:rounded-[3rem] border-[4px] border-[#1a1a1a] shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden z-10"
+              style={{ transformStyle: "preserve-3d" }}
+              initial={{ rotateY: -15, rotateX: 10, rotateZ: 5 }}
+              animate={{ 
+                y: [0, -20, 0],
+                rotateY: [-15, -10, -15],
+                rotateX: [10, 15, 10]
+              }}
+              transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+            >
+              {/* Internal Mockup Content */}
+              <div className="w-full h-full p-4 md:p-5 flex flex-col gap-4 relative">
+                <div className="w-1/3 h-5 bg-[#1a1a1a] rounded-b-xl absolute top-0 left-1/2 -translate-x-1/2 z-20" />
+                
+                <div className="mt-8 flex justify-between items-center px-2">
+                  <div className="w-6 h-6 rounded-full bg-white/5" />
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+                  </div>
+                </div>
+                
+                <div className="w-full h-32 md:h-40 bg-white/5 rounded-2xl flex flex-col items-center justify-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 mb-2 flex items-center justify-center">
+                    <div className="w-0 h-0 border-t-[4px] border-t-transparent border-l-[6px] border-l-accent border-b-[4px] border-b-transparent ml-1" />
+                  </div>
+                  <div className="w-1/2 h-2 bg-white/20 rounded-full" />
+                  <div className="w-3/4 h-2 bg-white/10 rounded-full" />
+                </div>
+                
+                <div className="flex gap-3">
+                  <div className="flex-1 h-24 md:h-28 bg-white/5 rounded-xl flex items-end p-3"><div className="w-full h-2 bg-white/10 rounded-full" /></div>
+                  <div className="flex-1 h-24 md:h-28 bg-white/5 rounded-xl flex items-end p-3"><div className="w-full h-2 bg-white/10 rounded-full" /></div>
+                </div>
+                
+                <div className="w-full flex-1 bg-white/5 rounded-xl flex flex-col justify-end p-4">
+                  <div className="w-2/3 h-2 bg-white/20 rounded-full mb-2" />
+                  <div className="w-1/3 h-2 bg-white/10 rounded-full" />
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
+            </motion.div>
+
+            {/* ThinkSmart Colors Card (Top Left) */}
+            <motion.div
+              className="absolute top-[0%] left-[0%] lg:top-[5%] lg:left-[0%] w-[260px] md:w-[320px] bg-white rounded-3xl p-4 md:p-5 shadow-[0_30px_60px_rgba(0,0,0,0.6)] z-30 transform -rotate-6"
+              animate={{ y: [0, -15, 0], rotate: [-6, -4, -6] }}
+              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", delay: 0.5 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-mono text-[9px] uppercase tracking-widest text-black/40 font-bold">ThinkSmart Colors</span>
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-[#c40000]" />
+                  <div className="w-2 h-2 rounded-full bg-[#32373c]" />
+                  <div className="w-2 h-2 rounded-full bg-[#f4f4f4] border border-black/10" />
+                </div>
+              </div>
+              <div className="flex gap-2 md:gap-3 h-16 md:h-20">
+                <div className="flex-[2] bg-[#c40000] rounded-xl flex items-end p-2 md:p-3 relative overflow-hidden">
+                  <span className="font-mono text-[7px] md:text-[8px] text-white">#C40000</span>
+                </div>
+                <div className="flex-1 bg-[#32373c] rounded-xl flex items-end p-2 md:p-3">
+                  <span className="font-mono text-[7px] md:text-[8px] text-white/50">#32373C</span>
+                </div>
+                <div className="flex-1 bg-[#f4f4f4] border border-black/5 rounded-xl flex items-end p-2 md:p-3">
+                  <span className="font-mono text-[7px] md:text-[8px] text-black/30">#F4F4</span>
+                </div>
+                <div className="flex-1 bg-white border border-black/10 rounded-xl flex items-end p-2 md:p-3">
+                  <span className="font-mono text-[7px] md:text-[8px] text-black/30">#FFF</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* ThinkSmart Buttons Card (Middle Left) */}
+            <motion.div
+              className="absolute top-[35%] lg:top-[40%] left-[-10%] lg:left-[-12%] w-[220px] md:w-[280px] bg-white/95 backdrop-blur-xl rounded-3xl p-4 md:p-5 shadow-[0_30px_60px_rgba(0,0,0,0.5)] z-40 transform -rotate-3"
+              animate={{ y: [0, -10, 0], rotate: [-3, -1, -3] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+            >
+              <span className="font-mono text-[9px] uppercase tracking-widest text-black/40 font-bold mb-3 md:mb-4 block">ThinkSmart Buttons</span>
+              <div className="flex flex-col gap-2 md:gap-3">
+                <button className="w-full py-2.5 md:py-3 bg-[#c40000] rounded-full text-white font-bold text-[9px] md:text-[10px] uppercase tracking-wider shadow-[0_4px_15px_rgba(196,0,0,0.3)]">Get a Quote</button>
+                <button className="w-full py-2.5 md:py-3 bg-[#f4f4f4] rounded-full text-black font-bold text-[9px] md:text-[10px] uppercase tracking-wider">Learn More</button>
+                <button className="w-full py-2.5 md:py-3 bg-white border border-black/10 border-dashed rounded-full text-black/30 font-bold text-[9px] md:text-[10px] uppercase tracking-wider" disabled>Disabled</button>
+              </div>
+            </motion.div>
+
+            {/* DreamTalent Type Card (Bottom Left/Center) */}
+            <motion.div
+              className="absolute bottom-[5%] lg:bottom-[10%] left-[5%] lg:left-[5%] w-[260px] md:w-[320px] bg-[#0c0c0c] border border-white/10 rounded-3xl p-4 md:p-5 shadow-[0_40px_80px_rgba(0,0,0,0.8)] z-30 transform rotate-6"
+              animate={{ y: [0, -12, 0], rotate: [6, 8, 6] }}
+              transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1.5 }}
+            >
+              <div className="flex items-center gap-3 md:gap-4 border-b border-white/10 pb-3 md:pb-4 mb-3 md:mb-4">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-[#9b51e0] to-[#ff6900] flex items-center justify-center text-white font-sans text-lg md:text-xl font-bold">Aa</div>
+                <div>
+                  <span className="font-mono text-[7px] md:text-[8px] uppercase tracking-widest text-white/40 block mb-0.5 md:mb-1">DreamTalent Type</span>
+                  <span className="text-white font-bold font-sans tracking-tight text-sm md:text-base">Montserrat</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 md:gap-3">
+                <div className="flex justify-between items-baseline">
+                  <span className="text-white font-bold text-xl md:text-2xl font-sans">Header 1</span>
+                  <span className="font-mono text-[7px] md:text-[8px] text-white/30">72px / Bold</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-white/80 font-bold text-base md:text-lg font-sans">Header 2</span>
+                  <span className="font-mono text-[7px] md:text-[8px] text-white/30">48px / Semibold</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-white/50 text-xs md:text-sm font-sans">Body Text</span>
+                  <span className="font-mono text-[7px] md:text-[8px] text-white/30">16px / Regular</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right Text Block */}
+          <motion.div 
+            className="lg:col-span-3 flex flex-col justify-center h-full relative z-30 text-left lg:text-right"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          >
+            <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4">UI/UX & Web</p>
+            <h2 className="font-heading font-black text-5xl md:text-6xl lg:text-[4rem] leading-[0.9] tracking-tighter text-white mb-6">
+              DIGITAL<br className="hidden lg:block"/> PLATFORMS
+            </h2>
+            <p className="font-body text-sm text-white/50 mb-10 max-w-[280px] lg:ml-auto">
+              Designing and building seamless user interfaces for polished websites and digital forums.
+            </p>
+
+            {/* Stats */}
+            <div className="flex flex-col gap-6 items-start lg:items-end lg:ml-auto">
+              <div className="flex items-center gap-4 flex-row-reverse lg:flex-row">
+                <div className="text-left lg:text-right">
+                  <span className="block text-white font-bold font-mono text-lg">50+</span>
+                  <span className="block text-[9px] text-white/40 uppercase tracking-wider">Projects Completed</span>
+                </div>
+                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 text-white/50 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 flex-row-reverse lg:flex-row">
+                <div className="text-left lg:text-right">
+                  <span className="block text-white font-bold font-mono text-lg">30+</span>
+                  <span className="block text-[9px] text-white/40 uppercase tracking-wider">Happy Clients</span>
+                </div>
+                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 text-white/50 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 flex-row-reverse lg:flex-row">
+                <div className="text-left lg:text-right">
+                  <span className="block text-white font-bold font-mono text-lg">5+</span>
+                  <span className="block text-[9px] text-white/40 uppercase tracking-wider">Years Experience</span>
+                </div>
+                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 text-white/50 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
         </div>
       </section>
 
