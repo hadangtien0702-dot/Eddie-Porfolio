@@ -27,7 +27,7 @@ export const webProjects: WebProject[] = [
       "Full UI/UX design and build for an insurance brand — bilingual (EN/VI), responsive, conversion-focused layout with a modern design system.",
     tags: ["Next.js", "UI Design", "Bilingual", "Corporate"],
     status: "Live",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=1200&auto=format&fit=crop",
   },
   {
     name: "Dream Talent",

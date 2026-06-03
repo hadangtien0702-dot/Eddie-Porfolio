@@ -90,10 +90,10 @@ export default function WorkSetupWebsite() {
           {/* Background Image */}
           <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
              <Image 
-               src="/images/services/web-design/Main.webp" 
-               alt="Web Design" 
+               src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600&auto=format&fit=crop" 
+               alt="UI/UX Abstract Background" 
                fill 
-               className="object-cover opacity-30 mix-blend-luminosity"
+               className="object-cover opacity-20 mix-blend-luminosity grayscale"
              />
              <div className="absolute inset-0 bg-gradient-to-l from-black via-black/60 to-transparent" />
           </div>
