@@ -504,47 +504,81 @@ export default function WebForumDesignPage() {
                        <h4 className="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-2">03 / Architecture</h4>
                        <h3 className="font-heading text-2xl font-bold text-white">Wireframing</h3>
                      </div>
-                     <div className="relative z-10 flex-1 flex items-center justify-center">
+                     <div className="relative z-10 flex-1 flex items-center justify-center min-h-[280px]">
                        {/* Wireframe Mockup based on project type */}
                        {isThinkSmart ? (
-                         <div className="w-[90%] max-w-[340px] aspect-[4/3] border-2 border-white/10 rounded-xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative">
-                            {/* Sticky Header */}
-                            <div className="w-full h-10 bg-white border-b border-black/10 flex justify-between items-center px-4 sticky top-0 z-20 shadow-sm">
-                              <div className="w-16 h-4 bg-[#c40000] rounded-sm" />
-                              <div className="flex gap-2">
-                                <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
-                                <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
-                                <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
+                         <div className="relative w-full h-full flex items-center justify-center">
+                           {/* Left Card (Mobile) */}
+                           <div className="absolute left-0 md:left-4 w-[140px] aspect-[9/16] border border-white/10 rounded-[2rem] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col scale-[0.85] opacity-50 z-0 transform -translate-x-10 md:-translate-x-16 transition-all duration-500 hover:opacity-100 hover:scale-90 hover:z-30">
+                             <div className="w-full h-8 border-b border-black/10 flex items-center px-3 gap-2">
+                               <div className="w-4 h-4 rounded-full bg-[#c40000]/20" />
+                               <div className="flex-1 h-1.5 bg-black/10 rounded-sm" />
+                             </div>
+                             <div className="flex-1 p-3 flex flex-col gap-2">
+                               <div className="w-full h-16 bg-[#f4f4f4] rounded-lg" />
+                               <div className="w-3/4 h-2 bg-black/20 rounded-sm mx-auto" />
+                               <div className="w-full h-8 bg-black/5 rounded-md mt-2" />
+                               <div className="w-full h-8 bg-black/5 rounded-md" />
+                             </div>
+                           </div>
+
+                           {/* Center Card (Desktop Main) */}
+                           <div className="relative w-[90%] max-w-[340px] aspect-[4/3] border-2 border-white/10 rounded-xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col z-20">
+                             {/* Sticky Header */}
+                             <div className="w-full h-10 bg-white border-b border-black/10 flex justify-between items-center px-4 sticky top-0 z-20 shadow-sm">
+                               <div className="w-16 h-4 bg-[#c40000] rounded-sm" />
+                               <div className="flex gap-2">
+                                 <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
+                                 <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
+                                 <div className="w-6 h-1.5 bg-black/20 rounded-sm" />
+                               </div>
+                             </div>
+                             {/* Hero Banner */}
+                             <div className="w-full h-28 bg-[#f4f4f4] relative flex items-center px-4">
+                               <div className="w-1/2 flex flex-col gap-2 relative z-10">
+                                 <div className="w-3/4 h-3 bg-black/80 rounded-sm" />
+                                 <div className="w-full h-2 bg-black/40 rounded-sm" />
+                                 <div className="w-5/6 h-2 bg-black/40 rounded-sm" />
+                                 <div className="w-16 h-5 mt-1 bg-[#c40000] rounded-full" />
+                               </div>
+                               <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-50 bg-[url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80')] bg-cover bg-center [mask-image:linear-gradient(to_left,black,transparent)]" />
+                             </div>
+                             {/* Content Section */}
+                             <div className="flex-1 p-4 bg-white flex flex-col gap-3">
+                               <div className="w-1/3 h-2.5 bg-black/80 rounded-sm mx-auto mb-2" />
+                               <div className="grid grid-cols-3 gap-2">
+                                 <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
+                                   <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
+                                   <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                                 </div>
+                                 <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
+                                   <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
+                                   <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                                 </div>
+                                 <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
+                                   <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
+                                   <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Right Card (Tablet) */}
+                           <div className="absolute right-0 md:right-4 w-[220px] aspect-[4/3] border border-white/10 rounded-xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col scale-[0.85] opacity-50 z-10 transform translate-x-10 md:translate-x-16 transition-all duration-500 hover:opacity-100 hover:scale-95 hover:z-30 overflow-hidden">
+                              <div className="w-full h-8 bg-[#c40000] flex justify-between items-center px-3">
+                                <div className="w-10 h-2 bg-white/50 rounded-sm" />
+                                <div className="w-4 h-4 rounded bg-white/20" />
                               </div>
-                            </div>
-                            {/* Hero Banner */}
-                            <div className="w-full h-28 bg-[#f4f4f4] relative flex items-center px-4">
-                              <div className="w-1/2 flex flex-col gap-2 relative z-10">
-                                <div className="w-3/4 h-3 bg-black/80 rounded-sm" />
-                                <div className="w-full h-2 bg-black/40 rounded-sm" />
-                                <div className="w-5/6 h-2 bg-black/40 rounded-sm" />
-                                <div className="w-16 h-5 mt-1 bg-[#c40000] rounded-full" />
-                              </div>
-                              <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-50 bg-[url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&q=80')] bg-cover bg-center [mask-image:linear-gradient(to_left,black,transparent)]" />
-                            </div>
-                            {/* Content Section */}
-                            <div className="flex-1 p-4 bg-white flex flex-col gap-3">
-                              <div className="w-1/3 h-2.5 bg-black/80 rounded-sm mx-auto mb-2" />
-                              <div className="grid grid-cols-3 gap-2">
-                                <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
-                                  <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
-                                  <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                              <div className="flex-1 p-3 flex gap-3">
+                                <div className="flex-1 flex flex-col gap-2">
+                                  <div className="w-full h-12 bg-black/5 rounded" />
+                                  <div className="w-full h-12 bg-black/5 rounded" />
                                 </div>
-                                <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
-                                  <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
-                                  <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
-                                </div>
-                                <div className="h-16 border border-black/10 rounded-lg bg-black/5 flex flex-col items-center justify-center gap-1.5">
-                                  <div className="w-5 h-5 rounded-full bg-[#c40000]/20" />
-                                  <div className="w-10 h-1.5 bg-black/20 rounded-sm" />
+                                <div className="w-1/3 flex flex-col gap-2">
+                                  <div className="w-full h-full bg-black/5 rounded" />
                                 </div>
                               </div>
-                            </div>
+                           </div>
                          </div>
                        ) : (
                          <div className="w-[80%] max-w-[300px] aspect-[9/16] border border-white/20 rounded-[2rem] p-4 flex flex-col gap-4 bg-[#111] backdrop-blur-sm shadow-2xl overflow-hidden relative">
