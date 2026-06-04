@@ -216,6 +216,7 @@ export default function WorkSocial() {
                       src={item.src} 
                       alt="Social Post" 
                       fill 
+                      draggable={false}
                       className={`object-cover transition-all duration-700 ${isActive ? 'opacity-100 brightness-110' : 'opacity-[0.85] brightness-[0.75] hover:brightness-110 hover:opacity-100'}`} 
                     />
                     
