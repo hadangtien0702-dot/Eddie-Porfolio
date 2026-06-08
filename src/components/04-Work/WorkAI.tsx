@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform, animate, useScroll, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { Sparkles, Video, Package, Hexagon, AudioLines, Clapperboard, FileText, Settings } from "lucide-react";
 
 // ─── Connection Component ───
 const PipelineConnection = ({ 
@@ -261,42 +262,44 @@ const PipelineNode = ({
 // ─── Sub-Canvas: Video Generator ───
 const VideoPipelineCanvas = () => {
   // Node positions — staggered left→right layout
-  const pX = useMotionValue(-380); // Prompt
-  const pY = useMotionValue(-40);
-  const ugcX = useMotionValue(-160); // UGC Image
-  const ugcY = useMotionValue(200);
+  const pX = useMotionValue(-400); // Prompt
+  const pY = useMotionValue(-150);
+  const refX = useMotionValue(-150); // Reference Video
+  const refY = useMotionValue(-280);
   const prodX = useMotionValue(-100); // Product Image
-  const prodY = useMotionValue(-220);
-  const aX = useMotionValue(-280);
-  const aY = useMotionValue(400);
-  const vX = useMotionValue(300);
-  const vY = useMotionValue(80);
+  const prodY = useMotionValue(-20);
+  const logoX = useMotionValue(-180); // Logo
+  const logoY = useMotionValue(200);
+  const aX = useMotionValue(-350); // Audio / Voice
+  const aY = useMotionValue(350);
+  const vX = useMotionValue(320); // Video
+  const vY = useMotionValue(60);
 
   const nodes = {
     prompt: {
-      title: "Prompt",
+      title: "Text Prompt",
       type: "prompt",
-      icon: "✦",
+      icon: <Sparkles className="w-3.5 h-3.5" style={{ color: "#fbbf24" }} />,
       width: 290,
       height: 185,
       hasOutput: true,
       color: "#fbbf24",
     },
-    ugc: {
-      title: "Hình ảnh UGC",
+    refVideo: {
+      title: "Reference Video",
       type: "image",
-      icon: "👤",
+      icon: <Video className="w-3.5 h-3.5" style={{ color: "#38bdf8" }} />,
       width: 185,
       height: 270,
       hasOutput: true,
-      badge: "UGC",
+      badge: "REF VIDEO",
       content: "/videos/reels/885137540830386.mp4",
       color: "#38bdf8",
     },
     product: {
       title: "Hình ảnh Sản phẩm",
       type: "image",
-      icon: "📦",
+      icon: <Package className="w-3.5 h-3.5" style={{ color: "#34d399" }} />,
       width: 185,
       height: 270,
       hasOutput: true,
@@ -304,10 +307,21 @@ const VideoPipelineCanvas = () => {
       content: "/videos/reels/1481637113705236.mp4",
       color: "#34d399",
     },
+    logo: {
+      title: "Logo Module",
+      type: "image",
+      icon: <Hexagon className="w-3.5 h-3.5" style={{ color: "#a78bfa" }} />,
+      width: 160,
+      height: 160,
+      hasOutput: true,
+      badge: "LOGO",
+      content: "/images/logos/midjourney.svg",
+      color: "#a78bfa",
+    },
     audio: {
-      title: "Tánh AI Pro",
+      title: "Voice Module",
       type: "audio",
-      icon: "🎵",
+      icon: <AudioLines className="w-3.5 h-3.5" style={{ color: "#c471ed" }} />,
       width: 200,
       height: 180,
       hasOutput: true,
@@ -316,12 +330,12 @@ const VideoPipelineCanvas = () => {
     video: {
       title: "Video Generator #2",
       type: "video",
-      icon: "🎥",
+      icon: <Clapperboard className="w-3.5 h-3.5 text-white/80" />,
       width: 300,
       height: 450,
       hasInput: true,
-      inputs: [1, 2, 3, 4],
-      inputSpread: 260,
+      inputs: [1, 2, 3, 4, 5],
+      inputSpread: 320,
       content: "/videos/reels/1193408759530975.mp4",
     },
   };
@@ -334,25 +348,31 @@ const VideoPipelineCanvas = () => {
         {/* Prompt → Video */}
         <PipelineConnection
           sourceNode={{ x: pX, y: pY, width: nodes.prompt.width, height: nodes.prompt.height }}
-          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: -130 }}
+          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: -160 }}
           color={nodes.prompt.color}
         />
-        {/* UGC → Video */}
+        {/* RefVideo → Video */}
         <PipelineConnection
-          sourceNode={{ x: ugcX, y: ugcY, width: nodes.ugc.width, height: nodes.ugc.height }}
-          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: -43 }}
-          color={nodes.ugc.color}
+          sourceNode={{ x: refX, y: refY, width: nodes.refVideo.width, height: nodes.refVideo.height }}
+          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: -80 }}
+          color={nodes.refVideo.color}
         />
         {/* Product → Video */}
         <PipelineConnection
           sourceNode={{ x: prodX, y: prodY, width: nodes.product.width, height: nodes.product.height }}
-          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: 43 }}
+          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: 0 }}
           color={nodes.product.color}
+        />
+        {/* Logo → Video */}
+        <PipelineConnection
+          sourceNode={{ x: logoX, y: logoY, width: nodes.logo.width, height: nodes.logo.height }}
+          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: 80 }}
+          color={nodes.logo.color}
         />
         {/* Audio → Video */}
         <PipelineConnection
           sourceNode={{ x: aX, y: aY, width: nodes.audio.width, height: nodes.audio.height }}
-          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: 130 }}
+          targetNode={{ x: vX, y: vY, width: nodes.video.width, height: nodes.video.height, inPortY: 160 }}
           color={nodes.audio.color}
         />
       </svg>
@@ -366,10 +386,10 @@ const VideoPipelineCanvas = () => {
           <div className="absolute -inset-[3px] rounded-[14px] animate-pulse" style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.3), rgba(245,158,11,0.1))', filter: 'blur(6px)' }} />
         </motion.div>
       </div>
-      {/* UGC node — cyan highlight ring */}
+      {/* RefVideo node — cyan highlight ring */}
       <div style={{ position: 'absolute', left: 0, top: 0, zIndex: 15, pointerEvents: 'none' }}>
         <motion.div
-          style={{ x: ugcX, y: ugcY, width: nodes.ugc.width, height: nodes.ugc.height, marginLeft: -nodes.ugc.width / 2, marginTop: -nodes.ugc.height / 2 }}
+          style={{ x: refX, y: refY, width: nodes.refVideo.width, height: nodes.refVideo.height, marginLeft: -nodes.refVideo.width / 2, marginTop: -nodes.refVideo.height / 2 }}
           className="absolute"
         >
           <div className="absolute -inset-[3px] rounded-[14px]" style={{ background: 'rgba(56,189,248,0.15)', filter: 'blur(8px)' }} />
@@ -384,10 +404,20 @@ const VideoPipelineCanvas = () => {
           <div className="absolute -inset-[3px] rounded-[14px]" style={{ background: 'rgba(52,211,153,0.15)', filter: 'blur(8px)' }} />
         </motion.div>
       </div>
+      {/* Logo node — purple highlight ring */}
+      <div style={{ position: 'absolute', left: 0, top: 0, zIndex: 15, pointerEvents: 'none' }}>
+        <motion.div
+          style={{ x: logoX, y: logoY, width: nodes.logo.width, height: nodes.logo.height, marginLeft: -nodes.logo.width / 2, marginTop: -nodes.logo.height / 2 }}
+          className="absolute"
+        >
+          <div className="absolute -inset-[3px] rounded-[14px]" style={{ background: 'rgba(167,139,250,0.15)', filter: 'blur(8px)' }} />
+        </motion.div>
+      </div>
 
       <PipelineNode nodeData={{ ...nodes.prompt, content: promptContent }} motionX={pX} motionY={pY} />
-      <PipelineNode nodeData={nodes.ugc} motionX={ugcX} motionY={ugcY} />
+      <PipelineNode nodeData={nodes.refVideo} motionX={refX} motionY={refY} />
       <PipelineNode nodeData={nodes.product} motionX={prodX} motionY={prodY} />
+      <PipelineNode nodeData={nodes.logo} motionX={logoX} motionY={logoY} />
       <PipelineNode nodeData={nodes.audio} motionX={aX} motionY={aY} />
       <PipelineNode nodeData={nodes.video} motionX={vX} motionY={vY} />
     </>
@@ -566,7 +596,7 @@ export default function WorkAI() {
         <div className="relative w-full h-full max-w-[1400px] mx-auto pointer-events-auto overflow-hidden">
           
           {/* ─── Node Canvas Center Anchor ─── */}
-          <div className="absolute left-1/2 top-1/2 w-[1px] h-[1px] overflow-visible">
+          <div className="absolute left-1/2 top-1/2 w-[1px] h-[1px] overflow-visible scale-[0.45] sm:scale-[0.6] md:scale-[0.8] lg:scale-100 transition-transform duration-500">
             <AnimatePresence mode="wait">
               {activeTab === 'video' ? (
                 <motion.div key="video-canvas" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} transition={{ duration: 0.5 }}>
@@ -583,8 +613,8 @@ export default function WorkAI() {
       </motion.div>
 
       {/* ─── Foreground Title & Text Overlay ─── */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 lg:p-16 pointer-events-none flex flex-col justify-end items-start z-30 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/80 to-transparent pt-32">
-        <div className="max-w-2xl pointer-events-auto">
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 lg:p-16 pointer-events-none flex flex-col justify-end items-start z-50 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/80 to-transparent pt-32">
+        <div className="max-w-2xl pointer-events-auto relative z-50">
           <h2 className="font-heading text-[clamp(40px,7vw,90px)] text-white font-black leading-[0.9] tracking-tight uppercase">
             A.I<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff5a1f] to-[#ff9f43]">
@@ -601,8 +631,8 @@ export default function WorkAI() {
 
           <div className="mt-8">
             <Link 
-              href="#" 
-              className="group flex items-center gap-3 bg-[#111] hover:bg-[#ff5a1f]/10 border border-[#ff5a1f]/20 hover:border-[#ff5a1f]/50 
+              href="/ai" 
+              className="relative z-[100] pointer-events-auto cursor-pointer group flex items-center gap-3 bg-[#111] hover:bg-[#ff5a1f]/10 border border-[#ff5a1f]/20 hover:border-[#ff5a1f]/50 
                          px-6 py-3.5 rounded-full transition-all duration-300 backdrop-blur-md w-fit"
             >
               <span className="font-heading text-[11px] font-black tracking-widest text-[#ff5a1f] uppercase">
