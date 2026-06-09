@@ -8,7 +8,6 @@ import WorkVideoEditor from "@/components/04-Work/WorkVideoEditor";
 import WorkSocial from "@/components/04-Work/WorkSocial";
 import WorkAI from "@/components/04-Work/WorkAI";
 import WorkSetupWebsite from "@/components/04-Work/WorkSetupWebsite";
-import Showreel from "@/components/05-Showreel/Showreel";
 import CaseStudy from "@/components/03-CaseStudy/CaseStudy";
 import Contact from "@/components/06-Contact/Contact";
 import Footer from "@/components/07-Footer/Footer";
@@ -25,9 +24,6 @@ export default function Home() {
       <WorkSocial />
       <WorkAI />
       <WorkSetupWebsite />
-
-      {/* Showreel: Demo reel */}
-      <Showreel />
 
       {/* Case Study: Chứng minh bằng case thực tế */}
       <CaseStudy />

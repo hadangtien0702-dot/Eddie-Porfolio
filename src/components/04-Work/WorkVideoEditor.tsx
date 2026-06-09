@@ -484,6 +484,10 @@ export default function WorkVideoEditor() {
     return val * 0.7 * (m as number);
   });
 
+  // Intro Glow Link Activation Flash - liên kết chuyển cảnh từ Overview ở trên
+  const introGlow = useTransform(scrollYProgress, [0, 0.12, 0.24], [0, 1, 0]);
+  const introGlowSpring = useSpring(introGlow, { damping: 20, stiffness: 60 });
+
   const handleTrackClick = (e: React.MouseEvent) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
@@ -538,7 +542,7 @@ export default function WorkVideoEditor() {
                 {["EDIT", "COLOR", "EFFECTS", "AUDIO", "EXPORT"].map(tab => (
                   <button 
                     key={tab} 
-                    className={`px-3 py-1 rounded transition-colors ${tab === "EDIT" ? "text-cyan-400 bg-white/5 border border-cyan-400/20 font-bold" : "hover:text-white"}`}
+                    className={`px-3 py-1 rounded transition-colors ${tab === "EDIT" ? "text-accent bg-white/5 border border-accent/20 font-bold" : "hover:text-white"}`}
                   >
                     {tab}
                   </button>
@@ -548,19 +552,12 @@ export default function WorkVideoEditor() {
             
             {/* Render Engine specs */}
             <div className="flex items-center gap-4 text-[10px] md:text-xs font-mono">
-              <button 
-                onClick={handleRenderShowcase}
-                className="hidden md:flex items-center gap-2 bg-gradient-to-r from-[#ff4000] to-[#e83600] hover:brightness-110 text-white font-heading font-bold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-lg border border-white/15 transition-all shadow-[0_0_15px_rgba(255,64,0,0.2)]"
-              >
-                <span>3D SHOWCASE</span>
-                <Sliders className="w-3 h-3" />
-              </button>
               <div className="flex items-center gap-2 bg-zinc-900 border border-white/5 px-2.5 py-1 rounded-md">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
-                <span className="text-zinc-400 uppercase tracking-wider text-[9px]">ENGINE</span>
+                <span className="text-zinc-400 tracking-wider text-[9px]">ENGINE</span>
                 <span className="text-green-400 font-bold text-[9px]">ONLINE</span>
               </div>
-              <div className="bg-zinc-900 border border-white/5 px-2.5 py-1 rounded-md text-cyan-400 font-bold text-[9px] tracking-wider hidden sm:block">
+              <div className="bg-zinc-900 border border-white/5 px-2.5 py-1 rounded-md text-accent font-bold text-[9px] tracking-wider hidden sm:block">
                 60 FPS
               </div>
             </div>
@@ -582,27 +579,27 @@ export default function WorkVideoEditor() {
               
               {/* Assets Tree & Grid Container */}
               <div className="flex-1 overflow-y-auto p-2 scrollbar-hide flex flex-col gap-2">
-                {/* Folder 1: Sequences */}
+                {/* Folder 1: Seq */}
                 <div className="flex flex-col">
                   <div 
                     onClick={() => toggleFolder("sequences")} 
                     className="flex items-center gap-1.5 px-1 py-1 text-xs text-zinc-300 hover:bg-white/5 rounded cursor-pointer transition-colors"
                   >
                     {expandedFolders.sequences ? <ChevronDown className="w-3.5 h-3.5 text-zinc-500" /> : <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />}
-                    <Folder className="w-3.5 h-3.5 text-cyan-400" />
+                    <Folder className="w-3.5 h-3.5 text-accent" />
                     <span className="font-mono text-[11px] truncate flex-1">01_SEQUENCES</span>
                     <span className="font-mono text-[9px] text-zinc-500 bg-white/5 px-1.5 py-0.5 rounded">1</span>
                   </div>
                   {expandedFolders.sequences && (
                     <div className="pl-6 flex flex-col py-0.5">
-                      <div className="flex items-center gap-2 px-1.5 py-1 text-xs text-cyan-400 bg-cyan-500/5 border border-cyan-500/10 rounded cursor-pointer font-medium font-mono text-[11px]">
+                      <div className="flex items-center gap-2 px-1.5 py-1 text-xs text-accent bg-accent/5 border border-accent/10 rounded cursor-pointer font-medium font-mono text-[11px]">
                         <Film className="w-3.5 h-3.5" />
                         <span className="truncate">SEQ_MASTER_V3</span>
                       </div>
                     </div>
                   )}
                 </div>
-
+ 
                 {/* Folder 2: Footage */}
                 <div className="flex flex-col">
                   <div 
@@ -620,7 +617,7 @@ export default function WorkVideoEditor() {
                         <div 
                           key={asset.id}
                           onClick={() => handleAssetSelect(asset)}
-                          className={`flex items-center gap-2 p-1.5 rounded cursor-pointer border transition-all ${activeAsset.id === asset.id ? "bg-white/5 border-cyan-500/20 shadow-sm" : "border-transparent hover:bg-white/5"}`}
+                          className={`flex items-center gap-2 p-1.5 rounded cursor-pointer border transition-all ${activeAsset.id === asset.id ? "bg-white/5 border-accent/20 shadow-sm" : "border-transparent hover:bg-white/5"}`}
                         >
                           <div className="relative w-12 h-8 rounded overflow-hidden border border-white/10 bg-black shrink-0">
                             <Image src={asset.path} alt={asset.name} fill className="object-cover" />
@@ -691,7 +688,7 @@ export default function WorkVideoEditor() {
                 <div 
                   className="relative w-full aspect-video max-w-[800px] border border-white/10 bg-[#040405] rounded-xl overflow-hidden shadow-2xl"
                   style={{
-                    boxShadow: is3DMode ? "0 30px 60px rgba(0,255,255,0.06), 0 0 100px rgba(0,0,0,0.8)" : "0 10px 40px rgba(0,0,0,0.8)"
+                    boxShadow: is3DMode ? "0 30px 60px rgba(255,64,0,0.15), 0 0 100px rgba(0,0,0,0.8)" : "0 10px 40px rgba(0,0,0,0.8)"
                   }}
                 >
                   <motion.div 
@@ -737,29 +734,29 @@ export default function WorkVideoEditor() {
                         </div>
                       </div>
                     </motion.div>
-
+ 
                     {/* Layer 3: VFX & Glow Diagnostic Panel (Fades in 3D mode) */}
                     <motion.div 
                       style={{ z: layer3Z, rotateX: layer3RotateX, rotateY: layer3RotateY, opacity: layer3Opacity, transformStyle: "preserve-3d" }}
                       className="absolute inset-0 z-30 pointer-events-none"
                     >
-                      <div className="absolute inset-0 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.01] mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.12)]">
+                      <div className="absolute inset-0 rounded-xl border border-accent/20 bg-accent/[0.01] mix-blend-screen backdrop-blur-[0.5px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_0_30px_rgba(255,64,0,0.12)]">
                         <div className="flex justify-between items-center opacity-50">
-                          <span className="font-mono text-cyan-400 text-[8px] tracking-widest bg-cyan-500/10 px-2 py-0.5 rounded">VFX_OPTICAL_GLOW [V2]</span>
-                          <span className="font-mono text-cyan-300 text-[8px]">THR: 0.25</span>
+                          <span className="font-mono text-accent text-[8px] tracking-widest bg-accent/10 px-2 py-0.5 rounded">VFX_OPTICAL_GLOW [V2]</span>
+                          <span className="font-mono text-zinc-400 text-[8px]">THR: 0.25</span>
                         </div>
                         <div className="absolute top-[30%] left-[25%] flex flex-col items-center gap-0.5 opacity-40">
-                          <div className="w-5 h-5 border border-cyan-400 rounded-sm relative flex items-center justify-center">
-                            <div className="w-0.5 h-0.5 bg-cyan-400 rounded-full" />
+                          <div className="w-5 h-5 border border-accent rounded-sm relative flex items-center justify-center">
+                            <div className="w-0.5 h-0.5 bg-accent rounded-full" />
                           </div>
-                          <span className="font-mono text-[6px] text-cyan-400">TRACKPOINT_01</span>
+                          <span className="font-mono text-[6px] text-accent">TRACKPOINT_01</span>
                         </div>
                         <div className="flex justify-between items-end opacity-50">
-                          <span className="font-mono text-cyan-400 text-[8px]">VFX COMPOSITE</span>
+                          <span className="font-mono text-accent text-[8px]">VFX COMPOSITE</span>
                         </div>
                       </div>
                     </motion.div>
-
+ 
                     {/* Layer 4: Typography & Guides Overlay Panel (Visible in both modes) */}
                     <motion.div 
                       style={{ z: layer4Z, rotateX: layer4RotateX, rotateY: layer4RotateY, transformStyle: "preserve-3d" }}
@@ -771,30 +768,52 @@ export default function WorkVideoEditor() {
                           <span className="font-mono text-white text-[8px] tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.camera}</span>
                           <span className="font-mono text-white/50 text-[8px] tracking-widest bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.iso}</span>
                         </div>
-
-                        {/* Title text removed per user request */}
-                        
+ 
                         <div className="flex justify-between items-end opacity-60">
                           <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">REC.709 / CINEMATIC</span>
                           <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">V4_OVERLAY</span>
                         </div>
                       </div>
                     </motion.div>
-
+ 
                     {/* Alignment Flash */}
                     <motion.div 
                       style={{ opacity: masterGlowOpacity }}
-                      className="absolute inset-0 bg-white/10 shadow-[0_0_100px_rgba(255,255,255,0.3)] rounded-xl pointer-events-none mix-blend-overlay z-50"
+                      className="absolute inset-0 bg-white/10 shadow-[0_0_100px_rgba(255,64,0,0.3)] rounded-xl pointer-events-none mix-blend-overlay z-50"
                     />
+
+                    {/* Intro Glow Link Activation Flash */}
+                    <motion.div 
+                      style={{ opacity: introGlowSpring }}
+                      className="absolute inset-0 bg-accent/15 shadow-[0_0_120px_rgba(255,64,0,0.55)] rounded-xl pointer-events-none mix-blend-screen z-50 flex items-center justify-center border border-accent/40"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-accent/10 to-transparent animate-pulse" />
+                    </motion.div>
                   </motion.div>
+ 
+                  {/* 3D Showcase CTA Button overlayed on player */}
+                  <button
+                    onClick={handleRenderShowcase}
+                    className="absolute bottom-4 right-4 z-50 flex items-center gap-2.5 
+                               bg-gradient-to-r from-accent via-[#ff3c00] to-[#ff2a00] hover:brightness-110 active:scale-95
+                               text-white font-heading font-black text-[10px] sm:text-[11px] uppercase tracking-[0.12em]
+                               px-5 py-3 rounded-xl border border-white/30 
+                               shadow-[0_0_30px_rgba(255,64,0,0.65),0_12px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.4)]
+                               hover:shadow-[0_0_40px_rgba(255,64,0,0.85),0_15px_30px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.5)]
+                               hover:scale-[1.04] transition-all duration-300 cursor-pointer pointer-events-auto
+                               animate-[pulse_1.8s_infinite] backdrop-blur-sm"
+                  >
+                    <span>TRẢI NGHIỆM 3D SHOWCASE</span>
+                    <Sliders className="w-3.5 h-3.5 text-white" />
+                  </button>
                 </div>
               </div>
-
+ 
               {/* Viewport Control Strip */}
               <div className="h-10 bg-[#090b10] border-t border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[10px] select-none text-zinc-400">
                 <div className="flex items-center gap-3">
                   {/* Current Program Timecode */}
-                  <span ref={monitorTimecodeRef} className="font-bold text-cyan-400 bg-black/40 px-2 py-1 border border-white/5 rounded">01:00:00:00</span>
+                  <span ref={monitorTimecodeRef} className="font-bold text-accent bg-black/40 px-2 py-1 border border-white/5 rounded">01:00:00:00</span>
                   <div className="w-px h-3 bg-white/10" />
                   <select className="bg-transparent border-0 outline-none text-[9px] hover:text-white cursor-pointer font-bold">
                     <option>Fit</option>
@@ -802,20 +821,20 @@ export default function WorkVideoEditor() {
                     <option>50%</option>
                   </select>
                 </div>
-
+ 
                 {/* Video controls */}
                 <div className="flex items-center gap-4 text-zinc-400">
                   <button className="hover:text-white transition-colors" onClick={() => dragX.set(0)}><Play className="w-3.5 h-3.5 rotate-180" /></button>
                   <button className="hover:text-white transition-colors" onClick={() => {if(videoRef.current){videoRef.current.currentTime=Math.max(0, videoRef.current.currentTime-2);}}}><Pause className="w-3.5 h-3.5" /></button>
                   <button 
                     onClick={handlePlayPause}
-                    className={`w-7 h-7 border rounded-full flex items-center justify-center hover:bg-white/10 hover:border-cyan-500/25 transition-all ${isPlaying ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400" : "bg-white/5 border-white/10 text-cyan-400"}`}
+                    className={`w-7 h-7 border rounded-full flex items-center justify-center hover:bg-white/10 hover:border-accent/25 transition-all ${isPlaying ? "bg-accent/10 border-accent/40 text-accent" : "bg-white/5 border-white/10 text-accent"}`}
                   >
-                    {isPlaying ? <Pause className="w-3 h-3 fill-cyan-400 text-cyan-400" /> : <Play className="w-3 h-3 fill-cyan-400 text-cyan-400 ml-0.5" />}
+                    {isPlaying ? <Pause className="w-3 h-3 fill-accent text-accent" /> : <Play className="w-3 h-3 fill-accent text-accent ml-0.5" />}
                   </button>
                   <button className="hover:text-white transition-colors" onClick={() => {if(videoRef.current){videoRef.current.currentTime=Math.min(videoRef.current.duration, videoRef.current.currentTime+2);}}}><Play className="w-3.5 h-3.5" /></button>
                 </div>
-
+ 
                 {/* Right controls */}
                 <div className="flex items-center gap-3">
                   {/* 3D mode Toggle */}
@@ -824,7 +843,7 @@ export default function WorkVideoEditor() {
                       uiSounds.playClick();
                       setIs3DMode(!is3DMode);
                     }}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[9px] font-bold transition-all ${is3DMode ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400 font-bold animate-pulse" : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"}`}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[9px] font-bold transition-all ${is3DMode ? "bg-accent/10 border-accent/40 text-accent font-bold animate-pulse" : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"}`}
                   >
                     <Activity className="w-3 h-3" />
                     <span>3D MODE</span>
@@ -832,7 +851,7 @@ export default function WorkVideoEditor() {
                   <div className="w-px h-3 bg-white/10" />
                   <div className="flex items-center gap-2">
                     <Volume2 className="w-3.5 h-3.5 hover:text-white cursor-pointer" />
-                    <div className="w-12 h-1 bg-zinc-800 rounded-full relative cursor-pointer"><div className="absolute top-0 bottom-0 left-0 w-3/4 bg-cyan-400 rounded-full" /></div>
+                    <div className="w-12 h-1 bg-zinc-800 rounded-full relative cursor-pointer"><div className="absolute top-0 bottom-0 left-0 w-3/4 bg-accent rounded-full" /></div>
                   </div>
                   <Maximize2 className="w-3.5 h-3.5 hover:text-white cursor-pointer ml-1" />
                 </div>
@@ -862,15 +881,15 @@ export default function WorkVideoEditor() {
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-zinc-500">Position</span>
-                    <span className="text-cyan-400 font-bold"><span ref={posXRef}>960.0</span> · 540.0</span>
+                    <span className="text-accent font-bold"><span ref={posXRef}>960.0</span> · 540.0</span>
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-zinc-500">Scale</span>
-                    <span ref={scaleValueRef} className="text-cyan-400 font-bold">100.0%</span>
+                    <span ref={scaleValueRef} className="text-accent font-bold">100.0%</span>
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-zinc-500">Rotation</span>
-                    <span ref={rotationValueRef} className="text-cyan-400 font-bold">0.0°</span>
+                    <span ref={rotationValueRef} className="text-accent font-bold">0.0°</span>
                   </div>
                 </div>
 
@@ -898,7 +917,7 @@ export default function WorkVideoEditor() {
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-zinc-500">Basic Correction</span>
-                    <span className="text-cyan-400 font-bold">Active</span>
+                    <span className="text-accent font-bold">Active</span>
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-zinc-500">Input LUT</span>
@@ -908,7 +927,7 @@ export default function WorkVideoEditor() {
                   <div className="flex flex-col gap-1.5 px-1 mt-1">
                     <div className="flex justify-between text-[9px]">
                       <span className="text-zinc-500">LUT Intensity</span>
-                      <span className="text-cyan-400 font-bold"><span ref={intensityValueRef}>50.0</span></span>
+                      <span className="text-accent font-bold"><span ref={intensityValueRef}>50.0</span></span>
                     </div>
                     <input 
                       ref={intensitySliderRef}
@@ -916,7 +935,7 @@ export default function WorkVideoEditor() {
                       min="20" 
                       max="80" 
                       defaultValue="50"
-                      className="w-full accent-cyan-400 bg-zinc-800 h-1 rounded-lg cursor-pointer"
+                      className="w-full accent-accent bg-zinc-800 h-1 rounded-lg cursor-pointer"
                       disabled
                     />
                   </div>
@@ -932,7 +951,7 @@ export default function WorkVideoEditor() {
               <div className="flex items-center gap-4">
                 <span className="font-bold text-zinc-200">TIMELINE: SEQUENCE 01</span>
                 <div className="h-3 w-px bg-white/10" />
-                <span ref={timecodeRef} className="font-bold text-cyan-400">01:00:00:00</span>
+                <span ref={timecodeRef} className="font-bold text-accent">01:00:00:00</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -958,7 +977,7 @@ export default function WorkVideoEditor() {
                     key={tool.id}
                     title={tool.label}
                     onClick={() => setActiveTool(tool.id)}
-                    className={`p-1.5 rounded-md cursor-pointer transition-all ${activeTool === tool.id ? "bg-cyan-500/10 text-cyan-400 border border-cyan-400/20" : "text-zinc-500 hover:text-white"}`}
+                    className={`p-1.5 rounded-md cursor-pointer transition-all ${activeTool === tool.id ? "bg-accent/10 text-accent border border-accent/20" : "text-zinc-500 hover:text-white"}`}
                   >
                     <tool.icon className="w-4 h-4" />
                   </div>
@@ -973,7 +992,7 @@ export default function WorkVideoEditor() {
                 {([
                   { name: "V3", color: "text-purple-400", bg: "bg-purple-500/5" },
                   { name: "V2", color: "text-blue-400", bg: "bg-blue-500/5" },
-                  { name: "V1", color: "text-cyan-400", bg: "bg-cyan-500/5" }
+                  { name: "V1", color: "text-accent", bg: "bg-accent/5" }
                 ] as const).map(track => {
                   const state = trackStates[track.name];
                   return (
@@ -1111,8 +1130,8 @@ export default function WorkVideoEditor() {
                     <div 
                       className={`absolute h-[22px] rounded flex items-center overflow-hidden transition-shadow duration-150 select-none group/clip ${
                         draggingClip === 'V1' 
-                          ? 'z-30 shadow-[0_0_25px_rgba(34,211,238,0.5)] bg-cyan-600/45 border border-cyan-300/60 cursor-grabbing' 
-                          : 'shadow-[0_0_12px_rgba(34,211,238,0.2)] bg-cyan-600/30 border border-cyan-400/40 hover:bg-cyan-600/45 cursor-grab'
+                          ? 'z-30 shadow-[0_0_25px_rgba(255,64,0,0.4)] bg-accent/45 border border-red-500/60 cursor-grabbing' 
+                          : 'shadow-[0_0_12px_rgba(255,64,0,0.15)] bg-accent/30 border border-accent/40 hover:bg-accent/45 cursor-grab'
                       }`}
                       style={{ 
                         left: `${clipPositions.V1.left}%`, 
@@ -1123,13 +1142,13 @@ export default function WorkVideoEditor() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div 
-                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-20 hover:bg-cyan-400/50 group-hover/clip:bg-cyan-400/20 transition-colors"
+                        className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-20 hover:bg-accent/50 group-hover/clip:bg-accent/20 transition-colors"
                         onPointerDown={(e) => handleTrimDrag('V1', 'left', e)}
                       />
                       <div className="relative h-full aspect-video opacity-45 border-r border-white/10 shrink-0 pointer-events-none"><Image src={activeAsset.path} alt={activeAsset.name} fill className="object-cover" /></div>
-                      <span className="ml-2.5 text-[9px] font-mono text-cyan-200 font-bold truncate pointer-events-none">{activeAsset.name} [V]</span>
+                      <span className="ml-2.5 text-[9px] font-mono text-zinc-200 font-bold truncate pointer-events-none">{activeAsset.name} [V]</span>
                       <div 
-                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-20 hover:bg-cyan-400/50 group-hover/clip:bg-cyan-400/20 transition-colors"
+                        className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-20 hover:bg-accent/50 group-hover/clip:bg-accent/20 transition-colors"
                         onPointerDown={(e) => handleTrimDrag('V1', 'right', e)}
                       />
                     </div>
@@ -1251,24 +1270,25 @@ export default function WorkVideoEditor() {
                       setIsPlaying(false);
                     }
                   }}
-                  onDragEnd={() => { isDraggingRef.current = false; }}
-                  style={{ x: dragX }}
+                  onDragEnd={() => {
+                    isDraggingRef.current = false;
+                  }}
                   className="absolute -top-10 bottom-0 w-8 -ml-[16px] z-40 cursor-ew-resize flex flex-col items-center pointer-events-auto group"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Laser Emitter Head */}
-                  <div className="w-8 h-9 bg-black/90 border border-cyan-400/50 rounded shadow-[0_0_15px_rgba(34,211,238,0.7)] relative flex flex-col items-center justify-end pb-1.5 group-hover:bg-cyan-950 transition-colors z-20 backdrop-blur-md">
+                  <div className="w-8 h-9 bg-black/90 border border-accent/50 rounded shadow-[0_0_15px_rgba(255,64,0,0.6)] relative flex flex-col items-center justify-end pb-1.5 group-hover:bg-orange-950 transition-colors z-20 backdrop-blur-md">
                      <div className="w-2.5 h-1 bg-white rounded-full animate-pulse shadow-[0_0_8px_#fff]" />
-                     <div className="absolute -bottom-2 w-0 h-0 border-l-[7px] border-r-[7px] border-t-[8px] border-l-transparent border-r-transparent border-t-cyan-400" />
+                     <div className="absolute -bottom-2 w-0 h-0 border-l-[7px] border-r-[7px] border-t-[8px] border-l-transparent border-r-transparent border-t-accent" />
                   </div>
                   {/* Laser Beam Slicing Through tracks */}
-                  <div className="flex-1 w-[2px] bg-cyan-400 shadow-[0_0_12px_#22d3ee,0_0_25px_#22d3ee] group-hover:w-[3px] group-hover:bg-white transition-all z-10 relative">
-                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-24 bg-cyan-400/25 blur-lg rounded-full pointer-events-none" />
+                  <div className="flex-1 w-[2px] bg-accent shadow-[0_0_12px_#ff4000,0_0_25px_#ff4000] group-hover:w-[3px] group-hover:bg-white transition-all z-10 relative">
+                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-24 bg-accent/25 blur-lg rounded-full pointer-events-none" />
                   </div>
                 </motion.div>
               </div>
             </div>
-
+ 
             {/* Timeline Bottom Status bar */}
             <div className="h-6 bg-[#08090c] border-t border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[9px] text-zinc-500">
               <div className="flex items-center gap-4">
@@ -1281,7 +1301,9 @@ export default function WorkVideoEditor() {
               </div>
               <div className="flex items-center gap-3">
                 <span>Zoom</span>
-                <div className="w-16 h-0.5 bg-zinc-800 rounded-full relative"><div className="absolute top-0 bottom-0 left-0 w-1/3 bg-cyan-400 rounded-full" /></div>
+                <div className="w-16 h-0.5 bg-zinc-800 rounded-full relative">
+                  <div className="absolute top-0 bottom-0 left-0 w-1/3 bg-accent rounded-full" />
+                </div>
               </div>
             </div>
           </motion.footer>
