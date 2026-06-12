@@ -107,9 +107,9 @@ export default function Overview() {
             bottom: 0,
             left: "50%",
             transform: "translateX(-50%)",
-            width: "80vw",
+            width: "160vw",
             height: "55vh",
-            background: "radial-gradient(ellipse 100% 80% at 50% 100%, rgba(180,25,25,0.42) 0%, rgba(120,15,15,0.18) 50%, transparent 75%)",
+            background: "radial-gradient(ellipse 50% 80% at 50% 100%, rgba(180,25,25,0.42) 0%, rgba(120,15,15,0.18) 50%, transparent 75%)",
           }}
         />
 
