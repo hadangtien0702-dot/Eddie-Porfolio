@@ -1,10 +1,10 @@
 // ─── Root Layout ───
 // Mô tả: Layout chính của toàn bộ trang portfolio
-// Font: Be Vietnam Pro (heading) + Inter Display (body)
-// Giải pháp: Sử dụng Be Vietnam Pro để hỗ trợ tiếng Việt hoàn hảo cho tiêu đề
+// Font: Be Vietnam Pro (heading) + Inter Display (body) + JetBrains Mono (số liệu/label)
+// Giải pháp: Cả 3 font đều hỗ trợ tiếng Việt; Inter Display dùng bản WOFF2 nén nhẹ
 
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro } from "next/font/google";
+import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
@@ -17,27 +17,45 @@ const beVietnam = Be_Vietnam_Pro({
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
+// ─── Mono Font: JetBrains Mono (Google Fonts) — labels, stats, overline ───
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin", "vietnamese"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
 // ─── Local Font: Inter Display (Body) ───
 const interDisplay = localFont({
   src: [
     {
-      path: "../../assets/fonts/Inter Display/InterDisplay-Regular.ttf",
+      path: "../../assets/fonts/Inter Display/InterDisplay-Regular.woff2",
       weight: "400",
       style: "normal",
     },
     {
-      path: "../../assets/fonts/Inter Display/InterDisplay-Medium.ttf",
+      path: "../../assets/fonts/Inter Display/InterDisplay-Medium.woff2",
       weight: "500",
       style: "normal",
     },
     {
-      path: "../../assets/fonts/Inter Display/InterDisplay-SemiBold.ttf",
+      path: "../../assets/fonts/Inter Display/InterDisplay-SemiBold.woff2",
       weight: "600",
       style: "normal",
     },
     {
-      path: "../../assets/fonts/Inter Display/InterDisplay-Bold.ttf",
+      path: "../../assets/fonts/Inter Display/InterDisplay-Bold.woff2",
       weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../assets/fonts/Inter Display/InterDisplay-ExtraBold.woff2",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "../../assets/fonts/Inter Display/InterDisplay-Black.woff2",
+      weight: "900",
       style: "normal",
     },
   ],
@@ -57,7 +75,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${beVietnam.variable} ${interDisplay.variable}`} suppressHydrationWarning>
+    <html lang="vi" className={`${beVietnam.variable} ${interDisplay.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <body className="antialiased bg-[#050505] text-white overflow-x-hidden min-h-screen relative" suppressHydrationWarning>
         
         {/* ─── Global Tech Motif Background ─── */}

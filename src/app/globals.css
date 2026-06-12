@@ -28,6 +28,7 @@
   /* Font — tham chiếu từ CSS variables mà Next.js tạo ra */
   --font-heading: var(--font-be-vietnam), system-ui, sans-serif;
   --font-body: var(--font-inter-display), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   /* Gradient */
   --gradient-hero: linear-gradient(
@@ -70,6 +71,7 @@
   /* Font Family — tham chiếu đúng biến Next.js */
   --font-heading: var(--font-be-vietnam), system-ui, sans-serif;
   --font-body: var(--font-inter-display), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   /* Font Size — Typography hierarchy optimized for Desktop & Mobile */
   --font-size-display: clamp(38px, 8vw, 76px);
