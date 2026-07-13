@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import Link from "next/link";
 import { contactData } from "@/data/contact";
 import GlowBorder from "@/components/ui/GlowBorder";
 
@@ -99,7 +100,23 @@ export default function Contact() {
               </svg>
             </a>
 
-            {/* Secondary — LinkedIn */}
+            {/* Secondary — Resume (CV) */}
+            <Link
+              href="/resume"
+              className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-body text-[12px] font-bold uppercase tracking-[0.2em] text-white/70 hover:text-white border border-white/10 hover:bg-white/5 transition-all duration-300"
+            >
+              View Resume
+              <svg
+                width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className="transition-transform duration-300 group-hover:translate-x-0.5"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </Link>
+
+            {/* Tertiary — LinkedIn */}
             <a
               href={contactData.socials[0]?.href || "#"}
               target="_blank"

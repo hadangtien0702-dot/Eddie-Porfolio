@@ -181,25 +181,25 @@ export default function WorkVideoEditor() {
     offset: ["start start", "end end"]
   });
 
-  // HUD Elements Assembly & Fade
-  const editorScale = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.93, 1, 1, 0.93]);
-  const editorOpacity = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
+  // HUD Elements Assembly & Fade — lắp ráp NHANH ngay khi vào, giữ lâu, tháo trễ → giảm khoảng tối
+  const editorScale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.93, 1, 1, 0.93]);
+  const editorOpacity = useTransform(scrollYProgress, [0, 0.05, 0.92, 1], [0, 1, 1, 0]);
 
   // Panel Fly-in Transforms
-  const panelYTop = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [-100, 0, 0, -100]);
-  const panelXLeft = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [-300, 0, 0, -300]);
-  const panelXRight = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [300, 0, 0, 300]);
-  const panelYBottom = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [300, 0, 0, 300]);
+  const panelYTop = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [-100, 0, 0, -100]);
+  const panelXLeft = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [-300, 0, 0, -300]);
+  const panelXRight = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [300, 0, 0, 300]);
+  const panelYBottom = useTransform(scrollYProgress, [0, 0.14, 0.86, 1], [300, 0, 0, 300]);
 
   // Opacity & Background Fades (Hides empty boxes before assembly)
-  const panelOpTop = useTransform(scrollYProgress, [0.05, 0.25, 0.75, 0.95], [0, 1, 1, 0]);
-  const panelOpSide = useTransform(scrollYProgress, [0.1, 0.3, 0.7, 0.9], [0, 1, 1, 0]);
-  const panelOpBottom = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], [0, 1, 1, 0]);
+  const panelOpTop = useTransform(scrollYProgress, [0.02, 0.12, 0.88, 0.98], [0, 1, 1, 0]);
+  const panelOpSide = useTransform(scrollYProgress, [0.04, 0.14, 0.86, 0.96], [0, 1, 1, 0]);
+  const panelOpBottom = useTransform(scrollYProgress, [0.06, 0.16, 0.84, 0.94], [0, 1, 1, 0]);
 
-  const containerBg = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["rgba(7,8,12,0)", "rgba(7,8,12,1)", "rgba(7,8,12,1)", "rgba(7,8,12,0)"]);
-  const containerBorder = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["rgba(255,255,255,0)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0)"]);
-  const containerShadow = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["0px 0px 0px rgba(0,0,0,0)", "0px 25px 80px rgba(0,0,0,0.85)", "0px 25px 80px rgba(0,0,0,0.85)", "0px 0px 0px rgba(0,0,0,0)"]);
-  const centerBg = useTransform(scrollYProgress, [0.15, 0.35, 0.65, 0.85], ["rgba(5,6,8,0)", "rgba(5,6,8,1)", "rgba(5,6,8,1)", "rgba(5,6,8,0)"]);
+  const containerBg = useTransform(scrollYProgress, [0.05, 0.16, 0.84, 0.95], ["rgba(7,8,12,0)", "rgba(7,8,12,1)", "rgba(7,8,12,1)", "rgba(7,8,12,0)"]);
+  const containerBorder = useTransform(scrollYProgress, [0.05, 0.16, 0.84, 0.95], ["rgba(255,255,255,0)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0)"]);
+  const containerShadow = useTransform(scrollYProgress, [0.05, 0.16, 0.84, 0.95], ["0px 0px 0px rgba(0,0,0,0)", "0px 25px 80px rgba(0,0,0,0.85)", "0px 25px 80px rgba(0,0,0,0.85)", "0px 0px 0px rgba(0,0,0,0)"]);
+  const centerBg = useTransform(scrollYProgress, [0.05, 0.16, 0.84, 0.95], ["rgba(5,6,8,0)", "rgba(5,6,8,1)", "rgba(5,6,8,1)", "rgba(5,6,8,0)"]);
 
   // ─── Drag & Timeline Animation Logic ───
   const trackRef = useRef<HTMLDivElement>(null);
@@ -400,7 +400,15 @@ export default function WorkVideoEditor() {
   const modeAnim = useMotionValue(0);
   const autoRotateYVal = useMotionValue(0);
   const autoRotateXVal = useMotionValue(0);
-  
+
+  // ─── Mouse Parallax — con trỏ điều khiển góc nghiêng khung 3D (giá trị chuẩn hoá -1..1) ───
+  const monitorRef = useRef<HTMLDivElement>(null);
+  const pointerXVal = useMotionValue(0);
+  const pointerYVal = useMotionValue(0);
+  // Lò xo cho cảm giác trôi mượt & hơi "đuổi theo" con trỏ
+  const pointerX = useSpring(pointerXVal, { stiffness: 70, damping: 18, mass: 0.6 });
+  const pointerY = useSpring(pointerYVal, { stiffness: 70, damping: 18, mass: 0.6 });
+
   useEffect(() => {
     const controls = animate(modeAnim, is3DMode ? 1 : 0, {
       duration: 0.8,
@@ -427,6 +435,29 @@ export default function WorkVideoEditor() {
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
   }, [is3DMode, autoRotateYVal, autoRotateXVal]);
+
+  // Lắng nghe con trỏ trong vùng màn hình preview → cập nhật pointer (−1..1), về 0 khi rời chuột
+  useEffect(() => {
+    const el = monitorRef.current;
+    if (!el) return;
+    const handleMove = (e: MouseEvent) => {
+      const r = el.getBoundingClientRect();
+      const nx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      const ny = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      pointerXVal.set(Math.max(-1, Math.min(1, nx)));
+      pointerYVal.set(Math.max(-1, Math.min(1, ny)));
+    };
+    const handleLeave = () => {
+      pointerXVal.set(0);
+      pointerYVal.set(0);
+    };
+    el.addEventListener("mousemove", handleMove, { passive: true });
+    el.addEventListener("mouseleave", handleLeave);
+    return () => {
+      el.removeEventListener("mousemove", handleMove);
+      el.removeEventListener("mouseleave", handleLeave);
+    };
+  }, [pointerXVal, pointerYVal]);
 
   // Multiplied by modeAnim for smooth 2D/3D morphing transition!
   const layer1Z = useTransform([dragProgress, modeAnim], ([p, m]) => {
@@ -467,8 +498,9 @@ export default function WorkVideoEditor() {
   const layer4RotateY = useTransform([dragProgress, modeAnim], ([p, m]) => (30 * (1 - Math.pow(p as number, 0.7))) * (m as number));
 
   // Scene cameras
-  const sceneRotateY = useTransform([dragProgress, modeAnim, autoRotateYVal], ([p, m, auto]) => ((25 - (p as number) * 30) + (auto as number)) * (m as number));
-  const sceneRotateX = useTransform([dragProgress, modeAnim, autoRotateXVal], ([p, m, auto]) => ((15 - (p as number) * 17) + (auto as number)) * (m as number));
+  // Góc nghiêng = nền (scroll) + tự xoay (auto-orbit) + CON TRỎ (pointer) → khung "ngước nhìn" theo chuột
+  const sceneRotateY = useTransform([dragProgress, modeAnim, autoRotateYVal, pointerX], ([p, m, auto, px]) => ((25 - (p as number) * 30) + (auto as number) - (px as number) * 14) * (m as number));
+  const sceneRotateX = useTransform([dragProgress, modeAnim, autoRotateXVal, pointerY], ([p, m, auto, py]) => ((15 - (p as number) * 17) + (auto as number) + (py as number) * 9) * (m as number));
   const sceneScale = useTransform([dragProgress, modeAnim], ([p, m]) => {
     const flatScale = 1.0;
     const target3D = 0.65 + (p as number) * 0.30;
@@ -683,7 +715,7 @@ export default function WorkVideoEditor() {
               </div>
 
               {/* Viewport Box */}
-              <div className="flex-1 relative flex items-center justify-center p-4 bg-black overflow-hidden perspective-[1200px]">
+              <div ref={monitorRef} className="flex-1 relative flex items-center justify-center p-4 bg-black overflow-hidden perspective-[1200px]">
                 {/* 3D Morphing Viewport Canvas */}
                 <div 
                   className="relative w-full aspect-video max-w-[800px] border border-white/10 bg-[#040405] rounded-xl overflow-hidden shadow-2xl"

@@ -39,19 +39,24 @@ export default function Overview() {
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
   const smooth = useSpring(scrollYProgress, { damping: 22, stiffness: 48, mass: 0.8 });
-  const textOpacity = useTransform(smooth, [0, 0.25], [1, 0]);
-  const textY = useTransform(smooth, [0, 0.25], ["0px", "-50px"]);
-  const sceneScale = useTransform(smooth, [0, 0.5], [1, 1.04]);
-  const ringRotateY = useTransform(smooth, [0, 1], [0, -540]); // Quay 1.5 vòng
-  const ringY = useTransform(smooth, [0, 0.65, 1], ["0vh", "0vh", "85vh"]); // Rơi thẳng xuống dưới đáy màn hình
-  const ringScale = useTransform(smooth, [0, 0.65, 1], [1, 1, 0.9]); // Giữ tỷ lệ lớn khi rơi tự do
-  const ringOpacity = useTransform(smooth, [0, 0.75, 1], [1, 1, 0]); // Mờ dần ở cuối
-  const heroOpacity = useTransform(smooth, [0, 0.15, 0.4, 1], [1, 0.6, 0.05, 0]); // Mờ nhanh và biến mất khi bắt đầu xoay
+  const textOpacity = useTransform(smooth, [0, 0.28], [1, 0]);
+  const textY = useTransform(smooth, [0, 0.28], ["0px", "-60px"]);
+  const sceneScale = useTransform(smooth, [0, 0.72], [1, 1.05]);
+  const ringRotateY = useTransform(smooth, [0, 0.75], [0, -110]); // Quay xuyên suốt hành trình cuộn để tạo dòng chảy
+  // Nội dung TRÔI ĐI từ từ tới gần cuối section (thay vì biến mất ở 45%) → lấp đầy khoảng chuyển cảnh
+  const ringY = useTransform(smooth, [0, 0.45, 0.78], ["0vh", "0vh", "22vh"]); // Trôi xuống nhẹ khi rời đi
+  const ringScale = useTransform(smooth, [0, 0.45, 0.78], [1, 1, 0.9]);
+  const ringOpacity = useTransform(smooth, [0, 0.5, 0.74], [1, 1, 0]); // Mờ ĐÚNG LÚC trôi khỏi màn hình
+  const heroOpacity = useTransform(smooth, [0, 0.3, 0.62], [1, 0.6, 0]);
   const heroFilter = useTransform(
     smooth,
-    [0, 0.15, 0.4],
+    [0, 0.3, 0.62],
     ["brightness(1) blur(0px)", "brightness(0.5) blur(2px)", "brightness(0.15) blur(6px)"]
   );
+
+  // Chỉ ẩn khỏi DOM khi nội dung đã trôi khuất (gần cuối section) — tránh để lộ khoảng đen giữa 2 phần
+  const ringDisplay = useTransform(smooth, (v) => v > 0.82 ? "none" : "block");
+  const heroDisplay = useTransform(smooth, (v) => v > 0.82 ? "none" : "block");
 
   const scrollToWork = useCallback(() => {
     document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
@@ -79,9 +84,9 @@ export default function Overview() {
   ];
 
   return (
-    <section ref={sectionRef} id="overview" className="relative w-full h-[190vh]">
+    <section ref={sectionRef} id="overview" className="relative w-full h-[160vh]">
       {/* ─── Sticky full-screen viewport ─── */}
-      <div className="sticky top-0 h-screen w-screen overflow-hidden">
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
 
         {/* ── Background ── */}
         <motion.div style={{ x: bgX, y: bgY }} className="absolute -inset-12 w-[calc(100%+96px)] h-[calc(100%+96px)] z-0">
@@ -215,6 +220,7 @@ export default function Overview() {
               transformStyle: "preserve-3d",
               opacity: heroOpacity as any,
               filter: heroFilter as any,
+              display: heroDisplay as any,
             }}
           >
             <motion.div
@@ -260,17 +266,31 @@ export default function Overview() {
           </motion.div>
 
           {/* ── 3D Rotating Ring Container ── */}
+          {/* OUTER: lo phần fade / dịch chuyển / scale + giữ "perspective".
+              opacity < 1 sẽ ÉP transform-style về flat, nên element này TUYỆT ĐỐI
+              không được mang preserve-3d — nếu không vòng cung 3D sẽ xẹp thành hàng ngang.
+              Đặt perspective ở đây (dưới lớp fade) để các card vẫn được chiếu 3D trong lúc mờ dần. */}
           <motion.div
             style={{
               position: "absolute",
               inset: 0,
-              transformStyle: "preserve-3d",
-              rotateY: ringRotateY,
               y: ringY as any,
               scale: ringScale as any,
               opacity: ringOpacity as any,
+              display: ringDisplay as any,
+              perspective: "1100px",
+              perspectiveOrigin: "50% 60%",
             }}
           >
+            {/* INNER: vòng tròn 3D thật sự — chỉ có preserve-3d + rotateY, không dính prop gây flat */}
+            <motion.div
+              style={{
+                position: "absolute",
+                inset: 0,
+                transformStyle: "preserve-3d",
+                rotateY: ringRotateY,
+              }}
+            >
             {/* ── Video Cards (Xếp trên vòng tròn 3D và quay quanh Hero) ── */}
             {cards.map((c) => (
               <div
@@ -279,9 +299,11 @@ export default function Overview() {
                 style={{
                   left: "50%",
                   top: "60%",
-                  width: `${c.wVW}vw`,
+                  width: `clamp(${c.wVW * 8}px, ${c.wVW}vw, ${c.wVW * 15}px)`,
                   transformStyle: "preserve-3d",
-                  transform: `translate(-50%, -50%) rotateY(${c.angle}deg) translateZ(35vw)`,
+                  transform: `translate(-50%, -50%) rotateY(${c.angle}deg) translateZ(clamp(260px, 35vw, 500px))`,
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
                 }}
               >
                 <motion.div
@@ -325,6 +347,7 @@ export default function Overview() {
                 </motion.div>
               </div>
             ))}
+            </motion.div>
           </motion.div>
 
         </motion.div>

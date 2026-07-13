@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { brand } from "@/data/navigation";
 import { contactData } from "@/data/contact";
 
@@ -22,6 +23,17 @@ export default function Footer() {
 
           {/* Right — Social links as text */}
           <div className="flex items-center gap-7">
+            <Link
+              href="/resume"
+              className="group font-body text-[12px] text-accent hover:text-accent-warm uppercase tracking-[0.2em] transition-colors duration-300 relative font-bold"
+            >
+              Resume (CV)
+              <span
+                className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-500 ease-out"
+                style={{ background: "#FF4000" }}
+              />
+            </Link>
+
             {contactData.socials.map((social) => (
               <a
                 key={social.label}
