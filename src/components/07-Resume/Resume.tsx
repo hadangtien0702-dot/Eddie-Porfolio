@@ -410,12 +410,10 @@ export default function Resume() {
                 Portfolio & Case Studies
               </p>
               <p className="text-[10px] font-semibold mt-1">
-                <a href={personalInfo.portfolioHref}>Full Portfolio: {personalInfo.portfolioUrl}</a>
+                <a href={personalInfo.portfolioHref}>Portfolio: {personalInfo.portfolioUrl}</a>
               </p>
               <p className="text-[10px] font-semibold" style={{ marginTop: "2px" }}>
-                <a href={personalInfo.caseStudyHref}>
-                  Thinksmart Case Study: {personalInfo.caseStudyUrl}
-                </a>
+                <a href={personalInfo.caseStudyHref}>Case Study: {personalInfo.caseStudyUrl}</a>
               </p>
             </div>
           </div>
@@ -622,11 +620,11 @@ export default function Resume() {
           className="print-footer print-only hidden mt-8 pt-3 text-center text-[9px]"
           style={{ borderTop: "1px solid #ececec", color: "#555" }}
         >
-          Full portfolio & showreel:{" "}
+          Portfolio:{" "}
           <a href={personalInfo.portfolioHref}>
             <strong>{personalInfo.portfolioUrl}</strong>
           </a>{" "}
-          · Thinksmart case study:{" "}
+          · Case study:{" "}
           <a href={personalInfo.caseStudyHref}>
             <strong>{personalInfo.caseStudyUrl}</strong>
           </a>
