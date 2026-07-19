@@ -34,9 +34,9 @@ export default function Resume() {
     email: "hadangtien0702@gmail.com",
     location: "Ho Chi Minh City, Vietnam",
     remote: "Open to remote work",
-    // CV Full — portfolio chính (Vercel production); thay bằng hadangtien.com khi domain trỏ xong
-    portfolioUrl: "eddie-portfolio-v3.vercel.app",
-    portfolioHref: "https://eddie-portfolio-v3.vercel.app/",
+    // CV Full — portfolio chính (Vercel production domain); thay bằng hadangtien.com khi domain trỏ xong
+    portfolioUrl: "hadangtien.vercel.app",
+    portfolioHref: "https://hadangtien.vercel.app/",
     // CV Peak — case study Thinksmart chuyên sâu
     caseStudyUrl: "cv-media-lead.vercel.app",
     caseStudyHref: "https://cv-media-lead.vercel.app/",
