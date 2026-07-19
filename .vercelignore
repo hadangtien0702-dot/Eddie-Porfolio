@@ -1,0 +1,5 @@
+# Tư liệu nguồn — không deploy (461MB)
+public/HUONG_DAN_HINH_ANH
+
+# Video quá giới hạn 100MB/file của Vercel — cần host ngoài (Supabase/R2) rồi đổi URL trong casestudy.ts
+public/images/02-CaseStudy/dreamtalent/dreamtalent-video.mp4
