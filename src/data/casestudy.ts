@@ -234,7 +234,7 @@ export const caseStudies: CaseStudy[] = [
     company: "Thinksmart Insurance",
     tagline: "Generating 100% of marketing leads for Sales",
     role: "Head of Video Production / Performance Media Manager",
-    duration: "2023 — Present",
+    duration: "2022 — Present",
     description: "Proactively built and managed a high-volume performance media pipeline. Supplied 100% of marketing leads through relentless A/B testing, rapid creative adaptation, and deep involvement in ad strategy.",
     color: "#FF4000",
     website: "https://thinksmartinsurance.com/en/home",

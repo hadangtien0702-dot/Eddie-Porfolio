@@ -28,8 +28,8 @@ const BookmarkIcon = () => (
   </svg>
 );
 
-import SocialHUDLightbox from "@/components/04-Work/SocialHUDLightbox";
-import SocialRadar from "@/components/04-Work/SocialRadar";
+import SocialHUDLightbox from "@/components/02-Work/SocialHUDLightbox";
+import SocialRadar from "@/components/02-Work/SocialRadar";
 import { uiSounds } from "@/utils/ui-sounds";
 
 // ─── SocialCard Component ───

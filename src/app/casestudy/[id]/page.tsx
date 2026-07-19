@@ -4,8 +4,8 @@ import React, { useState, useEffect, use } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { caseStudies } from "@/data/casestudy";
-import { ThinksmartStory, DreamTalentStory } from "@/components/03-CaseStudy/CaseStudyLayouts";
-import { FullscreenLightbox } from "@/components/03-CaseStudy/CaseStudyModals";
+import { ThinksmartStory, DreamTalentStory } from "@/components/04-CaseStudy/CaseStudyLayouts";
+import { FullscreenLightbox } from "@/components/04-CaseStudy/CaseStudyModals";
 
 export default function CaseStudyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

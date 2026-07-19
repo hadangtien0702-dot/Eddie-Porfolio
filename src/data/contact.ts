@@ -6,7 +6,7 @@ export const contactData = {
   email: "hadangtien0702@gmail.com",
   availability: "Available for projects",
   socials: [
-    { label: "LinkedIn", href: "https://linkedin.com/in/eddie", icon: "in" },
+    { label: "LinkedIn", href: "https://linkedin.com/in/eddie-ha", icon: "in" },
     { label: "YouTube", href: "https://youtube.com/@eddie", icon: "▶" },
     { label: "TikTok", href: "https://tiktok.com/@eddie", icon: "♪" },
   ],

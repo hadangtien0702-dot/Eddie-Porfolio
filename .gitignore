@@ -61,3 +61,6 @@ docs/CREDENTIALS.md
 public/images/**/*.mp4
 public/videos/ads/*.mp4
 upload-videos.mjs
+
+# stray local artifact
+/resume.pdf

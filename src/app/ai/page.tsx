@@ -2,11 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import AIWorkflowDashboard from "@/components/05-AI/AIWorkflowDashboard";
-import AITimelineEditor from "@/components/05-AI/AITimelineEditor";
-import AIUseCaseCards from "@/components/05-AI/AIUseCaseCards";
-import AutomationFlowDiagram from "@/components/05-AI/AutomationFlowDiagram";
-import AICaseStudy from "@/components/05-AI/AICaseStudy";
+import AIWorkflowDashboard from "@/components/03-AI/AIWorkflowDashboard";
+import AITimelineEditor from "@/components/03-AI/AITimelineEditor";
+import AIUseCaseCards from "@/components/03-AI/AIUseCaseCards";
+import AutomationFlowDiagram from "@/components/03-AI/AutomationFlowDiagram";
+import AICaseStudy from "@/components/03-AI/AICaseStudy";
 import VerticalCutReveal from "@/components/ui/VerticalCutReveal";
 import { Zap, Clock, Users, TrendingUp, Sparkles, Terminal } from "lucide-react";
 

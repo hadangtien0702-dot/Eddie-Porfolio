@@ -17,31 +17,31 @@ export const overviewHeading = {
 // Mỗi stat sẽ có hiệu ứng count-up khi scroll tới
 export const businessStats = [
   {
-    number: "$6M+",
-    label: "Annual Revenue Peak",
-    countValue: 6,
+    number: "$6.2M",
+    label: "Peak Revenue",
+    countValue: 6.2,
     prefix: "$",
-    suffix: "M+",
+    suffix: "M",
+  },
+  {
+    number: "-66%",
+    label: "CPA Reduction",
+    countValue: 66,
+    prefix: "-",
+    suffix: "%",
   },
   {
     number: "100%",
-    label: "Leads Sourced by Video",
+    label: "Video-Sourced Leads",
     countValue: 100,
     prefix: "",
     suffix: "%",
   },
   {
-    number: "500+",
-    label: "High-Performance Ads",
-    countValue: 500,
-    prefix: "",
-    suffix: "+",
-  },
-  {
-    number: "12M+",
-    label: "Organic Video Reach",
-    countValue: 12,
-    prefix: "",
-    suffix: "M+",
+    number: "-90%",
+    label: "Overhead / +10x Velocity",
+    countValue: 90,
+    prefix: "-",
+    suffix: "%",
   },
 ];

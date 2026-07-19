@@ -12,7 +12,7 @@ import {
   supplementaryGallery,
   SetupHighlight,
 } from "@/data/work-setup-and-build";
-import { FullscreenLightbox } from "@/components/03-CaseStudy/CaseStudyModals";
+import { FullscreenLightbox } from "@/components/04-CaseStudy/CaseStudyModals";
 import { uiSounds } from "@/utils/ui-sounds";
 import { Maximize, Layers, Gauge, Target, Activity, Cpu } from "lucide-react";
 
