@@ -182,7 +182,7 @@ const T = {
       ],
     },
     education: {
-      school: "FPT Multimedia",
+      school: "FPT Arena Multimedia",
       detail:
         "Multimedia foundation, extended by self-directed training: performance marketing, video production & AI-assisted workflows — applied directly in the Thinksmart systems above.",
     },
@@ -327,7 +327,7 @@ const T = {
       ],
     },
     education: {
-      school: "FPT Multimedia",
+      school: "FPT Arena Multimedia",
       detail:
         "Nền tảng đa phương tiện, nối dài bằng tự học chuyên sâu: marketing hiệu quả, sản xuất video và quy trình có A.I hỗ trợ — áp dụng trực tiếp vào các hệ thống Thinksmart ở trên.",
     },
