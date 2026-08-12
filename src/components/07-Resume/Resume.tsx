@@ -42,10 +42,11 @@ export default function Resume() {
     caseStudyHref: "https://cv-media-lead.vercel.app/",
   };
 
-  // Số liệu resume — chỉ dùng số truy được về nguồn công khai (casestudy.ts, work-ai-applications.ts)
+  // Số liệu resume — chỉ dùng số truy được về nguồn công khai (casestudy.ts, work-ai-applications.ts, social-post.ts)
   const keyStats = [
     { number: "-66%", label: "CPA on Paid Video" },
     { number: "100%", label: "Marketing Leads from Video" },
+    { number: "15M+", label: "Organic Social Views" },
     { number: "-60%", label: "Content Production Cost via AI" },
     { number: "$6.2M", label: "Company Revenue Peak (2024)" },
   ];
@@ -473,7 +474,7 @@ export default function Resume() {
           <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-4 border-l-2 border-accent pl-3">
             Key Achievements
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 print:grid-cols-5 print:gap-2">
             {keyStats.map((stat) => (
               <div
                 key={stat.label}
