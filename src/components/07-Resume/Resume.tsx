@@ -6,8 +6,16 @@
 // deep-review (hiring manager + performance recruiter + claim skeptic). Mọi con số đều
 // truy được về nguồn công khai trong data/ — số không nguồn (500+, crew 6+) đã bị loại.
 // Print scale: html 12px làm gốc rem, các rule px đè chi tiết.
+//
+// 12/08/2026 — SONG NGỮ EN/VI: nút chuyển góc phải trên (chỗ nút Print cũ), mọi chữ đọc
+// từ T[lang]; mở /resume?lang=vi là vào thẳng bản tiếng Việt. Bản in in theo ngôn ngữ
+// đang chọn. Nút "Save PDF / Print", "Open to remote work" và 2 link "View ... Case Study"
+// đã gỡ theo yêu cầu (12/08) — người xem vẫn in được bằng Ctrl+P.
+// Section "Currently Building — AiO Studio" chỉ hiện trên web (no-print) để bản in giữ
+// kỷ luật 1 trang A4; số 14s / 28,800+ đo thật từ AiO Studio (tài liệu AiO MVP, 07-08/2026).
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Mail,
@@ -19,123 +27,332 @@ import {
   Video,
   Cpu,
 } from "lucide-react";
-// Printer icon + nút "Save PDF / Print" đã gỡ theo yêu cầu 12/08/2026 — người xem
-// vẫn in được bằng Ctrl+P; 2 link "View ... Case Study" cũng gỡ cùng đợt.
-import { contactData } from "@/data/contact";
+
+type Lang = "en" | "vi";
+
+// ─── Thông tin không đổi theo ngôn ngữ ───
+const personalInfo = {
+  fullName: "HA DANG TIEN (EDDIE)",
+  phone: "+84 938 169 130",
+  phoneHref: "tel:+84938169130",
+  email: "hadangtien0702@gmail.com",
+  // CV Full — portfolio chính (Vercel production domain); thay bằng hadangtien.com khi domain trỏ xong
+  portfolioUrl: "hadangtien.vercel.app",
+  portfolioHref: "https://hadangtien.vercel.app/",
+  // CV Peak — case study Thinksmart chuyên sâu
+  caseStudyUrl: "cv-media-lead.vercel.app",
+  caseStudyHref: "https://cv-media-lead.vercel.app/",
+};
+
+// ─── Toàn bộ chữ theo ngôn ngữ. EN giữ nguyên văn bản đã qua review 19/7. ───
+const T = {
+  en: {
+    availability: "Available for projects",
+    headline: "Creative Production Team Lead | Performance Video Creative",
+    location: "Ho Chi Minh City, Vietnam",
+    printLinksTitle: "Portfolio & Case Studies",
+    printPortfolio: "Portfolio",
+    printCaseStudy: "Case Study",
+    sections: {
+      summary: "Summary",
+      achievements: "Key Achievements",
+      experience: "Professional Experience",
+      skills: "Skills",
+      aio: "Currently Building — AiO Studio",
+      education: "Education",
+      languages: "Languages",
+    },
+    summary:
+      "Creative production lead who builds in-house video teams, studios, and workflows that turn short-form video into measurable growth. At Thinksmart Insurance, video creative sources 100% of marketing leads and has cut CPA 66% from a $180–$200 peak. Also designs AI-assisted production pipelines (n8n, HeyGen, ElevenLabs) that tripled content output and cut production costs about 60% across multilingual markets.",
+    // Số liệu — chỉ dùng số truy được về nguồn công khai (casestudy.ts, work-ai-applications.ts, social-post.ts)
+    keyStats: [
+      { number: "-66%", label: "CPA on Paid Video" },
+      { number: "100%", label: "Marketing Leads from Video" },
+      { number: "15M+", label: "Organic Social Views" },
+      { number: "-60%", label: "Content Production Cost via AI" },
+      { number: "$6.2M", label: "Company Revenue Peak (2024)" },
+    ],
+    jobs: [
+      {
+        title: "Head of Video Production / Performance Media Manager",
+        company: "Thinksmart Insurance",
+        dates: "2022 – Present",
+        location: "Ho Chi Minh City",
+        intro:
+          "Joined in 2022 to build the media foundation for Thinksmart's insurance lead generation; promoted in 2023 to lead the full design and video production squad — creative direction, in-house studio operations, and high-volume paid-video workflows.",
+        bullets: [
+          {
+            label: "Lead generation",
+            text: "Lead the in-house media team whose ad creative generates 100% of the company's marketing leads for the Sales department.",
+          },
+          {
+            label: "CPA reduction",
+            text: "Cut CPA 66% from a $180–$200 peak through real-time campaign analysis with media buyers, rapid video-asset iteration, and structured A/B testing.",
+          },
+          {
+            label: "Revenue contribution",
+            text: "Scaled tested paid-acquisition hooks across Meta and TikTok, contributing to the company's record $6.2M revenue year in 2024.",
+          },
+          {
+            label: "Visual identity",
+            text: "Designed the brand system and asset guide for core insurance products (IUL, Max-Funded IUL, EBTP, Kaizen, Term Life), making complex financial concepts accessible to prospects.",
+          },
+        ],
+      },
+      {
+        title: "Event Media Director",
+        company: "Dream Talent",
+        dates: "2022 – 2023",
+        location: "Ho Chi Minh City",
+        intro:
+          "Directed creative coverage and brand storytelling for company events, recruitment films, and company-profile productions — from concept to final delivery.",
+        bullets: [
+          {
+            label: "End-to-end production",
+            text: "Ran production 100% in-house — pre-event scripting, multi-camera planning, lighting setup, and post-production — owning the entire pipeline from concept to final delivery.",
+          },
+          {
+            label: "Rapid turnaround",
+            text: "Delivered fully graded event highlight films within 48 hours of each flagship event — Year-End Party, Sports Day, annual team building.",
+          },
+          {
+            label: "Team leadership",
+            text: "Led the on-site media crew across camera, sound, and directing roles, coordinating simultaneous coverage of the company's flagship events.",
+          },
+        ],
+      },
+    ],
+    skills: [
+      {
+        category: "Creative & Strategy",
+        items: [
+          "Creative Direction",
+          "Performance Video Strategy",
+          "CPA & Conversion Optimization",
+          "A/B Testing",
+          "Concept Development",
+        ],
+      },
+      {
+        category: "Production & Platforms",
+        items: [
+          "Video Editing (Premiere Pro, CapCut)",
+          "Post-Production",
+          "Studio Operations",
+          "Multi-Camera Event Production",
+          "Meta Ads",
+          "TikTok Ads",
+        ],
+      },
+      {
+        category: "AI & Automation",
+        items: [
+          "n8n Automation",
+          "HeyGen (AI Avatars & Dubbing)",
+          "ElevenLabs (Voice Cloning)",
+          "AI UGC Pipelines",
+          "Multilingual Ad Localization",
+        ],
+      },
+    ],
+    aio: {
+      lead: (
+        <>
+          A.I already saves editors time.{" "}
+          <strong className="text-white">AiO Studio saves even more</strong> — a tool suite that
+          runs natively inside the editing software and quietly handles the repetitive work:
+          cutting silences, typing subtitles, hunting for files, reframing for every platform.
+        </>
+      ),
+      imageAlt: "AiO Studio welcome screen — 8 tools for video editors",
+      tools: [
+        { name: "Auto Silent Cut", desc: "finds and removes silences right on the timeline" },
+        { name: "Auto Transcripts", desc: "turns a 60-minute video into text in 14 seconds" },
+        { name: "Asset Manager", desc: "28,800+ assets with instant preview, drag & drop" },
+        { name: "Power Bins", desc: "brand kit that follows every new project" },
+        { name: "Auto Podcast", desc: "multi-cam edit that cuts to whoever is speaking" },
+        { name: "Auto Reframes", desc: "horizontal to vertical — subject always in frame" },
+        { name: "Auto Short Clip", desc: "extracts highlight moments into short videos" },
+        { name: "Sound Design", desc: "music that ducks under voices, synced to the beat" },
+      ],
+      principles: [
+        { title: "Runs inside the editing software", desc: "no exporting, no uploading footage to the web" },
+        { title: "100% on-device processing", desc: "client footage never leaves the machine" },
+        { title: "No per-minute limits", desc: "unlike web tools that charge for every minute" },
+      ],
+    },
+    education: {
+      school: "FPT Multimedia",
+      detail:
+        "Multimedia foundation, extended by self-directed training: performance marketing, video production & AI-assisted workflows — applied directly in the Thinksmart systems above.",
+    },
+    languages: [
+      { name: "Vietnamese", level: "Native" },
+      { name: "English", level: "Professional Working Proficiency" },
+    ],
+  },
+
+  vi: {
+    availability: "Sẵn sàng nhận dự án",
+    headline: "Trưởng nhóm Sản xuất Sáng tạo | Video tạo doanh thu",
+    location: "TP. Hồ Chí Minh, Việt Nam",
+    printLinksTitle: "Portfolio & Case Study",
+    printPortfolio: "Portfolio",
+    printCaseStudy: "Case Study",
+    sections: {
+      summary: "Tóm tắt",
+      achievements: "Thành quả chính",
+      experience: "Kinh nghiệm làm việc",
+      skills: "Kỹ năng",
+      aio: "Đang xây dựng — AiO Studio",
+      education: "Học vấn",
+      languages: "Ngôn ngữ",
+    },
+    summary:
+      "Trưởng nhóm sản xuất sáng tạo — xây đội video, phòng quay và quy trình ngay trong công ty để video ngắn trở thành tăng trưởng đo đếm được. Tại Thinksmart Insurance, video tạo ra 100% khách hàng tiềm năng cho đội kinh doanh và giảm 66% chi phí tìm một khách từ mức đỉnh $180–200. Đồng thời thiết kế quy trình sản xuất có A.I hỗ trợ (n8n, HeyGen, ElevenLabs): sản lượng gấp 3, chi phí giảm khoảng 60%, phát hành đa ngôn ngữ.",
+    keyStats: [
+      { number: "-66%", label: "Chi phí tìm một khách qua video trả phí" },
+      { number: "100%", label: "Khách tiềm năng đến từ video" },
+      { number: "15M+", label: "Lượt xem tự nhiên — 0 đồng quảng cáo" },
+      { number: "-60%", label: "Chi phí sản xuất nội dung nhờ A.I" },
+      { number: "$6.2M", label: "Doanh thu đỉnh công ty (2024)" },
+    ],
+    jobs: [
+      {
+        title: "Trưởng bộ phận Sản xuất Video / Quản lý Truyền thông Hiệu quả",
+        company: "Thinksmart Insurance",
+        dates: "2022 – nay",
+        location: "TP. Hồ Chí Minh",
+        intro:
+          "Vào công ty năm 2022 để xây nền móng truyền thông cho mảng tìm khách hàng bảo hiểm; năm 2023 được giao dẫn dắt toàn bộ đội thiết kế và sản xuất video — định hướng sáng tạo, vận hành studio nội bộ, và quy trình video quảng cáo khối lượng lớn.",
+        bullets: [
+          {
+            label: "Tạo khách tiềm năng",
+            text: "Dẫn dắt đội truyền thông nội bộ — video quảng cáo của đội tạo ra 100% khách hàng tiềm năng cho bộ phận Kinh doanh.",
+          },
+          {
+            label: "Giảm chi phí",
+            text: "Giảm 66% chi phí tìm một khách hàng từ mức đỉnh $180–200 — đọc số liệu chiến dịch trực tiếp cùng người chạy quảng cáo, sửa video nhanh, thử nghiệm có hệ thống.",
+          },
+          {
+            label: "Đóng góp doanh thu",
+            text: "Nhân rộng các video đã chứng minh bán được trên Meta và TikTok, góp phần vào năm doanh thu kỷ lục $6.2M của công ty (2024).",
+          },
+          {
+            label: "Nhận diện thương hiệu",
+            text: "Thiết kế hệ thống thương hiệu cho các dòng sản phẩm bảo hiểm chính (IUL, Max-Funded IUL, EBTP, Kaizen, Term Life) — biến khái niệm tài chính phức tạp thành hình ảnh dễ hiểu.",
+          },
+        ],
+      },
+      {
+        title: "Đạo diễn Truyền thông Sự kiện",
+        company: "Dream Talent",
+        dates: "2022 – 2023",
+        location: "TP. Hồ Chí Minh",
+        intro:
+          "Chỉ đạo toàn bộ hình ảnh và câu chuyện thương hiệu cho sự kiện công ty, phim tuyển dụng và phim giới thiệu doanh nghiệp — từ ý tưởng đến thành phẩm.",
+        bullets: [
+          {
+            label: "Sản xuất trọn gói",
+            text: "Vận hành 100% trong nội bộ — kịch bản trước sự kiện, quay nhiều máy, ánh sáng, hậu kỳ — làm chủ toàn bộ quy trình từ ý tưởng đến bàn giao.",
+          },
+          {
+            label: "Giao hàng nhanh",
+            text: "Giao phim highlight chỉnh màu hoàn chỉnh trong 48 giờ sau mỗi sự kiện lớn — Year-End Party, Hội thao, Team Building thường niên.",
+          },
+          {
+            label: "Dẫn dắt đội ngũ",
+            text: "Điều phối đội quay tại hiện trường — máy quay, âm thanh, đạo diễn — phủ song song các sự kiện lớn của công ty.",
+          },
+        ],
+      },
+    ],
+    skills: [
+      {
+        category: "Sáng tạo & Chiến lược",
+        items: [
+          "Định hướng sáng tạo",
+          "Chiến lược video hiệu quả",
+          "Tối ưu chi phí & chuyển đổi",
+          "Thử nghiệm A/B",
+          "Phát triển ý tưởng",
+        ],
+      },
+      {
+        category: "Sản xuất & Nền tảng",
+        items: [
+          "Dựng phim (Premiere Pro, CapCut)",
+          "Hậu kỳ",
+          "Vận hành studio",
+          "Quay sự kiện nhiều máy",
+          "Meta Ads",
+          "TikTok Ads",
+        ],
+      },
+      {
+        category: "A.I & Tự động hoá",
+        items: [
+          "Tự động hoá n8n",
+          "HeyGen (người dẫn ảo & lồng tiếng)",
+          "ElevenLabs (nhân bản giọng đọc)",
+          "Quy trình UGC bằng A.I",
+          "Bản địa hoá quảng cáo đa ngôn ngữ",
+        ],
+      },
+    ],
+    aio: {
+      lead: (
+        <>
+          A.I đã giúp người dựng phim tiết kiệm thời gian.{" "}
+          <strong className="text-white">AiO Studio giúp tiết kiệm nhiều hơn nữa</strong> — bộ
+          công cụ chạy ngay trong phần mềm dựng phim, âm thầm làm giùm những việc lặp đi lặp lại:
+          cắt khoảng im lặng, gõ phụ đề, tìm file, đổi khung hình cho từng nền tảng.
+        </>
+      ),
+      imageAlt: "Màn hình chào của AiO Studio — 8 công cụ cho người dựng phim",
+      tools: [
+        { name: "Auto Silent Cut", desc: "tự tìm và cắt khoảng im lặng ngay trên bản dựng" },
+        { name: "Auto Transcripts", desc: "gỡ băng video 60 phút thành chữ trong 14 giây" },
+        { name: "Asset Manager", desc: "28.800+ tài nguyên, xem trước tức thì, kéo thả" },
+        { name: "Power Bins", desc: "bộ nhận diện thương hiệu đi theo mọi dự án mới" },
+        { name: "Auto Podcast", desc: "quay nhiều máy — tự chuyển góc theo người đang nói" },
+        { name: "Auto Reframes", desc: "video ngang thành dọc — nhân vật luôn trong khung" },
+        { name: "Auto Short Clip", desc: "trích khoảnh khắc đắt giá thành video ngắn" },
+        { name: "Sound Design", desc: "nhạc nền tự né giọng nói, khớp theo nhịp" },
+      ],
+      principles: [
+        { title: "Chạy ngay trong phần mềm dựng phim", desc: "không phải xuất file hay tải video lên web" },
+        { title: "Xử lý 100% trên máy người dùng", desc: "video của khách hàng không rời khỏi máy" },
+        { title: "Không giới hạn số phút", desc: "khác các công cụ web thu tiền theo từng phút" },
+      ],
+    },
+    education: {
+      school: "FPT Multimedia",
+      detail:
+        "Nền tảng đa phương tiện, nối dài bằng tự học chuyên sâu: marketing hiệu quả, sản xuất video và quy trình có A.I hỗ trợ — áp dụng trực tiếp vào các hệ thống Thinksmart ở trên.",
+    },
+    languages: [
+      { name: "Tiếng Việt", level: "Bản ngữ" },
+      { name: "Tiếng Anh", level: "Thành thạo trong công việc" },
+    ],
+  },
+} as const;
 
 export default function Resume() {
   const router = useRouter();
+  const [lang, setLang] = useState<Lang>("en");
+  const t = T[lang];
 
-  const personalInfo = {
-    fullName: "HA DANG TIEN (EDDIE)",
-    headline: "Creative Production Team Lead | Performance Video Creative",
-    phone: "+84 938 169 130",
-    phoneHref: "tel:+84938169130",
-    email: "hadangtien0702@gmail.com",
-    location: "Ho Chi Minh City, Vietnam",
-    // CV Full — portfolio chính (Vercel production domain); thay bằng hadangtien.com khi domain trỏ xong
-    portfolioUrl: "hadangtien.vercel.app",
-    portfolioHref: "https://hadangtien.vercel.app/",
-    // CV Peak — case study Thinksmart chuyên sâu
-    caseStudyUrl: "cv-media-lead.vercel.app",
-    caseStudyHref: "https://cv-media-lead.vercel.app/",
-  };
+  // Mở /resume?lang=vi là vào thẳng bản tiếng Việt (chạy sau khi trang gắn xong)
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("lang");
+    if (q === "vi") setLang("vi");
+  }, []);
 
-  // Số liệu resume — chỉ dùng số truy được về nguồn công khai (casestudy.ts, work-ai-applications.ts, social-post.ts)
-  const keyStats = [
-    { number: "-66%", label: "CPA on Paid Video" },
-    { number: "100%", label: "Marketing Leads from Video" },
-    { number: "15M+", label: "Organic Social Views" },
-    { number: "-60%", label: "Content Production Cost via AI" },
-    { number: "$6.2M", label: "Company Revenue Peak (2024)" },
-  ];
-
-  const jobs = [
-    {
-      title: "Head of Video Production / Performance Media Manager",
-      company: "Thinksmart Insurance",
-      dates: "2022 – Present",
-      location: "Ho Chi Minh City",
-      intro:
-        "Joined in 2022 to build the media foundation for Thinksmart's insurance lead generation; promoted in 2023 to lead the full design and video production squad — creative direction, in-house studio operations, and high-volume paid-video workflows.",
-      bullets: [
-        {
-          label: "Lead generation",
-          text: "Lead the in-house media team whose ad creative generates 100% of the company's marketing leads for the Sales department.",
-        },
-        {
-          label: "CPA reduction",
-          text: "Cut CPA 66% from a $180–$200 peak through real-time campaign analysis with media buyers, rapid video-asset iteration, and structured A/B testing.",
-        },
-        {
-          label: "Revenue contribution",
-          text: "Scaled tested paid-acquisition hooks across Meta and TikTok, contributing to the company's record $6.2M revenue year in 2024.",
-        },
-        {
-          label: "Visual identity",
-          text: "Designed the brand system and asset guide for core insurance products (IUL, Max-Funded IUL, EBTP, Kaizen, Term Life), making complex financial concepts accessible to prospects.",
-        },
-      ],
-    },
-    {
-      title: "Event Media Director",
-      company: "Dream Talent",
-      dates: "2022 – 2023",
-      location: "Ho Chi Minh City",
-      intro:
-        "Directed creative coverage and brand storytelling for company events, recruitment films, and company-profile productions — from concept to final delivery.",
-      bullets: [
-        {
-          label: "End-to-end production",
-          text: "Ran production 100% in-house — pre-event scripting, multi-camera planning, lighting setup, and post-production — owning the entire pipeline from concept to final delivery.",
-        },
-        {
-          label: "Rapid turnaround",
-          text: "Delivered fully graded event highlight films within 48 hours of each flagship event — Year-End Party, Sports Day, annual team building.",
-        },
-        {
-          label: "Team leadership",
-          text: "Led the on-site media crew across camera, sound, and directing roles, coordinating simultaneous coverage of the company's flagship events.",
-        },
-      ],
-    },
-  ];
-
-  const skillsData = [
-    {
-      category: "Creative & Strategy",
-      icon: <Palette className="w-4 h-4 text-accent print:hidden" aria-hidden="true" />,
-      items: [
-        "Creative Direction",
-        "Performance Video Strategy",
-        "CPA & Conversion Optimization",
-        "A/B Testing",
-        "Concept Development",
-      ],
-    },
-    {
-      category: "Production & Platforms",
-      icon: <Video className="w-4 h-4 text-accent print:hidden" aria-hidden="true" />,
-      items: [
-        "Video Editing (Premiere Pro, CapCut)",
-        "Post-Production",
-        "Studio Operations",
-        "Multi-Camera Event Production",
-        "Meta Ads",
-        "TikTok Ads",
-      ],
-    },
-    {
-      category: "AI & Automation",
-      icon: <Cpu className="w-4 h-4 text-accent print:hidden" aria-hidden="true" />,
-      items: [
-        "n8n Automation",
-        "HeyGen (AI Avatars & Dubbing)",
-        "ElevenLabs (Voice Cloning)",
-        "AI UGC Pipelines",
-        "Multilingual Ad Localization",
-      ],
-    },
+  const skillIcons = [
+    <Palette key="p" className="w-4 h-4 text-accent print:hidden" aria-hidden="true" />,
+    <Video key="v" className="w-4 h-4 text-accent print:hidden" aria-hidden="true" />,
+    <Cpu key="c" className="w-4 h-4 text-accent print:hidden" aria-hidden="true" />,
   ];
 
   return (
@@ -360,9 +577,30 @@ export default function Resume() {
             className="flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md text-[13px] font-medium cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
           >
             <ArrowLeft className="w-4 h-4 text-accent" aria-hidden="true" />
-            <span>Back to Portfolio</span>
+            <span>{lang === "en" ? "Back to Portfolio" : "Về Portfolio"}</span>
           </button>
 
+          {/* Nút chuyển ngôn ngữ — đúng vị trí nút Print cũ */}
+          <div
+            className="flex items-center gap-1 p-1 min-h-[44px] rounded-full bg-white/5 border border-white/10 backdrop-blur-md"
+            role="group"
+            aria-label="Language / Ngôn ngữ"
+          >
+            {(["en", "vi"] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                aria-pressed={lang === l}
+                className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-heading text-[12px] font-bold uppercase tracking-wider cursor-pointer transition-all duration-200 ${
+                  lang === l
+                    ? "bg-accent text-white shadow-[0_6px_18px_rgba(255,64,0,0.35)]"
+                    : "text-white/60 hover:text-white"
+                }`}
+              >
+                {l === "en" ? "EN" : "VI"}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -381,7 +619,7 @@ export default function Resume() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                 </span>
                 <span className="font-mono text-[10px] text-white/60 uppercase tracking-widest">
-                  {contactData.availability}
+                  {t.availability}
                 </span>
               </div>
 
@@ -389,20 +627,24 @@ export default function Resume() {
                 {personalInfo.fullName}
               </h1>
               <p className="headline font-mono text-xs md:text-sm font-bold text-accent uppercase tracking-widest">
-                {personalInfo.headline}
+                {t.headline}
               </p>
             </div>
 
             {/* Print-only: CV Full + CV Peak — hyperlink bấm được trong PDF */}
             <div className="print-only hidden text-left md:text-right print:text-right shrink-0">
               <p className="font-mono text-[9px] uppercase tracking-wider" style={{ color: "#555" }}>
-                Portfolio & Case Studies
+                {t.printLinksTitle}
               </p>
               <p className="text-[10px] font-semibold mt-1">
-                <a href={personalInfo.portfolioHref}>Portfolio: {personalInfo.portfolioUrl}</a>
+                <a href={personalInfo.portfolioHref}>
+                  {t.printPortfolio}: {personalInfo.portfolioUrl}
+                </a>
               </p>
               <p className="text-[10px] font-semibold" style={{ marginTop: "2px" }}>
-                <a href={personalInfo.caseStudyHref}>Case Study: {personalInfo.caseStudyUrl}</a>
+                <a href={personalInfo.caseStudyHref}>
+                  {t.printCaseStudy}: {personalInfo.caseStudyUrl}
+                </a>
               </p>
             </div>
           </div>
@@ -425,7 +667,7 @@ export default function Resume() {
             </a>
             <span className="flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 text-accent no-print" aria-hidden="true" />
-              <span>{personalInfo.location}</span>
+              <span>{t.location}</span>
             </span>
             {/* Portfolio URL: screen-only ở contact bar — bản in đã có ở góc phải + footer */}
             <a
@@ -443,24 +685,20 @@ export default function Resume() {
         {/* ─── SUMMARY ─── */}
         <section className="mt-8">
           <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-3 border-l-2 border-accent pl-3">
-            Summary
+            {t.sections.summary}
           </h2>
           <p className="text-sm md:text-[15px] text-white/75 leading-relaxed print:text-black/80">
-            Creative production lead who builds in-house video teams, studios, and workflows that
-            turn short-form video into measurable growth. At Thinksmart Insurance, video creative
-            sources 100% of marketing leads and has cut CPA 66% from a $180–$200 peak. Also designs
-            AI-assisted production pipelines (n8n, HeyGen, ElevenLabs) that tripled content output
-            and cut production costs about 60% across multilingual markets.
+            {t.summary}
           </p>
         </section>
 
         {/* ─── KEY ACHIEVEMENTS ─── */}
         <section className="mt-8">
           <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-4 border-l-2 border-accent pl-3">
-            Key Achievements
+            {t.sections.achievements}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 print:grid-cols-5 print:gap-2">
-            {keyStats.map((stat) => (
+            {t.keyStats.map((stat) => (
               <div
                 key={stat.label}
                 className="stat-card bg-white/[0.02] border border-white/5 rounded-xl p-4 flex flex-col justify-between"
@@ -479,11 +717,11 @@ export default function Resume() {
         {/* ─── PROFESSIONAL EXPERIENCE ─── */}
         <section className="mt-8">
           <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-6 border-l-2 border-accent pl-3">
-            Professional Experience
+            {t.sections.experience}
           </h2>
 
           <div className="space-y-8 print:space-y-4">
-            {jobs.map((job) => (
+            {t.jobs.map((job) => (
               <div key={job.company} className="job-block border-l border-white/10 pl-6 relative">
                 <div className="job-node absolute left-[-4.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" />
 
@@ -513,7 +751,6 @@ export default function Resume() {
                     </li>
                   ))}
                 </ul>
-
               </div>
             ))}
           </div>
@@ -522,17 +759,16 @@ export default function Resume() {
         {/* ─── SKILLS ─── */}
         <section className="mt-8">
           <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-4 border-l-2 border-accent pl-3">
-            Skills
+            {t.sections.skills}
           </h2>
-
-          <div className="skills-grid grid grid-cols-1 md:grid-cols-3 gap-6 print:grid-cols-3">
-            {skillsData.map((category) => (
+          <div className="skills-grid grid grid-cols-1 md:grid-cols-3 gap-4 print:grid-cols-3">
+            {t.skills.map((category, i) => (
               <div
                 key={category.category}
                 className="skill-block bg-white/[0.01] border border-white/5 rounded-xl p-5"
               >
                 <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
-                  {category.icon}
+                  {skillIcons[i]}
                   <h3 className="font-heading text-sm font-bold text-white print:text-black uppercase tracking-wider">
                     {category.category}
                   </h3>
@@ -555,58 +791,48 @@ export default function Resume() {
 
         {/* ─── CURRENTLY BUILDING: AIO STUDIO ───
             Screen-only (no-print): bản in giữ kỷ luật 1 trang A4 cho recruiter.
-            Số liệu 14s / 28,800+ đo thật từ AiO Studio (tài liệu AiO MVP, đo 07-08/2026).
-            Ảnh: public/images/resume/aio-welcome.webp (nén từ AiO Design System/AiO WELCOME). */}
+            Ảnh: public/images/resume/aio-welcome.webp (đã sửa Wellcome→Welcome 12/08, nén 100KB). */}
         <section className="mt-8 no-print">
           <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white mb-3 border-l-2 border-accent pl-3">
-            Currently Building — AiO Studio
+            {t.sections.aio}
           </h2>
-          <p className="text-sm md:text-[15px] text-white/75 leading-relaxed">
-            A.I already saves editors time.{" "}
-            <strong className="text-white">AiO Studio saves even more</strong> — a tool suite that
-            runs natively inside the editing software and quietly handles the repetitive work:
-            cutting silences, typing subtitles, hunting for files, reframing for every platform.
-          </p>
+          <p className="text-sm md:text-[15px] text-white/75 leading-relaxed">{t.aio.lead}</p>
 
           <div className="mt-5 rounded-xl overflow-hidden border border-white/10">
             <Image
               src="/images/resume/aio-welcome.webp"
               width={1600}
               height={1207}
-              alt="AiO Studio welcome screen — 8 tools for video editors"
+              alt={t.aio.imageAlt}
               className="w-full h-auto block"
             />
           </div>
 
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2.5 mt-6 list-none">
-            {[
-              { name: "Auto Silent Cut", desc: "finds and removes silences right on the timeline" },
-              { name: "Auto Transcripts", desc: "turns a 60-minute video into text in 14 seconds" },
-              { name: "Asset Manager", desc: "28,800+ assets with instant preview, drag & drop" },
-              { name: "Power Bins", desc: "brand kit that follows every new project" },
-              { name: "Auto Podcast", desc: "multi-cam edit that cuts to whoever is speaking" },
-              { name: "Auto Reframes", desc: "horizontal to vertical — subject always in frame" },
-              { name: "Auto Short Clip", desc: "extracts highlight moments into short videos" },
-              { name: "Sound Design", desc: "music that ducks under voices, synced to the beat" },
-            ].map((t) => (
-              <li key={t.name} className="flex items-baseline gap-2.5 text-[13px] text-white/65 leading-relaxed">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 translate-y-[-2px]" aria-hidden="true" />
+            {t.aio.tools.map((tool) => (
+              <li
+                key={tool.name}
+                className="flex items-baseline gap-2.5 text-[13px] text-white/65 leading-relaxed"
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 translate-y-[-2px]"
+                  aria-hidden="true"
+                />
                 <span>
-                  <strong className="text-white font-bold">{t.name}</strong>
+                  <strong className="text-white font-bold">{tool.name}</strong>
                   {" — "}
-                  {t.desc}
+                  {tool.desc}
                 </span>
               </li>
             ))}
           </ul>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
-            {[
-              { title: "Runs inside the editing software", desc: "no exporting, no uploading footage to the web" },
-              { title: "100% on-device processing", desc: "client footage never leaves the machine" },
-              { title: "No per-minute limits", desc: "unlike web tools that charge for every minute" },
-            ].map((p) => (
-              <div key={p.title} className="border border-white/10 rounded-lg px-4 py-3.5 bg-white/[0.02]">
+            {t.aio.principles.map((p) => (
+              <div
+                key={p.title}
+                className="border border-white/10 rounded-lg px-4 py-3.5 bg-white/[0.02]"
+              >
                 <p className="text-[12.5px] font-bold text-white leading-snug">{p.title}</p>
                 <p className="text-[11.5px] text-white/50 leading-snug mt-1">{p.desc}</p>
               </div>
@@ -619,34 +845,28 @@ export default function Resume() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2">
             <div className="meta-block border-l border-white/10 pl-6">
               <h2 className="font-heading text-sm font-black uppercase tracking-wider text-white print:text-black mb-2">
-                Education
+                {t.sections.education}
               </h2>
               <div>
                 <h3 className="text-xs font-bold text-white print:text-black">
-                  Self-Directed Professional Education
+                  {t.education.school}
                 </h3>
-                <p className="text-xs text-white/60 print:text-black/70 mt-0.5">
-                  Performance marketing, video production & AI-assisted workflows
-                </p>
                 <p className="text-[11px] text-white/60 print:text-black/70 mt-1">
-                  Focus: performance video strategy and AI-assisted production workflows — applied
-                  directly in the Thinksmart systems above.
+                  {t.education.detail}
                 </p>
               </div>
             </div>
 
             <div className="meta-block border-l border-white/10 pl-6">
               <h2 className="font-heading text-sm font-black uppercase tracking-wider text-white print:text-black mb-2">
-                Languages
+                {t.sections.languages}
               </h2>
               <div className="text-xs text-white/75 print:text-black/80 space-y-1">
-                <p>
-                  <strong className="text-white print:text-black">Vietnamese:</strong> Native
-                </p>
-                <p>
-                  <strong className="text-white print:text-black">English:</strong> Professional
-                  Working Proficiency
-                </p>
+                {t.languages.map((l) => (
+                  <p key={l.name}>
+                    <strong className="text-white print:text-black">{l.name}:</strong> {l.level}
+                  </p>
+                ))}
               </div>
             </div>
           </div>
@@ -657,11 +877,11 @@ export default function Resume() {
           className="print-footer print-only hidden mt-8 pt-3 text-center text-[9px]"
           style={{ borderTop: "1px solid #ececec", color: "#555" }}
         >
-          Portfolio:{" "}
+          {t.printPortfolio}:{" "}
           <a href={personalInfo.portfolioHref}>
             <strong>{personalInfo.portfolioUrl}</strong>
           </a>{" "}
-          · Case study:{" "}
+          · {t.printCaseStudy}:{" "}
           <a href={personalInfo.caseStudyHref}>
             <strong>{personalInfo.caseStudyUrl}</strong>
           </a>
