@@ -7,7 +7,7 @@
 // truy được về nguồn công khai trong data/ — số không nguồn (500+, crew 6+) đã bị loại.
 // Print scale: html 12px làm gốc rem, các rule px đè chi tiết.
 
-import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Mail,
@@ -15,12 +15,12 @@ import {
   MapPin,
   Globe,
   ArrowLeft,
-  ArrowRight,
-  Printer,
   Palette,
   Video,
   Cpu,
 } from "lucide-react";
+// Printer icon + nút "Save PDF / Print" đã gỡ theo yêu cầu 12/08/2026 — người xem
+// vẫn in được bằng Ctrl+P; 2 link "View ... Case Study" cũng gỡ cùng đợt.
 import { contactData } from "@/data/contact";
 
 export default function Resume() {
@@ -33,7 +33,6 @@ export default function Resume() {
     phoneHref: "tel:+84938169130",
     email: "hadangtien0702@gmail.com",
     location: "Ho Chi Minh City, Vietnam",
-    remote: "Open to remote work",
     // CV Full — portfolio chính (Vercel production domain); thay bằng hadangtien.com khi domain trỏ xong
     portfolioUrl: "hadangtien.vercel.app",
     portfolioHref: "https://hadangtien.vercel.app/",
@@ -77,8 +76,6 @@ export default function Resume() {
           text: "Designed the brand system and asset guide for core insurance products (IUL, Max-Funded IUL, EBTP, Kaizen, Term Life), making complex financial concepts accessible to prospects.",
         },
       ],
-      caseStudyHref: "/casestudy/thinksmart",
-      caseStudyLabel: "View Thinksmart Case Study",
     },
     {
       title: "Event Media Director",
@@ -101,8 +98,6 @@ export default function Resume() {
           text: "Led the on-site media crew across camera, sound, and directing roles, coordinating simultaneous coverage of the company's flagship events.",
         },
       ],
-      caseStudyHref: "/casestudy/dreamtalent",
-      caseStudyLabel: "View Dream Talent Case Study",
     },
   ];
 
@@ -368,13 +363,6 @@ export default function Resume() {
             <span>Back to Portfolio</span>
           </button>
 
-          <button
-            onClick={() => window.print()}
-            className="flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-full bg-accent text-white hover:bg-accent-warm font-heading text-[13px] font-bold shadow-[0_10px_25px_rgba(255,64,0,0.35)] cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
-          >
-            <Printer className="w-4 h-4" aria-hidden="true" />
-            <span>Save PDF / Print</span>
-          </button>
         </div>
       </div>
 
@@ -438,9 +426,6 @@ export default function Resume() {
             <span className="flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 text-accent no-print" aria-hidden="true" />
               <span>{personalInfo.location}</span>
-            </span>
-            <span className="flex items-center gap-2">
-              <span>{personalInfo.remote}</span>
             </span>
             {/* Portfolio URL: screen-only ở contact bar — bản in đã có ở góc phải + footer */}
             <a
@@ -529,16 +514,6 @@ export default function Resume() {
                   ))}
                 </ul>
 
-                {/* Case study link — screen only, điều hướng nội bộ */}
-                <div className="mt-3.5 no-print">
-                  <Link
-                    href={job.caseStudyHref}
-                    className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs text-accent hover:underline font-semibold"
-                  >
-                    <span>{job.caseStudyLabel}</span>
-                    <ArrowRight className="w-3 h-3" aria-hidden="true" />
-                  </Link>
-                </div>
               </div>
             ))}
           </div>
@@ -573,6 +548,67 @@ export default function Resume() {
                     </span>
                   ))}
                 </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ─── CURRENTLY BUILDING: AIO STUDIO ───
+            Screen-only (no-print): bản in giữ kỷ luật 1 trang A4 cho recruiter.
+            Số liệu 14s / 28,800+ đo thật từ AiO Studio (tài liệu AiO MVP, đo 07-08/2026).
+            Ảnh: public/images/resume/aio-welcome.webp (nén từ AiO Design System/AiO WELCOME). */}
+        <section className="mt-8 no-print">
+          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white mb-3 border-l-2 border-accent pl-3">
+            Currently Building — AiO Studio
+          </h2>
+          <p className="text-sm md:text-[15px] text-white/75 leading-relaxed">
+            A.I already saves editors time.{" "}
+            <strong className="text-white">AiO Studio saves even more</strong> — a tool suite that
+            runs natively inside the editing software and quietly handles the repetitive work:
+            cutting silences, typing subtitles, hunting for files, reframing for every platform.
+          </p>
+
+          <div className="mt-5 rounded-xl overflow-hidden border border-white/10">
+            <Image
+              src="/images/resume/aio-welcome.webp"
+              width={1600}
+              height={1207}
+              alt="AiO Studio welcome screen — 8 tools for video editors"
+              className="w-full h-auto block"
+            />
+          </div>
+
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2.5 mt-6 list-none">
+            {[
+              { name: "Auto Silent Cut", desc: "finds and removes silences right on the timeline" },
+              { name: "Auto Transcripts", desc: "turns a 60-minute video into text in 14 seconds" },
+              { name: "Asset Manager", desc: "28,800+ assets with instant preview, drag & drop" },
+              { name: "Power Bins", desc: "brand kit that follows every new project" },
+              { name: "Auto Podcast", desc: "multi-cam edit that cuts to whoever is speaking" },
+              { name: "Auto Reframes", desc: "horizontal to vertical — subject always in frame" },
+              { name: "Auto Short Clip", desc: "extracts highlight moments into short videos" },
+              { name: "Sound Design", desc: "music that ducks under voices, synced to the beat" },
+            ].map((t) => (
+              <li key={t.name} className="flex items-baseline gap-2.5 text-[13px] text-white/65 leading-relaxed">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 translate-y-[-2px]" aria-hidden="true" />
+                <span>
+                  <strong className="text-white font-bold">{t.name}</strong>
+                  {" — "}
+                  {t.desc}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+            {[
+              { title: "Runs inside the editing software", desc: "no exporting, no uploading footage to the web" },
+              { title: "100% on-device processing", desc: "client footage never leaves the machine" },
+              { title: "No per-minute limits", desc: "unlike web tools that charge for every minute" },
+            ].map((p) => (
+              <div key={p.title} className="border border-white/10 rounded-lg px-4 py-3.5 bg-white/[0.02]">
+                <p className="text-[12.5px] font-bold text-white leading-snug">{p.title}</p>
+                <p className="text-[11.5px] text-white/50 leading-snug mt-1">{p.desc}</p>
               </div>
             ))}
           </div>
