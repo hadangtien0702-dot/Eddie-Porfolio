@@ -823,20 +823,27 @@ export default function WorkVideoEditor() {
                     </motion.div>
                   </motion.div>
 
-                  {/* Hover CTA: reveal showcase on hover / focus; always visible on touch */}
+                  {/* Hover CTA: dim the frame and surface the showcase button; always visible on touch */}
                   <button
                     type="button"
                     onClick={handleRenderShowcase}
                     aria-label="View 3D showcase"
-                    className="absolute inset-0 z-50 flex items-end justify-center pb-5 rounded-xl cursor-pointer
-                               bg-gradient-to-t from-black/70 via-black/10 to-transparent
+                    className="absolute inset-0 z-50 flex items-center justify-center rounded-xl cursor-pointer
+                               bg-black/0 group-hover:bg-black/65 focus-visible:bg-black/65 [@media(hover:none)]:bg-black/45
+                               backdrop-blur-0 group-hover:backdrop-blur-[3px] focus-visible:backdrop-blur-[3px]
                                opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100
-                               transition-opacity duration-300 outline-none"
+                               transition-all duration-300 outline-none"
                   >
-                    <span className="flex items-center gap-2 bg-accent text-white font-heading font-black text-[10px] uppercase tracking-[0.14em]
-                                     px-4 py-2 rounded-md border border-white/20 shadow-[0_0_24px_rgba(255,64,0,0.5)]
-                                     translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                      <Play className="w-3 h-3 fill-current" />
+                    {/* radial spotlight behind the button */}
+                    <span aria-hidden className="absolute inset-0 rounded-xl bg-[radial-gradient(ellipse_at_center,rgba(255,64,0,0.22)_0%,rgba(255,64,0,0.06)_35%,transparent_65%)]" />
+                    <span className="relative flex items-center gap-3 bg-accent text-white font-heading font-black text-[12px] sm:text-[13px] uppercase tracking-[0.16em]
+                                     px-7 py-3.5 rounded-lg border border-white/30
+                                     shadow-[0_0_0_6px_rgba(255,64,0,0.18),0_0_48px_rgba(255,64,0,0.7),0_16px_32px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.35)]
+                                     scale-90 group-hover:scale-100 focus-visible:scale-100 [@media(hover:none)]:scale-100
+                                     transition-transform duration-300">
+                      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20">
+                        <Play className="w-3 h-3 fill-current" />
+                      </span>
                       View showcase
                     </span>
                   </button>
