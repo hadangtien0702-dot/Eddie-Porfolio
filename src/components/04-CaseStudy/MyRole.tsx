@@ -300,7 +300,7 @@ export function MyRole() {
         </motion.div>
 
         {/* ─── Ultra-Premium Scanning Cards ─── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full relative z-30">
+        <div className="grid grid-cols-1 gap-5 w-full relative z-30">
           {cards.map((card, i) => (
             <motion.div
               key={card.id}
@@ -311,7 +311,7 @@ export function MyRole() {
               className="group relative h-full"
             >
               {/* HUD BORDER CONTAINER */}
-              <div className="relative p-10 h-full bg-[#080808]/40 backdrop-blur-3xl border border-white/5 overflow-hidden transition-all duration-500 group-hover:border-orange-500/30 group-hover:bg-orange-500/[0.02]">
+              <div className="relative p-7 md:p-8 h-full flex flex-col bg-[#080808]/40 backdrop-blur-3xl border border-white/5 overflow-hidden transition-all duration-500 group-hover:border-orange-500/30 group-hover:bg-orange-500/[0.02]">
                 
                 {/* ─── HUD ELEMENTS ─── */}
                 {/* Corner Brackets */}
@@ -330,36 +330,40 @@ export function MyRole() {
                 </div>
 
                 {/* Top Metadata Hub */}
-                <div className="flex items-start justify-between mb-12 relative z-10">
-                   <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
+                <div className="flex items-start justify-between gap-3 mb-7 relative z-10">
+                   <div className="flex flex-col gap-1 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_8px_#ff5a00]" />
-                        <span className="font-mono text-[9px] text-orange-500 font-black uppercase tracking-[0.2em]">{card.tag}</span>
+                        <span className="font-mono text-[9px] text-orange-500 font-black uppercase tracking-[0.2em] truncate">{card.tag}</span>
                       </div>
                       <span className="font-mono text-[8px] text-white/20 uppercase tracking-widest pl-3.5">SYS_STABLE_v.4.2</span>
                    </div>
-                   <div className="font-mono text-[10px] text-white/10 group-hover:text-white/30 transition-colors font-black uppercase tracking-widest">
+                   <div className="shrink-0 font-mono text-[10px] text-white/10 group-hover:text-white/30 transition-colors font-black uppercase tracking-widest whitespace-nowrap">
                       ID: 0{i+1}
                    </div>
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-8 transition-all duration-500 group-hover:bg-orange-500/10 group-hover:border-orange-500/20 group-hover:scale-110">
+                <div className="relative z-10 flex flex-col flex-1">
+                 <div className="flex flex-col md:flex-row md:items-start md:gap-7">
+                  <div className="shrink-0 w-14 h-14 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-6 md:mb-0 transition-all duration-500 group-hover:bg-orange-500/10 group-hover:border-orange-500/20 group-hover:scale-110">
                     <div className="text-white transition-colors group-hover:text-orange-500">
                       {card.icon}
                     </div>
                   </div>
 
-                  <h3 className="font-heading text-4xl font-black text-white leading-none tracking-tighter uppercase mb-6 italic transition-all duration-500 group-hover:translate-x-2 group-hover:text-orange-500">
+                  <div className="min-w-0 flex-1">
+                  <h3 className="font-heading text-[clamp(26px,1.9vw,34px)] font-black text-white leading-[0.95] tracking-tight uppercase mb-3 italic [text-wrap:balance] pr-2 transition-colors duration-500 group-hover:text-orange-500">
                     {card.title}
                   </h3>
                   
-                  <p className="font-body text-lg text-white/30 leading-relaxed group-hover:text-white/60 transition-colors">
+                  <p className="font-body text-base text-white/30 leading-relaxed mb-8 max-w-[52ch] group-hover:text-white/60 transition-colors">
                     {card.text}
                   </p>
+                  </div>
+                 </div>
 
-                  <div className="mt-12 pt-8 border-t border-white/5 flex items-center justify-between opacity-40 group-hover:opacity-100 transition-all duration-500">
+                  <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between opacity-40 group-hover:opacity-100 transition-all duration-500">
                     <div className="flex items-center gap-3">
                        <div className="flex gap-0.5">
                           {[1,2,3,4].map(j => <div key={j} className="w-1 h-3 bg-orange-500/40 rounded-full" />)}
