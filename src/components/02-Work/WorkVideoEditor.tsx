@@ -36,41 +36,41 @@ export default function WorkVideoEditor() {
   const assets = [
     {
       id: "astronaut",
-      name: "ASTRONAUT_CLOSE.mp4",
-      path: "/images/astronaut_cinematic.png",
+      name: "IUL_HOOK_TESTIMONIAL.mp4",
+      path: "/images/reels-thumbs/hook.jpg",
       videoUrl: "https://pub-9332e0501e844ae48782601867134d26.r2.dev/videos/ads/premium-creative-showcase.mp4",
-      duration: "00:05:11",
-      resolution: "4K 16:9 | 60 FPS",
+      duration: "00:00:15",
+      resolution: "9:16 · 1080p · 30 FPS",
       camera: "CAM_01",
       iso: "ISO 400 · F/2.8 · 1/50"
     },
     {
       id: "city_drone",
-      name: "CITY_DRONE_01.mp4",
-      path: "/images/city_drone.png",
+      name: "TERM_LIFE_EXPLAINER.mp4",
+      path: "/images/reels-thumbs/term.jpg",
       videoUrl: "/videos/reels/1193408759530975.mp4",
-      duration: "00:08:04",
-      resolution: "4K 16:9 | 60 FPS",
+      duration: "00:00:30",
+      resolution: "9:16 · 1080p · 30 FPS",
       camera: "CAM_02",
       iso: "ISO 800 · F/4.0 · 1/100"
     },
     {
       id: "space_station",
-      name: "SPACE_STATION_02.mp4",
-      path: "/images/space_station.png",
+      name: "EBTP_PRODUCT_LINE.mp4",
+      path: "/images/reels-thumbs/ebtp.jpg",
       videoUrl: "/videos/reels/1416295406374728.mp4",
-      duration: "00:07:19",
-      resolution: "4K 16:9 | 60 FPS",
+      duration: "00:00:21",
+      resolution: "9:16 · 1080p · 30 FPS",
       camera: "CAM_03",
       iso: "ISO 200 · F/1.8 · 1/24"
     },
     {
       id: "planet_surface",
-      name: "PLANET_SURFACE.mp4",
-      path: "/images/planet_surface.png",
+      name: "KAIZEN_RETARGET_CUT.mp4",
+      path: "/images/reels-thumbs/kaizen.jpg",
       videoUrl: "/videos/reels/1481637113705236.mp4",
-      duration: "00:06:07",
-      resolution: "4K 16:9 | 60 FPS",
+      duration: "00:00:12",
+      resolution: "9:16 · 1080p · 30 FPS",
       camera: "CAM_04",
       iso: "ISO 640 · F/2.8 · 1/50"
     }
@@ -590,7 +590,7 @@ export default function WorkVideoEditor() {
                 <span className="text-green-400 font-bold text-[9px]">ONLINE</span>
               </div>
               <div className="bg-zinc-900 border border-white/5 px-2.5 py-1 rounded-md text-accent font-bold text-[9px] tracking-wider hidden sm:block">
-                60 FPS
+                30 FPS
               </div>
             </div>
           </motion.header>
@@ -626,7 +626,7 @@ export default function WorkVideoEditor() {
                     <div className="pl-6 flex flex-col py-0.5">
                       <div className="flex items-center gap-2 px-1.5 py-1 text-xs text-accent bg-accent/5 border border-accent/10 rounded cursor-pointer font-medium font-mono text-[11px]">
                         <Film className="w-3.5 h-3.5" />
-                        <span className="truncate">SEQ_MASTER_V3</span>
+                        <span className="truncate">SEQ_THINKSMART_IUL_V3</span>
                       </div>
                     </div>
                   )}
@@ -659,7 +659,7 @@ export default function WorkVideoEditor() {
                           </div>
                           <div className="flex-grow min-w-0">
                             <div className="font-mono text-[10px] text-zinc-300 truncate font-semibold">{asset.name}</div>
-                            <div className="font-mono text-[8px] text-zinc-500">{asset.duration} · {asset.resolution.split(" ")[0]}</div>
+                            <div className="font-mono text-[8px] text-zinc-500">{asset.duration} · {asset.resolution.split(" · ")[0]}</div>
                           </div>
                         </div>
                       ))}
@@ -680,8 +680,8 @@ export default function WorkVideoEditor() {
                   </div>
                   {expandedFolders.audio && (
                     <div className="pl-6 flex flex-col py-0.5 gap-1 font-mono text-[10px] text-zinc-400">
-                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><Music className="w-3 h-3 text-emerald-400" /> <span>IMPACT_WHOOSH.wav</span></div>
-                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><Music className="w-3 h-3 text-emerald-400" /> <span>EPIC_BEAT_BG.mp3</span></div>
+                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><Music className="w-3 h-3 text-emerald-400" /> <span>WHOOSH.wav</span></div>
+                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><Music className="w-3 h-3 text-emerald-400" /> <span>MUSIC_BED.mp3</span></div>
                     </div>
                   )}
                 </div>
@@ -699,7 +699,7 @@ export default function WorkVideoEditor() {
                   </div>
                   {expandedFolders.gfx && (
                     <div className="pl-6 flex flex-col py-0.5 gap-1 font-mono text-[10px] text-zinc-400">
-                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><FileText className="w-3 h-3 text-pink-400" /> <span>OVERLAY_TEXT.png</span></div>
+                      <div className="flex items-center gap-1.5 p-1 rounded hover:bg-white/5"><FileText className="w-3 h-3 text-pink-400" /> <span>HOOK_TEXT.png</span></div>
                     </div>
                   )}
                 </div>
@@ -710,7 +710,7 @@ export default function WorkVideoEditor() {
             <motion.main style={{ backgroundColor: centerBg }} className="flex-1 flex flex-col min-h-0 relative z-10">
               {/* Monitor Title */}
               <div className="h-8 bg-[#090b10] border-b border-white/5 flex items-center justify-between px-4 shrink-0 font-mono text-[10px] text-zinc-400">
-                <span className="font-bold text-zinc-200">SEQUENCE 01: MASTERPIECE</span>
+                <span className="font-bold text-zinc-200">SEQUENCE 01: IUL_HOOK_V3</span>
                 <span className="text-zinc-500">{activeAsset.resolution}</span>
               </div>
 
@@ -718,7 +718,7 @@ export default function WorkVideoEditor() {
               <div ref={monitorRef} className="flex-1 relative flex items-center justify-center p-4 bg-black overflow-hidden perspective-[1200px]">
                 {/* 3D Morphing Viewport Canvas */}
                 <div 
-                  className="relative w-full aspect-video max-w-[800px] border border-white/10 bg-[#040405] rounded-xl overflow-hidden shadow-2xl"
+                  className="group relative w-full aspect-video max-w-[800px] border border-white/10 bg-[#040405] rounded-xl overflow-hidden shadow-2xl"
                   style={{
                     boxShadow: is3DMode ? "0 30px 60px rgba(255,64,0,0.15), 0 0 100px rgba(0,0,0,0.8)" : "0 10px 40px rgba(0,0,0,0.8)"
                   }}
@@ -798,12 +798,12 @@ export default function WorkVideoEditor() {
                         {/* Camera metadata tags */}
                         <div className="flex justify-between items-center opacity-70">
                           <span className="font-mono text-white text-[8px] tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.camera}</span>
-                          <span className="font-mono text-white/50 text-[8px] tracking-widest bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.iso}</span>
+                          <span className="font-mono text-accent text-[8px] tracking-widest bg-black/60 px-2 py-0.5 rounded border border-white/5">LUT · CINEMATIC</span>
                         </div>
  
                         <div className="flex justify-between items-end opacity-60">
-                          <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">REC.709 / CINEMATIC</span>
-                          <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">V4_OVERLAY</span>
+                          <span className="font-mono text-white/70 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5"><span className="text-accent font-bold">HOOK</span> 0–3s</span>
+                          <span className="font-mono text-white/40 text-[8px] bg-black/60 px-2 py-0.5 rounded border border-white/5">{activeAsset.duration}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -822,21 +822,23 @@ export default function WorkVideoEditor() {
                       <div className="absolute inset-0 bg-gradient-to-t from-accent/10 to-transparent animate-pulse" />
                     </motion.div>
                   </motion.div>
- 
-                  {/* 3D Showcase CTA Button overlayed on player */}
+
+                  {/* Hover CTA: reveal showcase on hover / focus; always visible on touch */}
                   <button
+                    type="button"
                     onClick={handleRenderShowcase}
-                    className="absolute bottom-4 right-4 z-50 flex items-center gap-2.5 
-                               bg-gradient-to-r from-accent via-[#ff3c00] to-[#ff2a00] hover:brightness-110 active:scale-95
-                               text-white font-heading font-black text-[10px] sm:text-[11px] uppercase tracking-[0.12em]
-                               px-5 py-3 rounded-xl border border-white/30 
-                               shadow-[0_0_30px_rgba(255,64,0,0.65),0_12px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.4)]
-                               hover:shadow-[0_0_40px_rgba(255,64,0,0.85),0_15px_30px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.5)]
-                               hover:scale-[1.04] transition-all duration-300 cursor-pointer pointer-events-auto
-                               animate-[pulse_1.8s_infinite] backdrop-blur-sm"
+                    aria-label="View 3D showcase"
+                    className="absolute inset-0 z-50 flex items-end justify-center pb-5 rounded-xl cursor-pointer
+                               bg-gradient-to-t from-black/70 via-black/10 to-transparent
+                               opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100
+                               transition-opacity duration-300 outline-none"
                   >
-                    <span>TRẢI NGHIỆM 3D SHOWCASE</span>
-                    <Sliders className="w-3.5 h-3.5 text-white" />
+                    <span className="flex items-center gap-2 bg-accent text-white font-heading font-black text-[10px] uppercase tracking-[0.14em]
+                                     px-4 py-2 rounded-md border border-white/20 shadow-[0_0_24px_rgba(255,64,0,0.5)]
+                                     translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                      <Play className="w-3 h-3 fill-current" />
+                      View showcase
+                    </span>
                   </button>
                 </div>
               </div>
@@ -905,6 +907,22 @@ export default function WorkVideoEditor() {
                   <div className="text-white font-bold truncate text-[11px]">{activeAsset.name}</div>
                 </div>
 
+                {/* Category 0: Deliverable */}
+                <div className="flex flex-col gap-2.5 border-b border-white/5 pb-4">
+                  <div className="flex items-center justify-between font-bold text-zinc-400 border-b border-white/5 pb-1">
+                    <span>fx Deliverable</span>
+                    <Film className="w-3 h-3 text-zinc-500" />
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Format</span>
+                    <span className="text-white font-bold">9:16 · 1080×1920</span>
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-zinc-500">Length</span>
+                    <span className="text-white font-bold">{activeAsset.duration.slice(3)} hook</span>
+                  </div>
+                </div>
+
                 {/* Category 1: Motion */}
                 <div className="flex flex-col gap-2.5 border-b border-white/5 pb-4">
                   <div className="flex items-center justify-between font-bold text-zinc-400 border-b border-white/5 pb-1">
@@ -946,10 +964,6 @@ export default function WorkVideoEditor() {
                   <div className="flex items-center justify-between font-bold text-zinc-400 border-b border-white/5 pb-1">
                     <span>fx Lumetri Color</span>
                     <Palette className="w-3 h-3 text-zinc-500" />
-                  </div>
-                  <div className="flex justify-between items-center px-1">
-                    <span className="text-zinc-500">Basic Correction</span>
-                    <span className="text-accent font-bold">Active</span>
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-zinc-500">Input LUT</span>
@@ -1149,7 +1163,7 @@ export default function WorkVideoEditor() {
                         className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-blue-400/50 group-hover/clip:bg-blue-400/20 transition-colors"
                         onPointerDown={(e) => handleTrimDrag('V2', 'left', e)}
                       />
-                      <span className="text-[9px] font-mono text-blue-200 font-bold truncate px-3 pointer-events-none">OVERLAY_TEXT.png</span>
+                      <span className="text-[9px] font-mono text-blue-200 font-bold truncate px-3 pointer-events-none">HOOK_TEXT.png</span>
                       <div 
                         className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-r z-10 hover:bg-blue-400/50 group-hover/clip:bg-blue-400/20 transition-colors"
                         onPointerDown={(e) => handleTrimDrag('V2', 'right', e)}
@@ -1242,7 +1256,7 @@ export default function WorkVideoEditor() {
                         className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-emerald-400/50 group-hover/clip:bg-emerald-400/20 transition-colors"
                         onPointerDown={(e) => handleTrimDrag('A2', 'left', e)}
                       />
-                      <span className="text-[8px] font-mono text-emerald-300 font-bold truncate z-10 px-3 pointer-events-none">IMPACT_WHOOSH_01.wav</span>
+                      <span className="text-[8px] font-mono text-emerald-300 font-bold truncate z-10 px-3 pointer-events-none">WHOOSH.wav</span>
                       <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px] pointer-events-none">
                         {[2,8,4,12,8,2,6,10,14,4,2,8,12,6,2,6,10,4].map((h, i) => (
                           <div key={i} className="flex-1 bg-emerald-400 rounded-t" style={{ height: `${h * 0.5}px` }} />
@@ -1275,7 +1289,7 @@ export default function WorkVideoEditor() {
                         className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize rounded-l z-10 hover:bg-teal-400/50 group-hover/clip:bg-teal-400/20 transition-colors"
                         onPointerDown={(e) => handleTrimDrag('A3', 'left', e)}
                       />
-                      <span className="text-[8px] font-mono text-teal-300 font-bold truncate z-10 px-3 pointer-events-none">BACKGROUND_EPIC_BEAT.mp3</span>
+                      <span className="text-[8px] font-mono text-teal-300 font-bold truncate z-10 px-3 pointer-events-none">MUSIC_BED.mp3</span>
                       <div className="absolute inset-x-2 bottom-1 h-2 opacity-25 flex items-end gap-[1px] pointer-events-none">
                         {[4,6,8,6,4,6,8,10,8,6,4,8,10,12,10,8,6,8,10,8,6,8,6,4,6,8,6,4,6,8,10,8,6,4,8,10,12].map((h, i) => (
                           <div key={i} className="flex-1 bg-teal-400 rounded-t" style={{ height: `${h * 0.5}px` }} />
