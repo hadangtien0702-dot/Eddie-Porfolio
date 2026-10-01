@@ -5,6 +5,7 @@
 import Navigation from "@/components/00-Navigation/Navigation";
 import Overview from "@/components/01-Overview/Overview";
 import WorkVideoEditor from "@/components/02-Work/WorkVideoEditor";
+import AiOStudioBanner from "@/components/02-Work/AiOStudioBanner";
 import WorkSocial from "@/components/02-Work/WorkSocial";
 import WorkAI from "@/components/02-Work/WorkAI";
 import WorkSetupWebsite from "@/components/02-Work/WorkSetupWebsite";
@@ -21,6 +22,8 @@ export default function Home() {
       
       {/* Work: 4 Creative Sections (Hands-on Interactive) */}
       <WorkVideoEditor />
+      {/* AiO Studio: Bộ công cụ dựng video in-house */}
+      <AiOStudioBanner />
       <WorkSocial />
       <WorkAI />
       <WorkSetupWebsite />

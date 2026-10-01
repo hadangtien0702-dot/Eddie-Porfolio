@@ -79,7 +79,7 @@ export default function RootLayout({
       <body className="antialiased bg-[#050505] text-white overflow-x-hidden min-h-screen relative" suppressHydrationWarning>
         
         {/* ─── Global Tech Motif Background ─── */}
-        <div className="fixed inset-0 pointer-events-none z-[-10]">
+        <div className="no-print print:hidden fixed inset-0 pointer-events-none z-[-10]">
           <div 
             className="absolute inset-0 opacity-[0.015]" 
             style={{ 

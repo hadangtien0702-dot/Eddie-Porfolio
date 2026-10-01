@@ -42,6 +42,11 @@ const personalInfo = {
   // CV Peak — case study Thinksmart chuyên sâu
   caseStudyUrl: "cv-media-lead.vercel.app",
   caseStudyHref: "https://cv-media-lead.vercel.app/",
+  // AiO Studio — bộ công cụ Premiere Pro & nền tảng Shot & Save
+  aioStudioUrl: "aio-shotsave.vercel.app/premiere",
+  aioStudioHref: "https://aio-shotsave.vercel.app/premiere/",
+  aioWebUrl: "aio-shotsave.vercel.app",
+  aioWebHref: "https://aio-shotsave.vercel.app",
 };
 
 // ─── Toàn bộ chữ theo ngôn ngữ. EN giữ nguyên văn bản đã qua review 19/7. ───
@@ -159,7 +164,7 @@ const T = {
       lead: (
         <>
           A.I already saves editors time.{" "}
-          <strong className="text-white">AiO Studio saves even more</strong> — a tool suite that
+          <strong className="text-zinc-900 font-bold">AiO Studio saves even more</strong> — a tool suite that
           runs natively inside the editing software and quietly handles the repetitive work:
           cutting silences, typing subtitles, hunting for files, reframing for every platform.
         </>
@@ -304,7 +309,7 @@ const T = {
       lead: (
         <>
           A.I đã giúp người dựng phim tiết kiệm thời gian.{" "}
-          <strong className="text-white">AiO Studio giúp tiết kiệm nhiều hơn nữa</strong> — bộ
+          <strong className="text-zinc-900 font-bold">AiO Studio giúp tiết kiệm nhiều hơn nữa</strong> — bộ
           công cụ chạy ngay trong phần mềm dựng phim, âm thầm làm giùm những việc lặp đi lặp lại:
           cắt khoảng im lặng, gõ phụ đề, tìm file, đổi khung hình cho từng nền tảng.
         </>
@@ -356,24 +361,43 @@ export default function Resume() {
   ];
 
   return (
-    <main className="min-h-dvh bg-[#050505] text-white font-body selection:bg-accent selection:text-white print:bg-white print:text-black print:p-0">
+    <main className="min-h-dvh bg-white text-[#111111] font-body selection:bg-accent selection:text-white print:bg-white print:text-black print:p-0">
       {/* ─── PRINT STYLES — light A4, 1 trang ───
-          Scale: html 12px (rem gốc → Tailwind text-* co còn 75%), rule px đè cho từng khối.
-          Đơn vị thống nhất px. Margin giấy 12/14mm — an toàn vùng không in của máy văn phòng. */}
+          Font: Inter toàn bộ (rõ nét, không vỡ nét, độ đậm vừa vặn).
+          Scale: html 12px làm gốc, margin 11mm 13mm vừa vặn 1 trang A4. */}
       <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+        html,
+        body {
+          background-color: #ffffff !important;
+          color: #111111 !important;
+        }
+
         @page {
           size: A4 portrait;
-          margin: 12mm 14mm;
+          margin: 8mm 12mm;
         }
 
         @media print {
           html,
           body,
+          main,
+          h1, h2, h3, h4, h5, h6,
+          p, span, a, li, strong, b, div {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+            -webkit-font-smoothing: antialiased !important;
+            -moz-osx-font-smoothing: grayscale !important;
+            text-rendering: optimizeLegibility !important;
+          }
+
+          html,
+          body,
           main {
             background: #ffffff !important;
-            color: #141414 !important;
-            font-size: 12px !important;
-            line-height: 1.45 !important;
+            color: #111111 !important;
+            font-size: 11px !important;
+            line-height: 1.4 !important;
             width: 100% !important;
             height: auto !important;
             min-height: 0 !important;
@@ -382,7 +406,8 @@ export default function Resume() {
             print-color-adjust: exact !important;
           }
 
-          .no-print {
+          .no-print,
+          .fixed {
             display: none !important;
           }
           .print-only {
@@ -397,152 +422,180 @@ export default function Resume() {
           }
 
           header {
-            padding-bottom: 9px !important;
-            border-bottom: 1px solid #e2e2e2 !important;
+            padding-bottom: 5px !important;
+            border-bottom: 1px solid #dcdcdc !important;
           }
           header h1 {
-            font-size: 25px !important;
-            margin-bottom: 3px !important;
-            color: #111111 !important;
+            font-size: 24px !important;
+            font-weight: 850 !important;
+            letter-spacing: -0.02em !important;
+            margin-bottom: 2px !important;
+            color: #0a0a0a !important;
           }
           header .headline {
-            font-size: 12px !important;
-            letter-spacing: 0.12em !important;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.08em !important;
             color: #d33500 !important;
           }
 
           .contact-bar {
-            margin-top: 6px !important;
-            padding-top: 6px !important;
-            gap: 6px 16px !important;
-            border-top: 1px solid #ececec !important;
-            color: #333333 !important;
+            margin-top: 4px !important;
+            padding-top: 4px !important;
+            gap: 4px 14px !important;
+            border-top: 1px solid #e5e5e5 !important;
+            color: #1f2937 !important;
             font-size: 10px !important;
+            font-weight: 500 !important;
           }
           .contact-bar a,
           .contact-bar span {
-            color: #333333 !important;
+            color: #1f2937 !important;
           }
           .contact-bar > *:not(:first-child)::before {
             content: "·";
-            margin-right: 10px;
-            color: #999999;
+            margin-right: 8px;
+            color: #888888;
+            font-weight: bold;
           }
 
           .section-title {
-            font-size: 11.5px !important;
-            letter-spacing: 0.08em !important;
-            margin-bottom: 6px !important;
-            padding-left: 8px !important;
-            color: #111111 !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.06em !important;
+            margin-bottom: 4px !important;
+            padding-left: 7px !important;
+            color: #0a0a0a !important;
             border-left: 3px solid #d33500 !important;
           }
 
           section {
-            margin-top: 10px !important;
+            margin-top: 6px !important;
           }
           section p {
-            font-size: 11px !important;
-            line-height: 1.45 !important;
-            color: #2c2c2c !important;
-            max-width: 95% !important;
+            font-size: 10.5px !important;
+            font-weight: 450 !important;
+            line-height: 1.4 !important;
+            color: #1f2937 !important;
+            max-width: 100% !important;
           }
 
           .stat-card {
-            padding: 7px 10px !important;
+            padding: 4px 6px !important;
             border-radius: 4px !important;
             background: #ffffff !important;
-            border: 1px solid #e4e4e4 !important;
+            border: 1px solid #dcdcdc !important;
           }
           .stat-number {
-            font-size: 19px !important;
-            margin-bottom: 2px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 17px !important;
+            font-weight: 850 !important;
+            letter-spacing: -0.02em !important;
+            margin-bottom: 1px !important;
             color: #d33500 !important;
           }
           .stat-label {
-            font-size: 9px !important;
+            font-size: 8.5px !important;
+            font-weight: 600 !important;
             letter-spacing: 0.03em !important;
-            color: #4a4a4a !important;
+            color: #374151 !important;
           }
 
           .job-block {
-            padding-left: 11px !important;
-            border-left: 1px solid #e2e2e2 !important;
+            padding-left: 9px !important;
+            border-left: 1.5px solid #dcdcdc !important;
           }
           .job-block h3 {
-            font-size: 12px !important;
-            font-weight: 700 !important;
-            color: #111111 !important;
+            font-size: 11.5px !important;
+            font-weight: 750 !important;
+            color: #0a0a0a !important;
           }
           .job-block .job-company {
-            font-size: 10.5px !important;
-            font-weight: 600 !important;
-            color: #222222 !important;
+            font-size: 10px !important;
+            font-weight: 650 !important;
+            color: #1f2937 !important;
           }
           .job-block .job-dates {
-            font-size: 10px !important;
-            color: #555555 !important;
+            font-size: 9.5px !important;
+            font-weight: 600 !important;
+            color: #d33500 !important;
           }
           .job-block ul {
-            font-size: 10.5px !important;
-            line-height: 1.45 !important;
-            color: #333333 !important;
+            font-size: 10px !important;
+            font-weight: 450 !important;
+            line-height: 1.4 !important;
+            color: #1f2937 !important;
           }
           .job-block ul strong {
-            color: #111111 !important;
+            font-weight: 700 !important;
+            color: #0a0a0a !important;
           }
           .job-node {
             background: #d33500 !important;
           }
 
-          .meta-block h2 {
-            font-size: 11px !important;
-            color: #111111 !important;
-            margin-bottom: 5px !important;
+          .meta-block {
+            padding-left: 9px !important;
+            border-left: 1.5px solid #dcdcdc !important;
           }
-          .meta-block h3,
+          .meta-block h2 {
+            font-size: 10.5px !important;
+            font-weight: 800 !important;
+            color: #0a0a0a !important;
+            margin-bottom: 3px !important;
+          }
+          .meta-block h3 {
+            font-size: 9.5px !important;
+            font-weight: 700 !important;
+            color: #0a0a0a !important;
+          }
           .meta-block p {
-            font-size: 10px !important;
-            line-height: 1.4 !important;
-            color: #333333 !important;
+            font-size: 9.5px !important;
+            font-weight: 450 !important;
+            line-height: 1.35 !important;
+            color: #374151 !important;
           }
           .meta-block strong {
-            color: #111111 !important;
+            font-weight: 700 !important;
+            color: #0a0a0a !important;
           }
 
           .skills-grid {
-            gap: 8px !important;
+            gap: 6px !important;
           }
           .skill-block {
-            padding: 8px 10px !important;
+            padding: 5px 8px !important;
             border-radius: 4px !important;
             background: #ffffff !important;
-            border: 1px solid #e4e4e4 !important;
+            border: 1px solid #dcdcdc !important;
           }
           .skill-block h3 {
-            font-size: 9.5px !important;
-            margin-bottom: 5px !important;
-            padding-bottom: 3px !important;
-            color: #111111 !important;
-            border-bottom: 1px solid #ececec !important;
+            font-size: 9px !important;
+            font-weight: 750 !important;
+            margin-bottom: 3px !important;
+            padding-bottom: 2px !important;
+            color: #0a0a0a !important;
+            border-bottom: 1px solid #e5e5e5 !important;
           }
           .skill-badge {
-            font-size: 9px !important;
-            padding: 2px 7px !important;
-            background: #f3f3f3 !important;
-            border: none !important;
-            color: #222222 !important;
+            font-size: 8.5px !important;
+            font-weight: 550 !important;
+            padding: 1.5px 6px !important;
+            background: #f1f2f4 !important;
+            border: 1px solid #e0e2e6 !important;
+            color: #111827 !important;
+            border-radius: 4px !important;
           }
 
           ul {
             margin-top: 2px !important;
           }
           li {
-            margin-bottom: 3px !important;
+            margin-bottom: 2px !important;
           }
 
           a {
-            color: #141414 !important;
+            color: #0a0a0a !important;
             text-decoration: none !important;
           }
           .print-only a {
@@ -551,14 +604,20 @@ export default function Resume() {
           }
 
           .print-footer {
-            font-size: 9.5px !important;
-            margin-top: 12px !important;
-            padding-top: 8px !important;
+            display: block !important;
+            font-size: 8px !important;
+            font-weight: 600 !important;
+            margin-top: 8px !important;
+            padding-top: 6px !important;
+            color: #374151 !important;
+            border-top: 1px solid #dcdcdc !important;
+            page-break-inside: avoid !important;
           }
 
           .job-block,
           .skill-block,
-          .stat-card {
+          .stat-card,
+          .print-footer {
             page-break-inside: avoid !important;
           }
 
@@ -574,15 +633,15 @@ export default function Resume() {
         <div className="max-w-4xl mx-auto flex items-center justify-between w-full pointer-events-auto">
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md text-[13px] font-medium cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-white/90 hover:bg-white text-zinc-700 hover:text-black border border-zinc-200/90 shadow-sm backdrop-blur-md text-[13px] font-semibold cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
           >
             <ArrowLeft className="w-4 h-4 text-accent" aria-hidden="true" />
             <span>{lang === "en" ? "Back to Portfolio" : "Về Portfolio"}</span>
           </button>
 
-          {/* Nút chuyển ngôn ngữ — đúng vị trí nút Print cũ */}
+          {/* Nút chuyển ngôn ngữ */}
           <div
-            className="flex items-center gap-1 p-1 min-h-[44px] rounded-full bg-white/5 border border-white/10 backdrop-blur-md"
+            className="flex items-center gap-1 p-1 min-h-[44px] rounded-full bg-white/90 border border-zinc-200/90 shadow-sm backdrop-blur-md"
             role="group"
             aria-label="Language / Ngôn ngữ"
           >
@@ -593,8 +652,8 @@ export default function Resume() {
                 aria-pressed={lang === l}
                 className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-heading text-[12px] font-bold uppercase tracking-wider cursor-pointer transition-all duration-200 ${
                   lang === l
-                    ? "bg-accent text-white shadow-[0_6px_18px_rgba(255,64,0,0.35)]"
-                    : "text-white/60 hover:text-white"
+                    ? "bg-accent text-white shadow-md shadow-accent/25"
+                    : "text-zinc-500 hover:text-black"
                 }`}
               >
                 {l === "en" ? "EN" : "VI"}
@@ -605,62 +664,42 @@ export default function Resume() {
       </div>
 
       {/* ─── RESUME CONTENT ─── */}
-      <div className="resume-container max-w-4xl mx-auto px-6 pt-28 pb-20 md:pb-32 relative z-10">
-        {/* Glow ambient — screen only */}
-        <div className="no-print absolute top-[10%] left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[300px] bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
-
+      <div className="resume-container max-w-4xl mx-auto px-6 sm:px-12 pt-28 pb-16 bg-white print:p-0 print:m-0 relative z-10">
         {/* ─── HEADER ─── */}
-        <header className="border-b border-white/10 pb-8">
+        <header className="border-b border-zinc-200 pb-8">
           <div className="flex flex-col md:flex-row md:items-end print:flex-row print:items-end justify-between gap-6">
             <div>
               <div className="flex items-center gap-2 mb-2 no-print">
                 <span className="relative flex h-2 w-2">
                   <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-50" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600" />
                 </span>
-                <span className="font-mono text-[10px] text-white/60 uppercase tracking-widest">
+                <span className="font-mono text-[10px] text-zinc-500 font-semibold uppercase tracking-widest">
                   {t.availability}
                 </span>
               </div>
 
-              <h1 className="font-heading text-5xl md:text-6xl font-black tracking-tighter leading-none mb-3 text-white print:text-black">
+              <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter leading-none mb-3 text-zinc-900 print:text-black">
                 {personalInfo.fullName}
               </h1>
               <p className="headline font-mono text-xs md:text-sm font-bold text-accent uppercase tracking-widest">
                 {t.headline}
               </p>
             </div>
-
-            {/* Print-only: CV Full + CV Peak — hyperlink bấm được trong PDF */}
-            <div className="print-only hidden text-left md:text-right print:text-right shrink-0">
-              <p className="font-mono text-[9px] uppercase tracking-wider" style={{ color: "#555" }}>
-                {t.printLinksTitle}
-              </p>
-              <p className="text-[10px] font-semibold mt-1">
-                <a href={personalInfo.portfolioHref}>
-                  {t.printPortfolio}: {personalInfo.portfolioUrl}
-                </a>
-              </p>
-              <p className="text-[10px] font-semibold" style={{ marginTop: "2px" }}>
-                <a href={personalInfo.caseStudyHref}>
-                  {t.printCaseStudy}: {personalInfo.caseStudyUrl}
-                </a>
-              </p>
-            </div>
           </div>
 
           {/* Contact bar */}
-          <div className="contact-bar flex flex-wrap items-center gap-y-2 gap-x-6 mt-6 pt-6 border-t border-white/5 text-xs text-white/70 print:text-black">
+          <div className="contact-bar flex flex-wrap items-center gap-y-2 gap-x-6 mt-6 pt-6 border-t border-zinc-200 text-xs text-zinc-600 print:text-black font-medium">
             <a
               href={`mailto:${personalInfo.email}`}
-              className="flex items-center gap-2 hover:text-white transition-colors duration-200"
+              className="flex items-center gap-2 hover:text-black transition-colors duration-200"
             >
               <Mail className="w-3.5 h-3.5 text-accent no-print" aria-hidden="true" />
               <span>{personalInfo.email}</span>
             </a>
             <a
               href={personalInfo.phoneHref}
-              className="flex items-center gap-2 hover:text-white transition-colors duration-200"
+              className="flex items-center gap-2 hover:text-black transition-colors duration-200"
             >
               <Phone className="w-3.5 h-3.5 text-accent no-print" aria-hidden="true" />
               <span>{personalInfo.phone}</span>
@@ -669,12 +708,11 @@ export default function Resume() {
               <MapPin className="w-3.5 h-3.5 text-accent no-print" aria-hidden="true" />
               <span>{t.location}</span>
             </span>
-            {/* Portfolio URL: screen-only ở contact bar — bản in đã có ở góc phải + footer */}
             <a
               href={personalInfo.portfolioHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="no-print flex items-center gap-2 hover:text-white transition-colors duration-200"
+              className="no-print flex items-center gap-2 hover:text-black transition-colors duration-200"
             >
               <Globe className="w-3.5 h-3.5 text-accent" aria-hidden="true" />
               <span>{personalInfo.portfolioUrl}</span>
@@ -684,29 +722,29 @@ export default function Resume() {
 
         {/* ─── SUMMARY ─── */}
         <section className="mt-8">
-          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-3 border-l-2 border-accent pl-3">
+          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-zinc-900 print:text-black mb-3 border-l-2 border-accent pl-3">
             {t.sections.summary}
           </h2>
-          <p className="text-sm md:text-[15px] text-white/75 leading-relaxed print:text-black/80">
+          <p className="text-sm md:text-[15px] text-zinc-700 leading-relaxed print:text-black/80 font-normal">
             {t.summary}
           </p>
         </section>
 
         {/* ─── KEY ACHIEVEMENTS ─── */}
         <section className="mt-8">
-          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-4 border-l-2 border-accent pl-3">
+          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-zinc-900 print:text-black mb-4 border-l-2 border-accent pl-3">
             {t.sections.achievements}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 print:grid-cols-5 print:gap-2">
             {t.keyStats.map((stat) => (
               <div
                 key={stat.label}
-                className="stat-card bg-white/[0.02] border border-white/5 rounded-xl p-4 flex flex-col justify-between"
+                className="stat-card bg-white border border-zinc-200 rounded-xl p-4 flex flex-col justify-between shadow-sm"
               >
                 <span className="stat-number font-mono text-3xl font-black text-accent leading-none mb-1">
                   {stat.number}
                 </span>
-                <span className="stat-label font-body text-[11px] text-white/60 uppercase tracking-wider leading-tight">
+                <span className="stat-label font-body text-[11px] text-zinc-500 font-semibold uppercase tracking-wider leading-tight">
                   {stat.label}
                 </span>
               </div>
@@ -716,35 +754,35 @@ export default function Resume() {
 
         {/* ─── PROFESSIONAL EXPERIENCE ─── */}
         <section className="mt-8">
-          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-6 border-l-2 border-accent pl-3">
+          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-zinc-900 print:text-black mb-6 border-l-2 border-accent pl-3">
             {t.sections.experience}
           </h2>
 
           <div className="space-y-8 print:space-y-4">
             {t.jobs.map((job) => (
-              <div key={job.company} className="job-block border-l border-white/10 pl-6 relative">
-                <div className="job-node absolute left-[-4.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" />
+              <div key={job.company} className="job-block border-l-2 border-zinc-200 pl-6 relative">
+                <div className="job-node absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" />
 
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2">
                   <div>
-                    <h3 className="text-base font-bold text-white print:text-black">{job.title}</h3>
-                    <p className="job-company text-sm text-white/70 print:text-black font-semibold">
+                    <h3 className="text-base font-bold text-zinc-900 print:text-black">{job.title}</h3>
+                    <p className="job-company text-sm text-zinc-800 print:text-black font-semibold">
                       {job.company}
                     </p>
                   </div>
-                  <div className="job-dates text-right sm:text-right text-xs font-mono text-accent">
+                  <div className="job-dates text-right sm:text-right text-xs font-mono text-accent font-semibold">
                     {job.dates} | {job.location}
                   </div>
                 </div>
 
-                <p className="text-sm text-white/80 print:text-black/80 leading-relaxed mb-3 font-medium">
+                <p className="text-sm text-zinc-700 print:text-black/80 leading-relaxed mb-3 font-normal">
                   {job.intro}
                 </p>
 
-                <ul className="list-disc list-outside ml-4 text-xs md:text-sm text-white/70 space-y-1.5 print:text-black/80">
+                <ul className="list-disc list-outside ml-4 text-xs md:text-sm text-zinc-700 space-y-1.5 print:text-black/80">
                   {job.bullets.map((b) => (
                     <li key={b.label}>
-                      <strong className="text-white print:text-black font-semibold">
+                      <strong className="text-zinc-900 print:text-black font-semibold">
                         {b.label}:
                       </strong>{" "}
                       {b.text}
@@ -758,18 +796,18 @@ export default function Resume() {
 
         {/* ─── SKILLS ─── */}
         <section className="mt-8">
-          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white print:text-black mb-4 border-l-2 border-accent pl-3">
+          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-zinc-900 print:text-black mb-4 border-l-2 border-accent pl-3">
             {t.sections.skills}
           </h2>
           <div className="skills-grid grid grid-cols-1 md:grid-cols-3 gap-4 print:grid-cols-3">
             {t.skills.map((category, i) => (
               <div
                 key={category.category}
-                className="skill-block bg-white/[0.01] border border-white/5 rounded-xl p-5"
+                className="skill-block bg-white border border-zinc-200 rounded-xl p-5 shadow-sm"
               >
-                <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
+                <div className="flex items-center gap-2 mb-3 border-b border-zinc-200 pb-2">
                   {skillIcons[i]}
-                  <h3 className="font-heading text-sm font-bold text-white print:text-black uppercase tracking-wider">
+                  <h3 className="font-heading text-sm font-bold text-zinc-900 print:text-black uppercase tracking-wider">
                     {category.category}
                   </h3>
                 </div>
@@ -778,7 +816,7 @@ export default function Resume() {
                   {category.items.map((skill) => (
                     <span
                       key={skill}
-                      className="skill-badge font-body text-xs bg-white/5 border border-white/10 text-white/80 px-2.5 py-1 rounded-full"
+                      className="skill-badge font-body text-xs bg-white border border-zinc-200/80 text-zinc-800 px-2.5 py-1 rounded-full shadow-sm"
                     >
                       {skill}
                     </span>
@@ -793,12 +831,12 @@ export default function Resume() {
             Screen-only (no-print): bản in giữ kỷ luật 1 trang A4 cho recruiter.
             Ảnh: public/images/resume/aio-welcome.webp (đã sửa Wellcome→Welcome 12/08, nén 100KB). */}
         <section className="mt-8 no-print">
-          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-white mb-3 border-l-2 border-accent pl-3">
+          <h2 className="section-title font-heading text-lg font-black uppercase tracking-wider text-zinc-900 mb-3 border-l-2 border-accent pl-3">
             {t.sections.aio}
           </h2>
-          <p className="text-sm md:text-[15px] text-white/75 leading-relaxed">{t.aio.lead}</p>
+          <p className="text-sm md:text-[15px] text-zinc-700 leading-relaxed">{t.aio.lead}</p>
 
-          <div className="mt-5 rounded-xl overflow-hidden border border-white/10">
+          <div className="mt-5 rounded-xl overflow-hidden border border-zinc-200 shadow-sm">
             <Image
               src="/images/resume/aio-welcome.webp"
               width={1600}
@@ -812,14 +850,14 @@ export default function Resume() {
             {t.aio.tools.map((tool) => (
               <li
                 key={tool.name}
-                className="flex items-baseline gap-2.5 text-[13px] text-white/65 leading-relaxed"
+                className="flex items-baseline gap-2.5 text-[13px] text-zinc-600 leading-relaxed"
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 translate-y-[-2px]"
                   aria-hidden="true"
                 />
                 <span>
-                  <strong className="text-white font-bold">{tool.name}</strong>
+                  <strong className="text-zinc-900 font-bold">{tool.name}</strong>
                   {" — "}
                   {tool.desc}
                 </span>
@@ -827,44 +865,54 @@ export default function Resume() {
             ))}
           </ul>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
-            {t.aio.principles.map((p) => (
-              <div
-                key={p.title}
-                className="border border-white/10 rounded-lg px-4 py-3.5 bg-white/[0.02]"
-              >
-                <p className="text-[12.5px] font-bold text-white leading-snug">{p.title}</p>
-                <p className="text-[11.5px] text-white/50 leading-snug mt-1">{p.desc}</p>
-              </div>
-            ))}
+          <div className="flex flex-wrap items-center gap-3 mt-6">
+            <a
+              href={personalInfo.aioStudioHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent hover:bg-accent-warm text-white font-bold text-xs shadow-md shadow-accent/20 transition-all hover:scale-105 active:scale-95"
+            >
+              <span>{lang === "en" ? "Live Showcase (Premiere Pro)" : "Trải Nghiệm Live Showcase"}</span>
+              <span className="text-sm">↗</span>
+            </a>
+            <a
+              href={personalInfo.aioWebHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold text-xs transition-all hover:scale-105 active:scale-95"
+            >
+              <span>{lang === "en" ? "AiO Studio Website" : "Trang Chủ AiO Studio"}</span>
+              <span className="text-sm">↗</span>
+            </a>
           </div>
         </section>
 
+
         {/* ─── EDUCATION & LANGUAGES ─── */}
-        <section className="mt-8">
+        <section className="mt-6 print:mt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2">
-            <div className="meta-block border-l border-white/10 pl-6">
-              <h2 className="font-heading text-sm font-black uppercase tracking-wider text-white print:text-black mb-2">
+            <div className="meta-block border-l-2 border-zinc-200 pl-6">
+              <h2 className="font-heading text-sm font-black uppercase tracking-wider text-zinc-900 print:text-black mb-2">
                 {t.sections.education}
               </h2>
               <div>
-                <h3 className="text-xs font-bold text-white print:text-black">
+                <h3 className="text-xs font-bold text-zinc-900 print:text-black">
                   {t.education.school}
                 </h3>
-                <p className="text-[11px] text-white/60 print:text-black/70 mt-1">
+                <p className="text-[11px] text-zinc-600 print:text-black/70 mt-1">
                   {t.education.detail}
                 </p>
               </div>
             </div>
 
-            <div className="meta-block border-l border-white/10 pl-6">
-              <h2 className="font-heading text-sm font-black uppercase tracking-wider text-white print:text-black mb-2">
+            <div className="meta-block border-l-2 border-zinc-200 pl-6">
+              <h2 className="font-heading text-sm font-black uppercase tracking-wider text-zinc-900 print:text-black mb-2">
                 {t.sections.languages}
               </h2>
-              <div className="text-xs text-white/75 print:text-black/80 space-y-1">
+              <div className="text-xs text-zinc-700 print:text-black/80 space-y-1">
                 {t.languages.map((l) => (
                   <p key={l.name}>
-                    <strong className="text-white print:text-black">{l.name}:</strong> {l.level}
+                    <strong className="text-zinc-900 print:text-black">{l.name}:</strong> {l.level}
                   </p>
                 ))}
               </div>
@@ -875,7 +923,7 @@ export default function Resume() {
         {/* ─── PRINT FOOTER ─── */}
         <div
           className="print-footer print-only hidden mt-8 pt-3 text-center text-[9px]"
-          style={{ borderTop: "1px solid #ececec", color: "#555" }}
+          style={{ borderTop: "1px solid #dcdcdc", color: "#555" }}
         >
           {t.printPortfolio}:{" "}
           <a href={personalInfo.portfolioHref}>
@@ -884,7 +932,48 @@ export default function Resume() {
           · {t.printCaseStudy}:{" "}
           <a href={personalInfo.caseStudyHref}>
             <strong>{personalInfo.caseStudyUrl}</strong>
+          </a>{" "}
+          · AiO Premiere:{" "}
+          <a href={personalInfo.aioStudioHref}>
+            <strong>{personalInfo.aioStudioUrl}</strong>
+          </a>{" "}
+          · AiO Studio:{" "}
+          <a href={personalInfo.aioWebHref}>
+            <strong>{personalInfo.aioWebUrl}</strong>
           </a>
+        </div>
+
+        {/* ─── WEB FOOTER (no-print) ─── */}
+        <div className="no-print mt-12 pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4 text-xs text-zinc-500">
+          <div className="flex flex-wrap items-center gap-4">
+            <a href={personalInfo.portfolioHref} target="_blank" rel="noopener noreferrer" className="hover:text-black font-semibold">
+              Portfolio: {personalInfo.portfolioUrl}
+            </a>
+            <span>·</span>
+            <a href={personalInfo.caseStudyHref} target="_blank" rel="noopener noreferrer" className="hover:text-black font-semibold">
+              Case Study: {personalInfo.caseStudyUrl}
+            </a>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href={personalInfo.aioStudioHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 hover:bg-accent/20 text-accent font-semibold text-xs transition-colors"
+            >
+              <span>AiO Premiere Live</span>
+              <span className="text-[10px]">↗</span>
+            </a>
+            <a
+              href={personalInfo.aioWebHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-semibold text-xs transition-colors"
+            >
+              <span>AiO Studio Web</span>
+              <span className="text-[10px]">↗</span>
+            </a>
+          </div>
         </div>
       </div>
     </main>
