@@ -47,8 +47,12 @@ export const businessStats = [
 ];
 
 // ─── Hero ───
+// variant: "orbit" (tiêu đề serif giữa + vòng thẻ 3D) hoặc "ribbon" (kiểu Turnover: ruy băng cam)
+export type HeroVariant = "orbit" | "ribbon";
+
 // theme: "light" (nền sáng như mẫu Mindly/Turnover) hoặc "dark" (đồng bộ với phần còn lại của trang)
 export const heroContent = {
+  variant: "orbit" as HeroVariant,
   theme: "light" as "light" | "dark",
   badge: "Creative Video Strategist",
   titleLine1: "Capturing moments,",
@@ -92,3 +96,32 @@ export const heroOrbit: OrbitItem[] = [
   { kind: "video", angle: 62, src: "/videos/socials/creative-5.mp4" },
   { kind: "image", angle: 128, src: "/images/04-Services/video-strategy.jpg" },
 ];
+
+// ─── Hero phương án 2: "Ribbon" (kiểu Turnover) ───
+export const heroRibbon = {
+  badge: "Creative Video Strategist",
+  titleLine1: "Capturing Moments,",
+  titleLine2: "Telling Stories.",
+  primaryCta: { label: "Let's Work Together", href: "#contact" },
+  reel: { label: "Watch My Reel", sub: "Short-form highlights" },
+  stats: [
+    { value: "$6.2M", label: "Peak Revenue" },
+    { value: "-66%", label: "CPA Reduction" },
+    { value: "100%", label: "Video-Sourced Leads" },
+    { value: "10x", label: "Production Velocity" },
+  ],
+  latestWork: {
+    label: "Latest Case Study",
+    text: "ThinkSmart — video-led growth system.",
+    image: "/images/02-CaseStudy/thinksmart/01-Hero/card-cover.webp",
+    href: "#case-study",
+  },
+  // Chữ chạy trên dải ruy băng
+  ribbonWords: ["Video", "Strategy", "Editing", "AI Flow", "Growth"],
+  // 3 thẻ dịch vụ bên phải
+  services: [
+    { icon: "clapperboard", title: "Video Editing", text: "Hook-first short-form that converts.", href: "#work" },
+    { icon: "sparkles", title: "AI Production", text: "10x faster content pipeline.", href: "#ai" },
+    { icon: "chart", title: "Performance Growth", text: "More reach. More leads. More revenue.", href: "#case-study" },
+  ] as { icon: "clapperboard" | "sparkles" | "chart"; title: string; text: string; href: string }[],
+};
