@@ -72,6 +72,7 @@
   --font-heading: var(--font-be-vietnam), system-ui, sans-serif;
   --font-body: var(--font-inter-display), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-display: var(--font-instrument-serif), Georgia, serif;
 
   /* Font Size — Typography hierarchy optimized for Desktop & Mobile */
   --font-size-display: clamp(38px, 8vw, 76px);
@@ -170,25 +171,37 @@ body {
   animation-play-state: paused;
 }
 
-/* ─── Hero masonry: cột cuộn dọc vô hạn ─── */
-@keyframes hero-scroll-up {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
+/* ─── Hero: màu theo theme (sáng / tối) ─── */
+.hero-shell[data-theme="light"] {
+  --h-bg: #f3f1ed;
+  --h-fg: #0c0c0c;
+  --h-muted: rgba(12, 12, 12, 0.56);
+  --h-faint: rgba(12, 12, 12, 0.14);
+  --h-card: rgba(255, 255, 255, 0.82);
+  --h-btn-bg: #0c0c0c;
+  --h-btn-fg: #ffffff;
+  --h-shadow: 0 24px 60px -24px rgba(40, 20, 10, 0.28);
 }
 
-.hero-col {
-  animation: hero-scroll-up var(--hero-speed, 60s) linear infinite;
-  will-change: transform;
+.hero-shell[data-theme="dark"] {
+  --h-bg: #0e0e0e;
+  --h-fg: #f5f5f5;
+  --h-muted: rgba(255, 255, 255, 0.55);
+  --h-faint: rgba(255, 255, 255, 0.14);
+  --h-card: rgba(28, 28, 28, 0.82);
+  --h-btn-bg: #ffffff;
+  --h-btn-fg: #0c0c0c;
+  --h-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.85);
 }
 
-.hero-col[data-reverse="true"] {
-  animation-direction: reverse;
+@keyframes hero-spin {
+  to { transform: rotate(360deg); }
 }
 
-.hero-masonry:hover .hero-col {
-  animation-play-state: paused;
+.hero-spin {
+  animation: hero-spin 22s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-col { animation: none; }
+  .hero-spin { animation: none; }
 }

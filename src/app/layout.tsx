@@ -62,6 +62,24 @@ const interDisplay = localFont({
   variable: "--font-inter-display",
 });
 
+// ─── Local Font: Instrument Serif (Display serif cho tiêu đề hero) ───
+const instrumentSerif = localFont({
+  src: [
+    {
+      path: "../../assets/fonts/Instrument Serif/instrument-serif-latin-400-normal.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../assets/fonts/Instrument Serif/instrument-serif-latin-400-italic.woff2",
+      weight: "400",
+      style: "italic",
+    },
+  ],
+  variable: "--font-instrument-serif",
+  display: "swap",
+});
+
 // ─── SEO Metadata ───
 export const metadata: Metadata = {
   title: "Eddie — Creative Video Strategist",
@@ -75,7 +93,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${beVietnam.variable} ${interDisplay.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+    <html lang="vi" className={`${beVietnam.variable} ${interDisplay.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`} suppressHydrationWarning>
       <body className="antialiased bg-[#050505] text-white overflow-x-hidden min-h-screen relative" suppressHydrationWarning>
         
         {/* ─── Global Tech Motif Background ─── */}

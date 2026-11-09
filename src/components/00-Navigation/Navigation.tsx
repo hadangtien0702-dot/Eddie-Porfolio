@@ -146,7 +146,7 @@ export default function Navigation() {
         >
           {/* ─── Layer 1: Glass base ─── */}
           <div
-            className="absolute inset-0 rounded-full bg-white/5 backdrop-blur-md
+            className="absolute inset-0 rounded-full bg-[#0c0c0c]/85 backdrop-blur-md
                        border border-white/10 pointer-events-none"
             aria-hidden="true"
           />
