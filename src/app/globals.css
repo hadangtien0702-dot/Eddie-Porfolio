@@ -169,3 +169,26 @@ body {
 .animate-marquee:hover, .animate-marquee-reverse:hover {
   animation-play-state: paused;
 }
+
+/* ─── Hero masonry: cột cuộn dọc vô hạn ─── */
+@keyframes hero-scroll-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+.hero-col {
+  animation: hero-scroll-up var(--hero-speed, 60s) linear infinite;
+  will-change: transform;
+}
+
+.hero-col[data-reverse="true"] {
+  animation-direction: reverse;
+}
+
+.hero-masonry:hover .hero-col {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-col { animation: none; }
+}
