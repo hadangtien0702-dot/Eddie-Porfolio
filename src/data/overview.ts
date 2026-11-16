@@ -116,8 +116,11 @@ export const heroRibbon = {
     image: "/images/02-CaseStudy/thinksmart/01-Hero/card-cover.webp",
     href: "#case-study",
   },
-  // Chữ chạy trên dải ruy băng
-  ribbonWords: ["Video", "Strategy", "Editing", "AI Flow", "Growth"],
+  // Nhân vật bên phải: "3d" = nhân vật 3D render từ Blender (kiểu Turnover) · "photo" = ảnh chân dung thật
+  character: "3d" as "3d" | "photo",
+  // Chữ trên dải ruy băng và trên kính — đã in sẵn trong ảnh render (muốn đổi chữ phải render lại bằng Blender)
+  ribbonWords: ["Video", "Strategy", "Editing", "AI Flow", "Growth", "Storytelling"],
+  visorText: "VIDEO STRATEGIST",
   // 3 thẻ dịch vụ bên phải
   services: [
     { icon: "clapperboard", title: "Video Editing", text: "Hook-first short-form that converts.", href: "#work" },

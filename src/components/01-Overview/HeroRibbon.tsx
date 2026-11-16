@@ -22,21 +22,29 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.8, delay, ease: EASE },
 });
 
-// ─── Cảnh: chân dung + ruy băng 3D ───
-// Ruy băng là mô hình 3D dựng & render bằng Blender (chữ đã in sẵn trên dải), xuất thành 2 lớp trong suốt:
-//   ribbon-back.webp  → toàn bộ dải, nằm SAU chân dung
-//   ribbon-front.webp → phần dải ở phía trước, đè LÊN chân dung
-// Cả 3 lớp dùng chung khung 1400 × 1100.
+// ─── Cảnh bên phải (khung chung 1400 × 1100) ───
+// Chọn trong src/data/overview.ts → heroRibbon.character:
+//   "3d"    → nhân vật 3D dựng & render bằng Blender (đầu xẻ lát, kính cam "VIDEO STRATEGIST",
+//             ruy băng quấn quanh) — 1 ảnh trong suốt ribbon-character.webp, chữ đã in sẵn trong ảnh.
+//   "photo" → ảnh chân dung thật (hero.png) kẹp giữa 2 lớp ruy băng 3D:
+//             ribbon-back.webp (sau người) và ribbon-front.webp (đè lên người).
 const SCENE = { w: 1400, h: 1100 };
 const IMG = { x: 60, y: 40, w: 820, h: Math.round((820 * 905) / 561) };
 const FLOAT = { animate: { y: [0, -10, 0] }, transition: { duration: 7, repeat: Infinity, ease: "easeInOut" as const } };
 
 function RibbonScene() {
+  const full = { x: 0, y: 0, width: SCENE.w, height: SCENE.h };
   return (
     <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="h-full w-full overflow-visible" aria-hidden="true">
-      <motion.image {...FLOAT} href="/images/01-Overview/ribbon-back.webp" x={0} y={0} width={SCENE.w} height={SCENE.h} />
-      <image href="/images/01-Overview/hero.png" x={IMG.x} y={IMG.y} width={IMG.w} height={IMG.h} />
-      <motion.image {...FLOAT} href="/images/01-Overview/ribbon-front.webp" x={0} y={0} width={SCENE.w} height={SCENE.h} />
+      {heroRibbon.character === "3d" ? (
+        <motion.image {...FLOAT} href="/images/01-Overview/ribbon-character.webp" {...full} />
+      ) : (
+        <>
+          <motion.image {...FLOAT} href="/images/01-Overview/ribbon-back.webp" {...full} />
+          <image href="/images/01-Overview/hero.png" x={IMG.x} y={IMG.y} width={IMG.w} height={IMG.h} />
+          <motion.image {...FLOAT} href="/images/01-Overview/ribbon-front.webp" {...full} />
+        </>
+      )}
     </svg>
   );
 }
@@ -156,11 +164,11 @@ export default function HeroRibbon() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.25, ease: EASE }}
           className="relative z-10 mt-4 h-[60vh] w-full
-                     lg:absolute lg:bottom-0 lg:left-[46%] lg:mt-0 lg:h-[84%] lg:w-auto lg:aspect-[1400/1100]
-                     xl:left-[41%] xl:h-[93%]"
+                     lg:absolute lg:bottom-0 lg:left-[40%] lg:mt-0 lg:h-[80%] lg:w-auto lg:aspect-[1400/1100]
+                     xl:left-[30%] xl:h-[88%]"
         >
           {/* Mobile: khung rộng hơn màn hình, canh giữa theo thân người */}
-          <div className="absolute bottom-0 left-1/2 aspect-[1400/1100] h-full -translate-x-[33%] lg:static lg:translate-x-0">
+          <div className="absolute bottom-0 left-1/2 aspect-[1400/1100] h-full -translate-x-[38%] lg:static lg:translate-x-0">
             <RibbonScene />
           </div>
         </motion.div>
