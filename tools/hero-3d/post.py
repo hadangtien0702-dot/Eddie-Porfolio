@@ -15,12 +15,18 @@ out=Image.new("RGBA",im.size,(0,0,0,0)); out.alpha_composite(glow); out.alpha_co
 top=Image.new("RGBA",im.size,(0,0,0,0)); 
 g=hi.filter(ImageFilter.GaussianBlur(W/120)); ga=g.convert("L").point(lambda v:min(255,int(v*0.25)))
 l=Image.new("RGBA",im.size,(255,190,130,0)); l.putalpha(ga); out.alpha_composite(l)
+# overall soft diffusion (dreamy look of the reference)
+soft=out.filter(ImageFilter.GaussianBlur(W/110))
+out=Image.blend(out,Image.alpha_composite(soft,out),1.0)
+sa=soft.getchannel("A").point(lambda v:int(v*0.3)); soft.putalpha(sa)
+tmp=Image.new("RGBA",im.size,(0,0,0,0)); tmp.alpha_composite(soft); tmp.alpha_composite(out)
+out=Image.blend(tmp,out,0.85)
 # fade the bottom into the page
 fade=Image.linear_gradient("L").resize((W,H)).point(lambda v: 255 if v<215 else max(0,int(255*(1-(v-215)/40))))
 out.putalpha(ImageChops.multiply(out.getchannel("A"),fade))
 # soft fade on the left edge so the shoulder never ends in a hard cut
-lf=Image.linear_gradient("L").rotate(90,expand=True).resize((W,H)).transpose(Image.FLIP_LEFT_RIGHT)
-lf=lf.point(lambda v: 255 if v>26 else int(255*(v/26)**1.5))
+lf=Image.linear_gradient("L").rotate(90,expand=True).resize((W,H))
+lf=lf.point(lambda v: 255 if v>34 else int(255*(v/34)**1.6))
 out.putalpha(ImageChops.multiply(out.getchannel("A"),lf))
 out.save(dst)
 bg=Image.new("RGBA",im.size,(244,242,238,255)); bg.alpha_composite(out); bg.convert("RGB").save(dst.rsplit('.',1)[0]+"-preview.jpg",quality=88)

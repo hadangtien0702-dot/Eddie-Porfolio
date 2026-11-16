@@ -90,22 +90,22 @@ def cut(bm,co,no,sharp=True):
         for x in nf: x.smooth=False
         for e in ed: e.smooth=False
 Y0=HF+ (HB-HF)*0.40          # where slicing begins (just in front of the ear)
-ZC=EYEZ-0.92                 # fins only above this height (shoulder line)
+ZC=EYEZ-1.7                 # fins only above this height (shoulder line)
 for f in src.faces: f.smooth=True
 parts=[]
 a=src.copy(); cut(a,Vector((0,Y0,0)),Vector((0,1,0))); parts.append(a)                     # front
 b=src.copy(); cut(b,Vector((0,Y0,0)),Vector((0,-1,0))); cut(b,Vector((0,0,ZC)),Vector((0,0,1))); parts.append(b)  # back torso
 hb=src.copy(); cut(hb,Vector((0,Y0,0)),Vector((0,-1,0))); cut(hb,Vector((0,0,ZC)),Vector((0,0,-1)))               # back of head+neck
-T=0.05; G=0.13; y=Y0+G; k=0
+T=0.045; G=0.125; y=Y0+G; k=0
 ZH=EYEZ+0.1
 slabs=[]
 while y<HB+0.05:
     s=hb.copy(); cut(s,Vector((0,y,0)),Vector((0,-1,0))); cut(s,Vector((0,y+T,0)),Vector((0,1,0)))
     if len(s.faces):
-        sc_=1.0+0.02*min(k,8)
+        sc_=1.0+0.022*min(k,9)
         for v in s.verts:
-            if True:
-                w=1
+            if v.co.z>ZC+0.75:
+                w=min(1,(v.co.z-(ZC+0.75))/0.7)
                 v.co.x*=1+(sc_-1)*w; v.co.z=ZH+(v.co.z-ZH)*(1+(sc_-1)*w)
         parts.append(s); slabs.append((s,y))
     y+=T+G; k+=1
@@ -115,22 +115,22 @@ core=hb.copy(); cc=Vector((0,Y0,EYEZ+0.15))
 for v in core.verts:
     v.co.x*=0.955; v.co.z=cc.z+(v.co.z-cc.z)*0.955; v.co.y=Y0+(v.co.y-Y0)*0.95
 parts.append(core)
-# echo discs trailing straight back from the skull (largest head cross-section, tapering)
-best=None
-for s_,y_ in slabs:
-    t_=s_.copy(); cut(t_,Vector((0,0,EYEZ-0.7)),Vector((0,0,-1)))
-    if len(t_.verts)<40: continue
-    h_=max(v.co.z for v in t_.verts)-min(v.co.z for v in t_.verts)
-    if best is None or h_>best[0]+0.02: best=(h_,t_,y_)
-s0,y0_=best[1],best[2]; ylast=slabs[-1][1]; print("slabs",len(slabs),"disc h",best[0])
-NDISC=int(os.environ.get('DISCS','0'))
+# echo discs trailing straight back from the skull (like the reference), tapering
+ylast=slabs[-1][1]; nsl=len(slabs); print("slabs",nsl)
+NDISC=int(os.environ.get('DISCS','8'))
+fl_=1.0+0.022*min(nsl,9)
 for i in range(NDISC):
-    f=0.92-0.17*i-0.01*i*i
-    s=s0.copy(); cz=EYEZ+0.2
-    dy=(ylast-y0_)+(T+G)*(i+1)
-    for v in s.verts:
-        v.co.x*=f; v.co.z=cz+(v.co.z-cz)*f+0.20*(T+G)*(i+1); v.co.y+=dy
-    parts.append(s)
+    f=fl_*(0.97-0.075*i-0.006*i*i)
+    d=bmesh.new()
+    bmesh.ops.create_cone(d,cap_ends=True,cap_tris=False,segments=72,radius1=1.0,radius2=1.0,depth=T)
+    yy=ylast+(T+G)*(i+1)+T/2
+    for v in d.verts:
+        x_,y_,z_=v.co.x,v.co.y,v.co.z      # cone axis = z
+        v.co=Vector((x_*0.80*f, yy+z_, EYEZ+0.22+0.21*(T+G)*(i+1)+y_*0.98*f))
+    for f_ in d.faces: f_.smooth=len(f_.verts)==4
+    for e in d.edges:
+        if any(len(f_.verts)>4 for f_ in e.link_faces): e.smooth=False
+    parts.append(d)
 allbm=bmesh.new()
 for p in parts:
     m=bpy.data.meshes.new("t"); p.to_mesh(m); allbm.from_mesh(m); bpy.data.meshes.remove(m); p.free()
@@ -159,13 +159,13 @@ def text_tile(path,text,size,h,font="/usr/share/fonts/opentype/inter/Inter-Black
     if squeeze!=1: im=im.resize((int(im.width*squeeze),h),Image.LANCZOS)
     im.save(path); return im.width/h
 VISOR_TXT="VIDEO STRATEGIST"
-asp0=text_tile(OUT+"/visor.png",VISOR_TXT,150,256,squeeze=1,pad=40,spacing=10)
-asp=text_tile(OUT+"/visor.png",VISOR_TXT,150,256,squeeze=(2.15/0.60)/asp0,pad=40,spacing=10)
-VH=0.60; VZ=EYEZ+0.08; VPOS=0.665
+asp0=text_tile(OUT+"/visor.png",VISOR_TXT,138,256,squeeze=1,pad=40,spacing=10)
+asp=text_tile(OUT+"/visor.png",VISOR_TXT,138,256,squeeze=(1.75/0.47)/asp0,pad=40,spacing=10)
+VH=0.47; VZ=EYEZ+0.07; VPOS=0.635
 vb=bmesh.new(); uvl=vb.loops.layers.uv.new("UVMap")
 RX=HX*1.06; YC=(HF+HB)/2; RYF=(HB-HF)/2*1.03; NS=128
 def vpt(t,off=0.0,dz=0.0):   # t: -1 (viewer-left side.. ) half superellipse front
-    ang=math.radians(118)*t
+    ang=math.radians(150)*t
     cx=math.sin(ang); cy=-math.cos(ang)
     n=2.3; r=(abs(cx)**n+abs(cy)**n)**(-1/n)
     return Vector(((RX+off)*cx*r, YC+(RYF+off)*cy*r, VZ+dz))
@@ -187,29 +187,29 @@ PIV=Vector((0,0.3,EYEZ-1.2))
 POSE=Matrix.Translation(PIV) @ Matrix.Rotation(math.radians(-52),4,'Z') @ Matrix.Rotation(math.radians(-13),4,'X') @ Matrix.Rotation(math.radians(4),4,'Y') @ Matrix.Translation(-PIV)
 char.matrix_world=POSE; visor.matrix_world=POSE
 # ---------------- ribbon ----------------
-RW=0.50; TH=0.05
+RW=0.37; TH=0.04
 words=["Video","Strategy","Editing","AI Flow","Growth","Storytelling"]
-font=ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-Medium.otf",104); H=256
+font=ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-Regular.otf",92); H=256
 d0=ImageDraw.Draw(Image.new("L",(10,10))); x=0; items=[]
 for w in words:
-    x+=95; items.append((x,w)); 
-    for ch in w: x+=d0.textlength(ch,font=font)+5
-    x+=95; items.append((x-11,"•")); 
+    x+=120; items.append((x,w)); 
+    for ch in w: x+=d0.textlength(ch,font=font)+8
+    x+=120; items.append((x-8,"•")); 
 TW=int(x); img=Image.new("L",(TW,H),0); d=ImageDraw.Draw(img)
 for px,w in items:
-    if w=="•": d.ellipse((px,H/2-11,px+22,H/2+11),fill=255)
+    if w=="•": d.ellipse((px,H/2-8,px+16,H/2+8),fill=255)
     else:
         xx=px
-        for ch in w: d.text((xx,H/2),ch,font=font,fill=255,anchor="lm"); xx+=d0.textlength(ch,font=font)+5
+        for ch in w: d.text((xx,H/2),ch,font=font,fill=255,anchor="lm"); xx+=d0.textlength(ch,font=font)+8
 img.save(OUT+"/tile.png"); TILE=RW*TW/H
 C=Vector((0.0,0.25,EYEZ-2.25))
 TH0=math.radians(-240); TH1=math.radians(322)
 def base(th):
     u=(th-TH0)/(TH1-TH0)
-    R=3.05-1.2*u**0.9
-    z=-0.65+1.75*u
+    R=3.35-1.45*u**0.9
+    z=-0.75+1.95*u
     return Vector((R*math.cos(th), R*math.sin(th)*0.95, z))
-ROT=Matrix.Rotation(math.radians(-6),4,'Y') @ Matrix.Rotation(math.radians(13),4,'X')
+ROT=Matrix.Rotation(math.radians(-6),4,'Y') @ Matrix.Rotation(math.radians(15),4,'X')
 N=700
 raw=[base(TH0+(TH1-TH0)*i/N) for i in range(N+1)]
 step=(raw[-1]-raw[-2]); L=step.length; t0=step.normalized(); t1=Vector((1,0.7,0.16)).normalized()
@@ -271,20 +271,24 @@ d=mth('MINIMUM',mth('SUBTRACT',neck,Z),mth('SUBTRACT',strap,mth('ABSOLUTE',X)))
 st=nt.nodes.new("ShaderNodeMapRange"); st.interpolation_type='SMOOTHSTEP'; nt.links.new(d,st.inputs[0]); st.inputs[1].default_value=-0.012; st.inputs[2].default_value=0.012
 hem=nt.nodes.new("ShaderNodeMapRange"); hem.interpolation_type='SMOOTHSTEP'; nt.links.new(d,hem.inputs[0]); hem.inputs[1].default_value=0.0; hem.inputs[2].default_value=0.07; hem.inputs[3].default_value=1; hem.inputs[4].default_value=0
 SHIRT=st.outputs[0]
-lw=nt.nodes.new("ShaderNodeLayerWeight"); lw.inputs[0].default_value=0.30
-cloth=mix(nt,hem.outputs[0],(0.07,0.12,0.16,1),(0.42,0.52,0.58,1))
+lw=nt.nodes.new("ShaderNodeLayerWeight"); lw.inputs[0].default_value=0.27
+cloth=mix(nt,hem.outputs[0],(0.15,0.23,0.29,1),(0.75,0.85,0.9,1))
 base_c=mix(nt,SHIRT,(0.002,0.012,0.022,1),cloth)
-rim=mix(nt,lw.outputs[1],(0,0,0,1),(0.10,0.42,0.60,1))
-rimk=mix(nt,SHIRT,rim,mix(nt,lw.outputs[1],(0.01,0.02,0.03,1),(0.25,0.40,0.50,1)))
-nt.links.new(base_c,p.inputs["Base Color"]); nt.links.new(rimk,p.inputs["Emission Color"]); p.inputs["Emission Strength"].default_value=0.55
-rg=nt.nodes.new("ShaderNodeMapRange"); nt.links.new(SHIRT,rg.inputs[0]); rg.inputs[3].default_value=0.24; rg.inputs[4].default_value=0.55
-nt.links.new(rg.outputs[0],p.inputs["Roughness"]); p.inputs["Coat Weight"].default_value=0.3; p.inputs["Coat Roughness"].default_value=0.2
+rim=mix(nt,lw.outputs[1],(0,0.004,0.008,1),(0.16,0.50,0.70,1))
+rimk=mix(nt,SHIRT,rim,mix(nt,lw.outputs[1],(0.02,0.035,0.05,1),(0.35,0.50,0.60,1)))
+nt.links.new(base_c,p.inputs["Base Color"]); nt.links.new(rimk,p.inputs["Emission Color"]); p.inputs["Emission Strength"].default_value=0.42
+rg=nt.nodes.new("ShaderNodeMapRange"); nt.links.new(SHIRT,rg.inputs[0]); rg.inputs[3].default_value=0.42; rg.inputs[4].default_value=0.6
+nt.links.new(rg.outputs[0],p.inputs["Roughness"]); p.inputs["Coat Weight"].default_value=0.12; p.inputs["Coat Roughness"].default_value=0.3
 char.data.materials.append(m)
 # visor
 m,nt,p=newmat("visor")
 tex=nt.nodes.new("ShaderNodeTexImage"); tex.image=bpy.data.images.load(OUT+"/visor.png"); tex.image.colorspace_settings.name='Non-Color'; tex.extension='CLIP'
 uv=nt.nodes.new("ShaderNodeUVMap"); uv.uv_map="UVMap"; nt.links.new(uv.outputs[0],tex.inputs[0])
-col=mix(nt,tex.outputs[0],(1.0,0.27,0.03,1),(0.36,0.025,0.0,1))
+vs_=nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(uv.outputs[0],vs_.inputs[0])
+pp=nt.nodes.new("ShaderNodeMath"); pp.operation='PINGPONG'; nt.links.new(vs_.outputs[1],pp.inputs[0]); pp.inputs[1].default_value=0.5
+eg=nt.nodes.new("ShaderNodeMapRange"); eg.interpolation_type='SMOOTHSTEP'; nt.links.new(pp.outputs[0],eg.inputs[0]); eg.inputs[1].default_value=0.02; eg.inputs[2].default_value=0.13; eg.inputs[3].default_value=1; eg.inputs[4].default_value=0
+bandc=mix(nt,eg.outputs[0],(1.0,0.23,0.02,1),(3.2,1.5,0.55,1))
+col=mix(nt,tex.outputs[0],bandc,(0.34,0.02,0.0,1))
 p.inputs["Base Color"].default_value=(0.25,0.03,0,1); nt.links.new(col,p.inputs["Emission Color"]); p.inputs["Emission Strength"].default_value=1.0; p.inputs["Roughness"].default_value=0.45
 visor.data.materials.append(m)
 # ribbon
@@ -293,13 +297,13 @@ tex=nt.nodes.new("ShaderNodeTexImage"); tex.image=bpy.data.images.load(OUT+"/til
 uv=nt.nodes.new("ShaderNodeUVMap"); uv.uv_map="UVMap"; nt.links.new(uv.outputs[0],tex.inputs[0])
 fu=nt.nodes.new("ShaderNodeUVMap"); fu.uv_map="flag"; sep=nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(fu.outputs[0],sep.inputs[0])
 mul=nt.nodes.new("ShaderNodeMath"); mul.operation='MULTIPLY'; nt.links.new(tex.outputs[0],mul.inputs[0]); nt.links.new(sep.outputs[0],mul.inputs[1])
-tf=nt.nodes.new("ShaderNodeMath"); tf.operation='MULTIPLY'; nt.links.new(mul.outputs[0],tf.inputs[0]); tf.inputs[1].default_value=0.92
+tf=nt.nodes.new("ShaderNodeMath"); tf.operation='MULTIPLY'; nt.links.new(mul.outputs[0],tf.inputs[0]); tf.inputs[1].default_value=0.85
 # soft vertical gradient across the band (brighter edges, like frosted glass)
 suv=nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(uv.outputs[0],suv.inputs[0])
 edge=nt.nodes.new("ShaderNodeMath"); edge.operation='PINGPONG'; nt.links.new(suv.outputs[1],edge.inputs[0]); edge.inputs[1].default_value=0.5
-er=nt.nodes.new("ShaderNodeMapRange"); nt.links.new(edge.outputs[0],er.inputs[0]); er.inputs[1].default_value=0.0; er.inputs[2].default_value=0.22; er.inputs[3].default_value=1; er.inputs[4].default_value=0
+er=nt.nodes.new("ShaderNodeMapRange"); nt.links.new(edge.outputs[0],er.inputs[0]); er.inputs[1].default_value=0.0; er.inputs[2].default_value=0.30; er.inputs[3].default_value=1; er.inputs[4].default_value=0
 er.interpolation_type='SMOOTHSTEP'
-band=mix(nt,er.outputs[0],(1.0,0.23,0.02,1),(1.0,0.40,0.11,1))
+band=mix(nt,er.outputs[0],(1.0,0.25,0.025,1),(1.0,0.50,0.18,1))
 inner=mix(nt,sep.outputs[1],band,(0.75,0.13,0.01,1))
 colt=mix(nt,tf.outputs[0],inner,(1,0.97,0.93,1))
 dkb=mix(nt,1.0,colt,(0.45,0.45,0.45,1),"MULTIPLY"); nt.links.new(dkb,p.inputs["Base Color"]); nt.links.new(colt,p.inputs["Emission Color"]); p.inputs["Emission Strength"].default_value=0.62
@@ -308,7 +312,7 @@ ribbon.data.materials.append(m); ribbon.hide_render=bool(ribbon_hide)
 # ---------------- camera / light ----------------
 cam=bpy.data.cameras.new("c"); cam.lens=243; cam.sensor_width=36; cam.clip_end=1000
 co=link(bpy.data.objects.new("c",cam)); sc.camera=co
-target=Vector((-0.2,0,EYEZ-1.2)); co.location=target+Vector((0,-46,-4.5))
+target=Vector((0.15,0,EYEZ-1.2)); co.location=target+Vector((0,-46,-4.5))
 co.rotation_euler=(target-co.location).to_track_quat('-Z','Y').to_euler()
 w=bpy.data.worlds.new("w"); sc.world=w; w.use_nodes=True
 bg=w.node_tree.nodes["Background"]; bg.inputs[0].default_value=(0.9,0.93,1,1); bg.inputs[1].default_value=0.07
