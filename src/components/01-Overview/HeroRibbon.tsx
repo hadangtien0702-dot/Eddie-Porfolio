@@ -164,8 +164,8 @@ export default function HeroRibbon() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.25, ease: EASE }}
           className="relative z-10 mt-4 h-[60vh] w-full
-                     lg:absolute lg:bottom-0 lg:left-[40%] lg:mt-0 lg:h-[80%] lg:w-auto lg:aspect-[1400/1100]
-                     xl:left-[30%] xl:h-[88%]"
+                     lg:absolute lg:bottom-0 lg:left-[34%] lg:mt-0 lg:h-[80%] lg:w-auto lg:aspect-[1400/1100]
+                     xl:left-[32%] xl:h-[88%]"
         >
           {/* Mobile: khung rộng hơn màn hình, canh giữa theo thân người */}
           <div className="absolute bottom-0 left-1/2 aspect-[1400/1100] h-full -translate-x-[38%] lg:static lg:translate-x-0">

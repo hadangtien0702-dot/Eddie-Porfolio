@@ -18,5 +18,9 @@ l=Image.new("RGBA",im.size,(255,190,130,0)); l.putalpha(ga); out.alpha_composite
 # fade the bottom into the page
 fade=Image.linear_gradient("L").resize((W,H)).point(lambda v: 255 if v<215 else max(0,int(255*(1-(v-215)/40))))
 out.putalpha(ImageChops.multiply(out.getchannel("A"),fade))
+# soft fade on the left edge so the shoulder never ends in a hard cut
+lf=Image.linear_gradient("L").rotate(90,expand=True).resize((W,H)).transpose(Image.FLIP_LEFT_RIGHT)
+lf=lf.point(lambda v: 255 if v>26 else int(255*(v/26)**1.5))
+out.putalpha(ImageChops.multiply(out.getchannel("A"),lf))
 out.save(dst)
 bg=Image.new("RGBA",im.size,(244,242,238,255)); bg.alpha_composite(out); bg.convert("RGB").save(dst.rsplit('.',1)[0]+"-preview.jpg",quality=88)

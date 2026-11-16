@@ -3,6 +3,8 @@
 #   https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/3dobjs/base.obj
 # Chạy:  python build.py -- 1.4 96 final   →  python post.py final.png final-out.png  →  đổi final-out.png sang .webp
 # Đổi chữ: sửa VISOR_TXT (chữ trên kính) và words (chữ trên ruy băng) bên dưới rồi render lại.
+# Hình thể nam: cần thêm 2 file morph (CC0) từ MPFB2 đặt cạnh file này: asian-male-young.target.gz và
+#   universal-male-young-maxmuscle-averageweight.target.gz (src/mpfb/data/targets/macrodetails trong repo makehumancommunity/mpfb2)
 import bpy, bmesh, math, sys, os, collections
 from mathutils import Vector, Matrix
 from PIL import Image, ImageDraw, ImageFont
@@ -25,11 +27,22 @@ for l in open(OUT+'/base.obj'):
         idx=[int(t.split('/')[0])-1 for t in l.split()[1:]]
         if g=='body': faces.append(idx)
         elif g=='helper-l-eye': eye+=idx
+# male body shape: MakeHuman/MPFB2 morph targets (CC0)
+import gzip
+def target(name,w):
+    for l in gzip.open(OUT+'/'+name+'.target.gz','rt'):
+        t=l.split()
+        if len(t)!=4 or t[0].startswith('#'): continue
+        i=int(t[0]); dx,dy,dz=(float(v) for v in t[1:])
+        x,y,z=vs[i]; vs[i]=(x+dx*w,y-dz*w,z+dy*w)
+target('asian-male-young',1.0)
+target('universal-male-young-maxmuscle-averageweight',float(os.environ.get('MUSCLE','0.8')))
+EYEZ=sum(vs[i][2] for i in eye)/len(eye); EYEY=min(vs[i][1] for i in eye)
 used=sorted({i for f in faces for i in f}); remap={i:k for k,i in enumerate(used)}
 def smooth(a,b,x):
     t=max(0,min(1,(x-a)/(b-a))); return t*t*(3-2*t)
 for sign in (1,-1):
-    piv=Vector((sign*1.62,0.25,5.72))
+    piv=Vector((sign*1.62*1.0,0.25,5.72+(EYEZ-7.284)))
     def posed(ang):
         out=[]
         for (x,y,z) in vs:
@@ -41,8 +54,19 @@ for sign in (1,-1):
     A=math.radians(float(os.environ.get('ARM','20')))
     c1=posed(A*sign); c2=posed(-A*sign)
     vs=c1 if max(v[0]*sign for v in c1)<max(v[0]*sign for v in c2) else c2
+# masculine build: broader shoulders/chest, thicker neck; torso turned less than the head
+TW=math.radians(float(os.environ.get('TWIST','24')))
+_new=[]
+for (x,y,z) in vs:
+    wb=1-smooth(EYEZ-1.75,EYEZ-1.25,z)            # 1 on torso, 0 on head/neck
+    wn=smooth(EYEZ-1.9,EYEZ-1.45,z)*(1-smooth(EYEZ-0.95,EYEZ-0.6,z))   # neck band
+    x*=1+0.13*wb+0.14*wn; y=0.2+(y-0.2)*(1+0.06*wb+0.12*wn)
+    wt=1-smooth(EYEZ-1.7,EYEZ-0.85,z)             # torso twist weight
+    a=TW*wt; cx_,cy_=0.0,0.15
+    dx,dy=x-cx_,y-cy_
+    _new.append((cx_+dx*math.cos(a)-dy*math.sin(a), cy_+dx*math.sin(a)+dy*math.cos(a), z))
+vs=_new
 me=bpy.data.meshes.new("body"); me.from_pydata([vs[i] for i in used],[],[[remap[i] for i in f] for f in faces]); me.update()
-EYEZ=sum(vs[i][2] for i in eye)/len(eye); EYEY=min(vs[i][1] for i in eye)
 body=link(bpy.data.objects.new("body",me))
 mod=body.modifiers.new("s",'SUBSURF'); mod.levels=2; mod.render_levels=2
 dg=bpy.context.evaluated_depsgraph_get(); em=bpy.data.meshes.new_from_object(body.evaluated_get(dg))
@@ -59,11 +83,14 @@ def cut(bm,co,no,sharp=True):
     ed=[e for e in r['geom_cut'] if isinstance(e,bmesh.types.BMEdge)]
     if ed:
         f=bmesh.ops.triangle_fill(bm,edges=ed,use_beauty=True)
-        for x in f['geom']:
-            if isinstance(x,bmesh.types.BMFace): x.smooth=False
+        nf=[x for x in f['geom'] if isinstance(x,bmesh.types.BMFace)]
+        if not nf:
+            ed=[e for e in ed if e.is_valid and e.is_boundary]
+            nf=bmesh.ops.holes_fill(bm,edges=ed,sides=0)['faces'] if ed else []
+        for x in nf: x.smooth=False
         for e in ed: e.smooth=False
 Y0=HF+ (HB-HF)*0.40          # where slicing begins (just in front of the ear)
-ZC=EYEZ-1.75                 # fins only above this height (shoulder line)
+ZC=EYEZ-0.92                 # fins only above this height (shoulder line)
 for f in src.faces: f.smooth=True
 parts=[]
 a=src.copy(); cut(a,Vector((0,Y0,0)),Vector((0,1,0))); parts.append(a)                     # front
@@ -75,23 +102,34 @@ slabs=[]
 while y<HB+0.05:
     s=hb.copy(); cut(s,Vector((0,y,0)),Vector((0,-1,0))); cut(s,Vector((0,y+T,0)),Vector((0,1,0)))
     if len(s.faces):
-        sc_=1.0+0.045*min(k,8)
+        sc_=1.0+0.02*min(k,8)
         for v in s.verts:
-            if v.co.z>ZC+0.9:
-                w=min(1,(v.co.z-(ZC+0.9))/0.8)
+            if True:
+                w=1
                 v.co.x*=1+(sc_-1)*w; v.co.z=ZH+(v.co.z-ZH)*(1+(sc_-1)*w)
         parts.append(s); slabs.append((s,y))
     y+=T+G; k+=1
 # floating plates beyond the skull
-for s0,y0_ in reversed(slabs):
-    t_=s0.copy(); cut(t_,Vector((0,0,EYEZ-0.75)),Vector((0,0,-1)))
-    if len(t_.verts)>40 and max(v.co.z for v in t_.verts)-min(v.co.z for v in t_.verts)>1.2: s0=t_; break
-ylast=slabs[-1][1]; print("slabs",len(slabs),"base slab y",y0_,"last",ylast)
-for i,f in enumerate((0.95,0.88,0.8,0.7,0.6,0.48,0.36,0.24)):
-    s=s0.copy()
-    cx=0; cz=EYEZ+0.2
+# solid core inside the sliced region so the gaps read as dark grooves, not holes
+core=hb.copy(); cc=Vector((0,Y0,EYEZ+0.15))
+for v in core.verts:
+    v.co.x*=0.955; v.co.z=cc.z+(v.co.z-cc.z)*0.955; v.co.y=Y0+(v.co.y-Y0)*0.95
+parts.append(core)
+# echo discs trailing straight back from the skull (largest head cross-section, tapering)
+best=None
+for s_,y_ in slabs:
+    t_=s_.copy(); cut(t_,Vector((0,0,EYEZ-0.7)),Vector((0,0,-1)))
+    if len(t_.verts)<40: continue
+    h_=max(v.co.z for v in t_.verts)-min(v.co.z for v in t_.verts)
+    if best is None or h_>best[0]+0.02: best=(h_,t_,y_)
+s0,y0_=best[1],best[2]; ylast=slabs[-1][1]; print("slabs",len(slabs),"disc h",best[0])
+NDISC=int(os.environ.get('DISCS','0'))
+for i in range(NDISC):
+    f=0.92-0.17*i-0.01*i*i
+    s=s0.copy(); cz=EYEZ+0.2
+    dy=(ylast-y0_)+(T+G)*(i+1)
     for v in s.verts:
-        v.co.x*=f; v.co.z=cz+(v.co.z-cz)*f; v.co.y+= (ylast-y0_)+(T+G)*(i+1)
+        v.co.x*=f; v.co.z=cz+(v.co.z-cz)*f+0.20*(T+G)*(i+1); v.co.y+=dy
     parts.append(s)
 allbm=bmesh.new()
 for p in parts:
@@ -225,9 +263,10 @@ def mth(op,x,y=None,z=None):
         else: nt.links.new(v,n.inputs[i])
     return n.outputs[0]
 tc=nt.nodes.new("ShaderNodeTexCoord"); sx=nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(tc.outputs["Object"],sx.inputs[0])
-X,Y_,Z=sx.outputs
-neck=mth('ADD',mth('MULTIPLY',mth('MULTIPLY',X,X),0.40),SH_Z-0.80)
-strap=mth('ADD',mth('MULTIPLY',mth('MAXIMUM',mth('SUBTRACT',SH_Z-0.2,Z),0),0.25),1.62)
+X0,Y_,Z=sx.outputs
+X=mth('ADD',mth('MULTIPLY',X0,math.cos(TW)),mth('MULTIPLY',mth('SUBTRACT',Y_,0.15),math.sin(TW)))
+neck=mth('ADD',mth('MULTIPLY',mth('MULTIPLY',X,X),0.30),SH_Z-0.45)
+strap=mth('ADD',mth('MULTIPLY',mth('MAXIMUM',mth('SUBTRACT',SH_Z-0.2,Z),0),0.25),1.9)
 d=mth('MINIMUM',mth('SUBTRACT',neck,Z),mth('SUBTRACT',strap,mth('ABSOLUTE',X)))
 st=nt.nodes.new("ShaderNodeMapRange"); st.interpolation_type='SMOOTHSTEP'; nt.links.new(d,st.inputs[0]); st.inputs[1].default_value=-0.012; st.inputs[2].default_value=0.012
 hem=nt.nodes.new("ShaderNodeMapRange"); hem.interpolation_type='SMOOTHSTEP'; nt.links.new(d,hem.inputs[0]); hem.inputs[1].default_value=0.0; hem.inputs[2].default_value=0.07; hem.inputs[3].default_value=1; hem.inputs[4].default_value=0
@@ -269,7 +308,7 @@ ribbon.data.materials.append(m); ribbon.hide_render=bool(ribbon_hide)
 # ---------------- camera / light ----------------
 cam=bpy.data.cameras.new("c"); cam.lens=243; cam.sensor_width=36; cam.clip_end=1000
 co=link(bpy.data.objects.new("c",cam)); sc.camera=co
-target=Vector((0.2,0,EYEZ-1.2)); co.location=target+Vector((0,-46,-4.5))
+target=Vector((-0.2,0,EYEZ-1.2)); co.location=target+Vector((0,-46,-4.5))
 co.rotation_euler=(target-co.location).to_track_quat('-Z','Y').to_euler()
 w=bpy.data.worlds.new("w"); sc.world=w; w.use_nodes=True
 bg=w.node_tree.nodes["Background"]; bg.inputs[0].default_value=(0.9,0.93,1,1); bg.inputs[1].default_value=0.07
