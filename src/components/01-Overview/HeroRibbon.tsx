@@ -2,10 +2,10 @@
 
 // ─── Hero phương án 2: "Ribbon" (kiểu Turnover) ───
 // Chữ bên trái (tiêu đề sans đậm, dòng 2 màu cam), số liệu, thẻ "Latest case study";
-// bên phải: chân dung với dải ruy băng cam quấn quanh (nửa sau nằm sau người, nửa trước đè lên),
-// chữ chạy dọc ruy băng; 3 thẻ dịch vụ nổi bên phải.
+// bên phải: chân dung với dải ruy băng cam 3D (render từ Blender) quấn quanh người;
+// 3 thẻ dịch vụ nổi bên phải.
 
-import { Fragment, useId, useState } from "react";
+import { Fragment, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,103 +22,26 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.8, delay, ease: EASE },
 });
 
-// ─── Hình học của cảnh (đơn vị theo viewBox 0 0 1000 1100) ───
-const IMG = { x: 190, y: 120, w: 610, h: Math.round((610 * 905) / 561) };
-const RIB = { cx: 500, cy: 560, rx: 470, ry: 112, tilt: -12, width: 54 };
-// Chu vi elip (công thức Ramanujan) — dùng để chữ chạy vòng liền mạch
-const LOOP = Math.round(
-  Math.PI * (3 * (RIB.rx + RIB.ry) - Math.sqrt((3 * RIB.rx + RIB.ry) * (RIB.rx + 3 * RIB.ry)))
-);
+// ─── Cảnh: chân dung + ruy băng 3D ───
+// Ruy băng là mô hình 3D dựng & render bằng Blender (chữ đã in sẵn trên dải), xuất thành 2 lớp trong suốt:
+//   ribbon-back.webp  → toàn bộ dải, nằm SAU chân dung
+//   ribbon-front.webp → phần dải ở phía trước, đè LÊN chân dung
+// Cả 3 lớp dùng chung khung 1400 × 1100.
+const SCENE = { w: 1400, h: 1100 };
+const IMG = { x: 60, y: 40, w: 820, h: Math.round((820 * 905) / 561) };
+const FLOAT = { animate: { y: [0, -10, 0] }, transition: { duration: 7, repeat: Infinity, ease: "easeInOut" as const } };
 
-// Elip 1 vòng: từ trái → xuống đáy (mặt trước) → phải → lên đỉnh (mặt sau) → trái
-const RIBBON_PATH = `M ${RIB.cx - RIB.rx} ${RIB.cy} A ${RIB.rx} ${RIB.ry} 0 1 0 ${RIB.cx + RIB.rx} ${RIB.cy} A ${RIB.rx} ${RIB.ry} 0 1 0 ${RIB.cx - RIB.rx} ${RIB.cy}`;
-
-function RibbonScene({ uid }: { uid: string }) {
-  const pathId = `${uid}-path`;
-  // \u00a0 = khoảng trắng không bị SVG gộp lại
-  const sep = "\u00a0\u00a0•\u00a0\u00a0";
-  const unit = heroRibbon.ribbonWords.join(sep) + sep;
-  // 4 cụm chữ mỗi vòng; textLength ép đúng 1 vòng.
-  // 2 bản chữ nối đuôi nhau (offset 0 và -LOOP) cùng trượt → phủ kín vòng, không chồng chữ.
-  const text = unit.repeat(4);
-  const DUR = "40s";
-
-  const ribbonText = [0, -LOOP].map((start) => (
-    <text
-      key={start}
-      fill="#fff"
-      fontSize="19"
-      fontWeight={600}
-      letterSpacing="1"
-      dominantBaseline="central"
-      textLength={LOOP}
-      lengthAdjust="spacing"
-      className="font-body"
-    >
-      <textPath href={`#${pathId}`} startOffset={start}>
-        {text}
-        <animate attributeName="startOffset" from={start} to={start + LOOP} dur={DUR} repeatCount="indefinite" />
-      </textPath>
-    </text>
-  ));
-
-  // Một nửa ruy băng (back = nửa trên/phía sau, front = nửa dưới/phía trước)
-  const half = (side: "back" | "front") => (
-    <g transform={`rotate(${RIB.tilt} ${RIB.cx} ${RIB.cy})`} clipPath={`url(#${uid}-clip-${side})`}>
-      <use
-        href={`#${pathId}`}
-        stroke={`url(#${uid}-grad-${side})`}
-        strokeWidth={RIB.width}
-        fill="none"
-        filter={side === "front" ? `url(#${uid}-shadow)` : undefined}
-      />
-      {/* Viền sáng mảnh phía trên dải */}
-      <use
-        href={`#${pathId}`}
-        stroke="rgba(255,255,255,0.35)"
-        strokeWidth={RIB.width - 4}
-        fill="none"
-        style={{ mixBlendMode: "soft-light" }}
-      />
-      <g opacity={side === "back" ? 0.75 : 1}>{ribbonText}</g>
-    </g>
-  );
-
+function RibbonScene() {
   return (
-    <svg viewBox="0 0 1000 1100" className="h-full w-full overflow-visible" aria-hidden="true">
-      <defs>
-        <path id={pathId} d={RIBBON_PATH} />
-        <linearGradient id={`${uid}-grad-front`} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" stopColor="#ff8a4c" />
-          <stop offset="0.5" stopColor="#ff4000" />
-          <stop offset="1" stopColor="#ff7a36" />
-        </linearGradient>
-        <linearGradient id={`${uid}-grad-back`} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" stopColor="#d63a06" />
-          <stop offset="0.5" stopColor="#b52d00" />
-          <stop offset="1" stopColor="#e24a10" />
-        </linearGradient>
-        <filter id={`${uid}-shadow`} x="-20%" y="-50%" width="140%" height="200%">
-          <feDropShadow dx="0" dy="14" stdDeviation="14" floodColor="#ff4000" floodOpacity="0.35" />
-        </filter>
-        {/* Cắt đôi elip theo trục ngang (trong hệ toạ độ đã xoay) */}
-        <clipPath id={`${uid}-clip-back`}>
-          <rect x={-200} y={RIB.cy - 400} width={1400} height={400} />
-        </clipPath>
-        <clipPath id={`${uid}-clip-front`}>
-          <rect x={-200} y={RIB.cy} width={1400} height={400} />
-        </clipPath>
-      </defs>
-
-      {half("back")}
+    <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="h-full w-full overflow-visible" aria-hidden="true">
+      <motion.image {...FLOAT} href="/images/01-Overview/ribbon-back.webp" x={0} y={0} width={SCENE.w} height={SCENE.h} />
       <image href="/images/01-Overview/hero.png" x={IMG.x} y={IMG.y} width={IMG.w} height={IMG.h} />
-      {half("front")}
+      <motion.image {...FLOAT} href="/images/01-Overview/ribbon-front.webp" x={0} y={0} width={SCENE.w} height={SCENE.h} />
     </svg>
   );
 }
 
 export default function HeroRibbon() {
-  const uid = useId().replace(/:/g, "");
   const [reelOpen, setReelOpen] = useState(false);
   const d = heroRibbon;
 
@@ -188,10 +111,10 @@ export default function HeroRibbon() {
           </motion.div>
 
           {/* Số liệu */}
-          <motion.dl {...fadeUp(0.52)} className="mt-10 grid grid-cols-2 gap-y-6 sm:flex sm:gap-0 lg:mt-12">
+          <motion.dl {...fadeUp(0.52)} className="mt-10 grid grid-cols-2 gap-y-6 sm:flex sm:gap-0 lg:mt-10 lg:grid lg:max-w-[340px] lg:gap-y-6 xl:mt-12 xl:flex xl:max-w-none xl:gap-0">
             {d.stats.map((s, i) => (
               <Fragment key={s.label}>
-                {i > 0 && <span className="mx-6 hidden w-px self-stretch sm:block" style={{ background: "var(--h-faint)" }} />}
+                {i > 0 && <span className="mx-6 hidden w-px self-stretch sm:block lg:hidden xl:block" style={{ background: "var(--h-faint)" }} />}
                 <div>
                   <dt className="sr-only">{s.label}</dt>
                   <dd className="font-heading text-[24px] font-bold leading-none tracking-tight text-[var(--h-fg)] md:text-[28px]">
@@ -205,7 +128,7 @@ export default function HeroRibbon() {
         </div>
 
         {/* ════════ Thẻ case study mới nhất (dưới trái) ════════ */}
-        <motion.div {...fadeUp(0.7)} className="absolute bottom-[5%] left-[5%] z-30 hidden lg:block">
+        <motion.div {...fadeUp(0.7)} className="absolute bottom-[5%] left-[5%] z-30 hidden xl:[@media(min-height:860px)]:block">
           <Link
             href={d.latestWork.href}
             className="group flex w-[380px] items-center gap-4 rounded-[20px] p-3 pr-4 backdrop-blur-xl"
@@ -232,26 +155,29 @@ export default function HeroRibbon() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.25, ease: EASE }}
-          className="relative z-10 mx-auto -mt-2 h-[64vh] max-w-full
-                     lg:absolute lg:bottom-0 lg:left-[43%] lg:mt-0 lg:h-[96%]"
-          style={{ aspectRatio: "1000 / 1100" }}
+          className="relative z-10 mt-4 h-[60vh] w-full
+                     lg:absolute lg:bottom-0 lg:left-[46%] lg:mt-0 lg:h-[84%] lg:w-auto lg:aspect-[1400/1100]
+                     xl:left-[41%] xl:h-[93%]"
         >
-          <RibbonScene uid={uid} />
+          {/* Mobile: khung rộng hơn màn hình, canh giữa theo thân người */}
+          <div className="absolute bottom-0 left-1/2 aspect-[1400/1100] h-full -translate-x-[33%] lg:static lg:translate-x-0">
+            <RibbonScene />
+          </div>
         </motion.div>
 
         {/* ════════ 3 thẻ dịch vụ (phải) ════════ */}
-        <div className="absolute right-[3.5%] top-[17%] z-30 hidden flex-col gap-[4.5vh] lg:flex">
+        <div className="absolute right-[2%] top-[19%] z-30 hidden flex-col gap-[3.5vh] lg:flex xl:right-[3.5%] xl:top-[17%] xl:gap-[4.5vh]">
           {d.services.map((s, i) => {
             const Icon = ICONS[s.icon];
             return (
-              <motion.div key={s.title} {...fadeUp(0.55 + i * 0.1)} className={i === 1 ? "translate-x-8" : ""}>
+              <motion.div key={s.title} {...fadeUp(0.55 + i * 0.1)} className={i === 1 ? "xl:translate-x-8" : ""}>
                 <Link
                   href={s.href}
-                  className="group relative flex w-[270px] items-start gap-3.5 rounded-[18px] p-4 backdrop-blur-xl"
+                  className="group relative flex w-[196px] items-center gap-3 rounded-[18px] p-2.5 pr-4 backdrop-blur-xl xl:w-[270px] xl:items-start xl:gap-3.5 xl:p-4"
                   style={{ background: "var(--h-card)", boxShadow: "var(--h-shadow)" }}
                 >
                   {/* Đường nối + chấm (kiểu Turnover) */}
-                  <span className="pointer-events-none absolute -left-16 top-1/2 flex w-16 items-center">
+                  <span className="pointer-events-none absolute -left-16 top-1/2 hidden w-16 items-center xl:flex">
                     <span className="h-2 w-2 shrink-0 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,64,0,0.25)]" />
                     <span className="h-px flex-1" style={{ background: "var(--h-faint)" }} />
                   </span>
@@ -260,10 +186,10 @@ export default function HeroRibbon() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-body text-[14px] font-semibold text-[var(--h-fg)]">{s.title}</span>
-                    <span className="mt-1 block font-body text-[12px] leading-snug text-[var(--h-muted)]">{s.text}</span>
+                    <span className="mt-1 hidden font-body text-[12px] leading-snug text-[var(--h-muted)] xl:block">{s.text}</span>
                   </span>
                   <span
-                    className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--h-fg)] transition-colors duration-300 group-hover:bg-accent group-hover:text-white"
+                    className="mt-1 hidden h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--h-fg)] transition-colors duration-300 group-hover:bg-accent group-hover:text-white xl:flex"
                     style={{ boxShadow: "inset 0 0 0 1px var(--h-faint)" }}
                   >
                     <ArrowRight size={13} />
@@ -275,7 +201,7 @@ export default function HeroRibbon() {
         </div>
 
         {/* ════════ Scroll down (dưới phải) ════════ */}
-        <motion.div {...fadeUp(0.9)} className="absolute bottom-[5%] right-[4%] z-30 hidden flex-col items-center gap-2 lg:flex">
+        <motion.div {...fadeUp(0.9)} className="absolute bottom-[5%] right-[4%] z-30 hidden flex-col items-center gap-2 xl:flex">
           <span className="font-body text-[11px] font-medium text-[var(--h-fg)]">Scroll Down</span>
           <span className="flex h-7 w-[18px] justify-center rounded-full pt-1.5" style={{ boxShadow: "inset 0 0 0 1.5px var(--h-fg)" }}>
             <motion.span
